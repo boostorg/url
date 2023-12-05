@@ -77,7 +77,7 @@ set(BOOST_EXCLUDE_LIBRARIES url)
 # Add Boost Subdirectory
 #
 #-------------------------------------------------
-if (NOT BOOST_SUPERPROJECT_VERSION)
+if (BOOST_URL_IS_ROOT)
     set(CMAKE_FOLDER Dependencies)
     # Find absolute BOOST_SRC_DIR
     if (NOT IS_ABSOLUTE ${BOOST_SRC_DIR})
@@ -96,6 +96,7 @@ if (NOT BOOST_SUPERPROJECT_VERSION)
 
     # Create Boost interface targets
     if (BOOST_SRC_DIR_IS_VALID)
+        # From BOOST_SRC_DIR
         set(BOOST_EXCLUDE_LIBRARIES ${PROJECT_NAME})
         set(PREV_BUILD_TESTING ${BUILD_TESTING})
         set(BUILD_TESTING OFF CACHE BOOL "Build the tests." FORCE)
@@ -103,6 +104,7 @@ if (NOT BOOST_SUPERPROJECT_VERSION)
         set(BUILD_TESTING ${PREV_BUILD_TESTING} CACHE BOOL "Build the tests." FORCE)
         set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${BOOST_SRC_DIR}/tools/cmake/include")
     else ()
+        # From Boost Package
         find_package(Boost REQUIRED COMPONENTS container)
         foreach (BOOST_INCLUDE_LIBRARY ${BOOST_INCLUDE_LIBRARIES})
             if (NOT TARGET Boost::${BOOST_INCLUDE_LIBRARY})
