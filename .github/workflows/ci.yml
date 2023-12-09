@@ -53,7 +53,7 @@ jobs:
       matrix: ${{ steps.cpp-matrix.outputs.matrix }}
     steps:
       - name: Generate Test Matrix
-        uses: alandefreitas/cpp-actions/cpp-matrix@v1.6.1
+        uses: alandefreitas/cpp-actions/cpp-matrix@v1.6.2
         id: cpp-matrix
         with:
           compilers: |
@@ -93,27 +93,26 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup C++
-        uses: alandefreitas/cpp-actions/setup-cpp@v1.6.1
+        uses: alandefreitas/cpp-actions/setup-cpp@v1.6.2
         id: setup-cpp
         with:
           compiler: ${{ matrix.compiler }}
           version: ${{ (matrix.subrange-policy == 'one-per-major' && matrix.major) || matrix.version }}
 
       - name: Install packages
-        uses: alandefreitas/cpp-actions/package-install@v1.6.1
+        uses: alandefreitas/cpp-actions/package-install@v1.6.2
         id: package-install
         with:
           apt-get: ${{ matrix.install }}
 
       - name: Clone Boost
-        uses: alandefreitas/cpp-actions/boost-clone@v1.6.1
+        uses: alandefreitas/cpp-actions/boost-clone@v1.6.2
         id: boost-clone
         with:
           branch: ${{ (github.ref_name == 'master' && github.ref_name) || 'develop' }}
           boost-dir: ../boost-source
           scan-modules-dir: .
           scan-modules-ignore: url
-          trace-commands: ${{ env.ACTIONS_STEP_DEBUG == 'true' }}
 
       - name: Patch Boost
         working-directory: ../boost-source
@@ -155,12 +154,12 @@ jobs:
           path: ${{ steps.patch.outputs.workspace_root }}/corpus.tar
           key: corpus-${{ github.run_id }}
           enableCrossOsArchive: true
-          restore-keys: | 
+          restore-keys: |
             corpus-
 
       # Run cmake to build Boost.URL with the Boost super-project as PROJECT_ROOT
       - name: Boost CMake Workflow
-        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.1
+        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.2
         with:
           source-dir: ../boost-root
           build-dir: __build_cmake_test__
@@ -168,7 +167,7 @@ jobs:
           build-type: ${{ matrix.build-type }}
           build-target: tests boost_url_tests boost_url_limits boost_url_extra ${{ (matrix.fuzz && 'fuzz') || ''}}
           run-tests: true
-          install-prefix: $GITHUB_WORKSPACE/.local
+          install-prefix: .local
           cxxstd: ${{ matrix.latest-cxxstd }}
           cc: ${{ steps.setup-cpp.outputs.cc || matrix.cc }}
           ccflags: ${{ matrix.ccflags }}
@@ -176,138 +175,99 @@ jobs:
           cxxflags: ${{ matrix.cxxflags }}
           shared: ${{ matrix.shared }}
           cmake-version: '>=3.15'
-          extra-args: -D Boost_VERBOSE=ON -D BOOST_INCLUDE_LIBRARIES=${{ steps.patch.outputs.module }} -D BOOST_URL_DISABLE_THREADS=${{ ( matrix.no-threads && 'ON' ) || 'OFF' }} -D BOOST_URL_BUILD_FUZZERS=${{ ( matrix.fuzz && format('ON -D BOOST_URL_FUZZER_CORPUS_PATH={0}/corpus.tar', steps.patch.outputs.workspace_root) ) || 'OFF' }}
+          extra-args: |
+            -D Boost_VERBOSE=ON 
+            -D BOOST_INCLUDE_LIBRARIES=${{ steps.patch.outputs.module }} 
+            -D BOOST_URL_DISABLE_THREADS=${{ ( matrix.no-threads && 'ON' ) || 'OFF' }} 
+            -D BOOST_URL_BUILD_FUZZERS=${{ ( matrix.fuzz && format('ON -D BOOST_URL_FUZZER_CORPUS_PATH={0}/corpus.tar', steps.patch.outputs.workspace_root) ) || 'OFF' }}
           export-compile-commands: ${{ matrix.time-trace }}
           package: false
           package-artifact: false
           ref-source-dir: ../boost-root/libs/url
-          trace-commands: ${{ env.ACTIONS_STEP_DEBUG == 'true' }}
 
-      - name: Set shared library paths
-        if: startsWith(matrix.runs-on, 'windows') && matrix.shared
+      - name: CMake Integration Test Parameters
         run: |
-          echo "$GITHUB_WORKSPACE/.local/bin" >> $GITHUB_PATH
-          ls -la $GITHUB_WORKSPACE/.local/bin
+          # The CMake integration tests share the following parameters
+          echo -E 'CMAKE_GENERATOR=${{ matrix.generator || '' }}' >> $GITHUB_ENV 
+          echo -E 'CMAKE_BUILD_TYPE=${{ matrix.build-type || '' }}' >> $GITHUB_ENV 
+          echo -E 'CC=${{ steps.setup-cpp.outputs.cc || matrix.cc || '' }}' >> $GITHUB_ENV 
+          echo -E 'CFLAGS=${{ matrix.ccflags || '' }}' >> $GITHUB_ENV 
+          echo -E 'CXX=${{ steps.setup-cpp.outputs.cxx || matrix.cxx || '' }}' >> $GITHUB_ENV 
+          echo -E 'CXXFLAGS=${{ matrix.cxxflags || '' }}' >> $GITHUB_ENV 
+          echo -E 'CXXSTD=${{ matrix.latest-cxxstd || '' }}' >> $GITHUB_ENV 
+          echo -E 'BUILD_SHARED_LIBS=${{ matrix.shared || '' }}' >> $GITHUB_ENV 
+          echo -E 'CMAKE_INSTALL=false' >> $GITHUB_ENV
+          echo -E 'CMAKE_PACKAGE=false' >> $GITHUB_ENV
+          echo -E 'CMAKE_PACKAGE_ARTIFACT=false' >> $GITHUB_ENV
+          
+          # Set PATH to find Boost DLLs
+          if [ -d "$GITHUB_WORKSPACE/.local/bin" ]; then
+              echo "$GITHUB_WORKSPACE/.local/bin" >> $GITHUB_PATH
+              ls -la $GITHUB_WORKSPACE/.local/bin
+          fi
 
       # Run cmake to build a project that finds Boost as a package and
       # url as a COMPONENT of this package.
       - name: Boost Find Package Integration Workflow
-        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.1
+        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.2
         if: ${{ matrix.is-latest || matrix.is-earliest }}
         with:
           source-dir: ../boost-root/libs/${{ steps.patch.outputs.module }}/test/cmake_test
           build-dir: __build_cmake_boost_install_test__
-          generator: ${{ matrix.generator }}
-          build-type: ${{ matrix.build-type }}
-          cxxstd: ${{ matrix.latest-cxxstd }}
-          cc: ${{ steps.setup-cpp.outputs.cc || matrix.cc }}
-          ccflags: ${{ matrix.ccflags }}
-          cxx: ${{ steps.setup-cpp.outputs.cxx || matrix.cxx }}
-          cxxflags: ${{ matrix.cxxflags }}
-          shared: ${{ matrix.shared }}
-          cmake-version: '*'
-          install: false
-          extra-args: -D BOOST_CI_INSTALL_TEST=ON -D CMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/.local
-          package: false
-          package-artifact: false
-          ref-source-dir: ../boost-root/libs/url/test/cmake_test
-          trace-commands: ${{ env.ACTIONS_STEP_DEBUG == 'true' }}
+          cmake-version: '>=3.8'
+          extra-args: -D BOOST_CI_INSTALL_TEST=ON -D CMAKE_PREFIX_PATH=${{ steps.patch.outputs.workspace_root }}/.local
+          ref-source-dir: ../boost-root/libs/url
+          trace-commands: true
 
       # Run cmake to build a project that finds Boost.URL as a `boost_url` package
       - name: Boost.URL Find Package Integration Workflow
-        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.1
+        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.2
         if: ${{ matrix.is-latest || matrix.is-earliest }}
         with:
           source-dir: ../boost-root/libs/${{ steps.patch.outputs.module }}/test/cmake_test
           build-dir: __build_cmake_url_install_test__
-          generator: ${{ matrix.generator }}
-          build-type: ${{ matrix.build-type }}
-          cxxstd: ${{ matrix.latest-cxxstd }}
-          cc: ${{ steps.setup-cpp.outputs.cc || matrix.cc }}
-          ccflags: ${{ matrix.ccflags }}
-          cxx: ${{ steps.setup-cpp.outputs.cxx || matrix.cxx }}
-          cxxflags: ${{ matrix.cxxflags }}
-          shared: ${{ matrix.shared }}
-          cmake-version: '*'
-          install: false
-          extra-args: -D BOOST_CI_INSTALL_MODULE_TEST=ON -D CMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/.local
-          package: false
-          package-artifact: false
-          ref-source-dir: ../boost-root/libs/url/test/cmake_test
-          trace-commands: ${{ env.ACTIONS_STEP_DEBUG == 'true' }}
+          cmake-version: '>=3.8'
+          extra-args: -D BOOST_CI_INSTALL_MODULE_TEST=ON -D CMAKE_PREFIX_PATH=${{ steps.patch.outputs.workspace_root }}/.local
+          ref-source-dir: ../boost-root/libs/url
 
       # Run cmake to build a project that adds the Boost super-project as subdirectory
       # defining BOOST_INCLUDE_LIBRARIES to url
       - name: Boost as Subdirectory Integration Workflow
-        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.1
+        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.2
         if: ${{ matrix.is-latest || matrix.is-earliest }}
         with:
           source-dir: ../boost-root/libs/${{ steps.patch.outputs.module }}/test/cmake_test
           build-dir: __build_cmake_boost_subdir_test__
-          generator: ${{ matrix.generator }}
-          build-type: ${{ matrix.build_type }}
-          cxxstd: ${{ matrix.latest-cxxstd }}
-          cc: ${{ steps.setup-cpp.outputs.cc || matrix.cc }}
-          ccflags: ${{ matrix.ccflags }}
-          cxx: ${{ steps.setup-cpp.outputs.cxx || matrix.cxx }}
-          cxxflags: ${{ matrix.cxxflags }}
-          shared: ${{ matrix.shared }}
           cmake-version: '>=3.11'
-          install: false
           extra-args: -D BOOST_CI_BOOST_SUBDIR_TEST=ON
-          ref-source-dir: ../boost-root/libs/url/test/cmake_test
-          trace-commands: ${{ env.ACTIONS_STEP_DEBUG == 'true' }}
+          ref-source-dir: ../boost-root/libs/url
 
       # Run cmake to build a project that adds the Boost.URL as subdirectory
       # All other transitive dependencies are directly added as subdirectories
       - name: Boost.URL as Subdirectory Integration Workflow
-        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.1
+        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.2
         if: ${{ matrix.is-latest || matrix.is-earliest }}
         with:
           source-dir: ../boost-root/libs/${{ steps.patch.outputs.module }}/test/cmake_test
           build-dir: __build_cmake_url_subdir_test__
-          generator: ${{ matrix.generator }}
-          build-type: ${{ matrix.build_type }}
-          cxxstd: ${{ matrix.latest-cxxstd }}
-          cc: ${{ steps.setup-cpp.outputs.cc || matrix.cc }}
-          ccflags: ${{ matrix.ccflags }}
-          cxx: ${{ steps.setup-cpp.outputs.cxx || matrix.cxx }}
-          cxxflags: ${{ matrix.cxxflags }}
-          shared: ${{ matrix.shared }}
-          install: false
           cmake-version: '>=3.11'
           extra-args: -D BOOST_CI_URL_SUBDIR_TEST=ON
-          ref-source-dir: ../boost-root/libs/url/test/cmake_test
-          trace-commands: ${{ env.ACTIONS_STEP_DEBUG == 'true' }}
+          ref-source-dir: ../boost-root/libs/url
 
       # Run cmake to build Boost.URL with the module as PROJECT_ROOT
       - name: Boost.URL as root CMake Workflow
-        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.1
+        uses: alandefreitas/cpp-actions/cmake-workflow@v1.6.2
         if: ${{ matrix.is-latest || matrix.is-earliest }}
         with:
           source-dir: .
           build-dir: __build_root_test__
-          generator: ${{ matrix.generator }}
-          build-type: ${{ matrix.build-type }}
           build-target: tests boost_url_tests boost_url_limits boost_url_extra
-          run-tests: false
-          install: false
-          cxxstd: ${{ matrix.latest-cxxstd }}
-          cc: ${{ steps.setup-cpp.outputs.cc || matrix.cc }}
-          ccflags: ${{ matrix.ccflags }}
-          cxx: ${{ steps.setup-cpp.outputs.cxx || matrix.cxx }}
-          cxxflags: ${{ matrix.cxxflags }}
-          shared: ${{ matrix.shared }}
-          cmake-version: '*'
           extra-args: -D Boost_VERBOSE=ON -D BUILD_TESTING=ON -D BOOST_SRC_DIR="../boost-root"
-          package: false
-          package-artifact: false
           ref-source-dir: .
-          trace-commands: ${{ env.ACTIONS_STEP_DEBUG == 'true' }}
 
       # Run b2 to build Boost.URL with the Boost super-project the root directory
       - name: Boost B2 Workflow
-        uses: alandefreitas/cpp-actions/b2-workflow@v1.6.1
+        uses: alandefreitas/cpp-actions/b2-workflow@v1.6.2
         with:
           source-dir: ../boost-root
           modules: url
@@ -322,7 +282,7 @@ jobs:
           shared: ${{ matrix.shared }}
 
       - name: FlameGraph
-        uses: alandefreitas/cpp-actions/flamegraph@v1.6.1
+        uses: alandefreitas/cpp-actions/flamegraph@v1.6.2
         if: matrix.time-trace
         with:
           source-dir: ../boost-root/libs/url
@@ -375,7 +335,7 @@ jobs:
           fetch-depth: 100
 
       - name: Changelog
-        uses: alandefreitas/cpp-actions/create-changelog@v1.6.1
+        uses: alandefreitas/cpp-actions/create-changelog@v1.6.2
         with:
           thank-non-regular: ${{ startsWith(github.ref, 'refs/tags/') }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
