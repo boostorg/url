@@ -56,7 +56,7 @@ path_chars =
 constexpr
 auto
 query_chars =
-    pchars + '/' + '?';
+    pchars + '/' + '?' + '[' + ']';
 
 constexpr
 auto
