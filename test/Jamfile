@@ -17,17 +17,26 @@ project
     <toolset>msvc:<warnings-as-errors>on
     <toolset>gcc:<warnings-as-errors>on
     <toolset>clang:<warnings-as-errors>on
-    <toolset>msvc:<cxxflags>"/we4265" # Extra errors that are disabled by default
-    <toolset>gcc:<cxxflags>"-Wno-unused-but-set-variable"      # Warnings in dependencies
-    <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized"        # Warnings in dependencies
-    <toolset>clang-4:<cxxflags>"-Wno-unused-but-set-variable"  # Warnings in dependencies
-    <toolset>clang-5:<cxxflags>"-Wno-unused-but-set-variable"  # Warnings in dependencies
-    <toolset>clang-6:<cxxflags>"-Wno-unused-but-set-variable"  # Warnings in dependencies
-    <toolset>clang-13:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
-    <toolset>clang-14:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
-    <toolset>clang-15:<cxxflags>"-Wno-unused-but-set-variable" # Warnings in dependencies
+    # Extra errors that are disabled by default
+    <toolset>msvc:<cxxflags>"/we4265"
+    # Warnings in dependencies
+    <toolset>gcc:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized"
+    <toolset>gcc-8:<cxxflags>"-Wno-maybe-uninitialized"
+    <toolset>gcc-9:<cxxflags>"-Wno-maybe-uninitialized"
+    <toolset>gcc-10:<cxxflags>"-Wno-maybe-uninitialized"
+    <toolset>gcc-11:<cxxflags>"-Wno-maybe-uninitialized"
+    <toolset>gcc-12:<cxxflags>"-Wno-maybe-uninitialized"
+    <toolset>gcc-13:<cxxflags>"-Wno-maybe-uninitialized"
+    <toolset>clang-4:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>clang-5:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>clang-6:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>clang-13:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>clang-14:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>clang-15:<cxxflags>"-Wno-unused-but-set-variable"
     <toolset>gcc,<target-os>windows:<cxxflags>"-Wno-error=array-bounds"
-    <undefined-sanitizer>norecover:<link>static                # different typeinfos confuse ubsan
+    # different typeinfos confuse ubsan
+    <undefined-sanitizer>norecover:<link>static
     <undefined-sanitizer>norecover:<visibility>global
     ;
 
