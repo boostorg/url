@@ -31,7 +31,7 @@ set(__ignore__ ${CMAKE_C_COMPILER})
 # Options
 #
 #-------------------------------------------------
-option(BOOST_URL_BUILD_TESTS "Build boost::url tests" ${BUILD_TESTING})
+option(BOOST_URL_BUILD_TESTS "Build boost::url tests even if BUILD_TESTING is OFF" OFF)
 option(BOOST_URL_BUILD_FUZZERS "Build boost::url fuzzers" OFF)
 option(BOOST_URL_BUILD_EXAMPLES "Build boost::url examples" ${BOOST_URL_IS_ROOT})
 option(BOOST_URL_DISABLE_THREADS "Disable threads" OFF)
@@ -62,7 +62,7 @@ foreach (BOOST_URL_DEPENDENCY ${BOOST_URL_DEPENDENCIES})
     endif ()
 endforeach ()
 # Conditional dependencies
-if (BOOST_URL_BUILD_TESTS)
+if (BUILD_TESTING OR BOOST_URL_BUILD_TESTS)
     set(BOOST_URL_UNIT_TEST_LIBRARIES container filesystem unordered)
 endif()
 if (BOOST_URL_BUILD_EXAMPLES)
@@ -148,7 +148,7 @@ boost_url_setup_properties(boost_url)
 # Tests
 #
 #-------------------------------------------------
-if (BOOST_URL_BUILD_TESTS)
+if (BUILD_TESTING OR BOOST_URL_BUILD_TESTS)
     if (BOOST_URL_IS_ROOT)
         include(CTest)
     endif ()
