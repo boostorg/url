@@ -25,4 +25,4 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../src PREFIX "url" FILES ${BOO
 
 # CTest target
 add_test(NAME boost_url_limits COMMAND boost_url_limits)
-add_dependencies(boost_url_all_tests boost_url_limits)
+add_dependencies(tests boost_url_limits)
