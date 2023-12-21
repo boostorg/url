@@ -97,6 +97,9 @@ if (BOOST_URL_IS_ROOT)
     # Create Boost interface targets
     if (BOOST_SRC_DIR_IS_VALID)
         # From BOOST_SRC_DIR
+        if (BUILD_SHARED_LIBS)
+            set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+        endif()
         set(BOOST_EXCLUDE_LIBRARIES ${PROJECT_NAME})
         set(PREV_BUILD_TESTING ${BUILD_TESTING})
         set(BUILD_TESTING OFF CACHE BOOL "Build the tests." FORCE)
