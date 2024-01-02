@@ -923,17 +923,19 @@ struct url_test
         /*  Errata 4547
             https://www.rfc-editor.org/errata/eid4547
         */
-        //check("../../../g",    "http://a/g");
-        //check("../../../../g", "http://a/g");
+        // Original says (ignore extra ".."):
+        // check("../../../g",    "http://a/g");
+        // check("../../../../g", "http://a/g");
+        // With Errata 4547, it should be (include unmatched ".."):
         check("../../../g",    "http://a/../g");
         check("../../../../g", "http://a/../../g");
 
         check("/./g"         , "http://a/g");
         check("/./g?q#f"     , "http://a/g?q#f");
 
-        // VFALCO RFC says this:
-        //check("/../g"        , "http://a/g");
-        // but this seems more logical
+        // Original says:
+        // check("/../g"        , "http://a/g");
+        // With Errata 4547, it should be:
         check("/../g"        , "http://a/../g");
 
         check("g."           , "http://a/b/c/g.");
@@ -959,6 +961,39 @@ struct url_test
             BOOST_TEST(r.has_error());
             BOOST_TEST(r.error() == error::not_a_base);
         }
+
+        // Multiple ".."
+        auto const check_base = [](
+            core::string_view b,
+            core::string_view r,
+            core::string_view e)
+        {
+            auto ub = parse_uri_reference(b).value();
+            auto ur = parse_uri_reference(r).value();
+            url u = parse_uri(
+                "z://y:x@p.q:69/x/f?q#f" ).value();
+            system::result<void> rv = resolve(ub, ur, u);
+            if (!BOOST_TEST( rv.has_value() ))
+                return;
+            BOOST_TEST_CSTR_EQ(u.buffer(), e);
+
+            // in place resolution
+            url base( ub );
+            rv = base.resolve( ur );
+            if (!BOOST_TEST( rv.has_value() ))
+                return;
+            BOOST_TEST_CSTR_EQ(base.buffer(), e);
+        };
+
+        // Issue #808
+        check_base("scheme:a/b/c", "../../../..", "scheme:../..");
+        check_base("scheme:a/b/c", "../../../../", "scheme:../../");
+        check_base("scheme:a/b/c/", "../../../..", "scheme:..");
+        check_base("scheme:a/b/c/", "../../../../", "scheme:../");
+        check_base("scheme:/a/b/c", "../../../..", "scheme:/../..");
+        check_base("scheme:/a/b/c", "../../../../", "scheme:/../../");
+        check_base("scheme:/a/b/c/", "../../../..", "scheme:/..");
+        check_base("scheme:/a/b/c/", "../../../../", "scheme:/../");
 
         // resolve self
         {
