@@ -149,7 +149,7 @@ std::size_t
 remove_dot_segments(
     char* dest,
     char const* end,
-    core::string_view s) noexcept;
+    core::string_view input) noexcept;
 
 void
 pop_last_segment(
