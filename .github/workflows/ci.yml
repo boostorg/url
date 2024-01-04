@@ -237,7 +237,10 @@ jobs:
           toolset: ${{ matrix.b2-toolset }}
           build-variant: ${{ matrix.build-type }}
           cxx: ${{ steps.setup-cpp.outputs.cxx || matrix.cxx || '' }}
-          cxxstd: ${{ matrix.cxxstd }}
+          # If this is the latest compiler version in the matrix, we also append `,latest` to `cxxstd`
+          # `latest` is a b2 tag that defaults to the latest C++ standard supported by the compiler,
+          # including experimental ones, decaying to placeholders options (such as 0x, 1y, 1z, 2a, 2b, 2c).
+          cxxstd: ${{ ( matrix.is-latest && ((matrix.cxxstd && format('{0},latest', matrix.cxxstd)) || 'latest' )) || matrix.cxxstd }}
           address-model: ${{ (matrix.x86 && '32') || '64' }}
           asan: ${{ matrix.asan }}
           ubsan: ${{ matrix.ubsan }}
