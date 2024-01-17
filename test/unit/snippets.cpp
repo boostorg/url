@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <vector>
 #include <cctype>
 
 //[snippet_headers_3
