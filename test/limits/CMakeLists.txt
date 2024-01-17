@@ -16,7 +16,10 @@ target_compile_definitions(boost_url_small_limits PUBLIC BOOST_URL_MAX_SIZE=16 B
 add_executable(boost_url_limits limits.cpp Jamfile ${SUITE_FILES})
 target_include_directories(boost_url_limits PRIVATE ../../include ../../extra ../../..)
 target_link_libraries(boost_url_limits PRIVATE boost_url_small_limits)
-set_source_files_properties(limits.cpp PROPERTIES COMPILE_FLAGS ${BOOST_URL_TEST_FLAGS})
+if (DEFINED BOOST_URL_TEST_FLAGS AND NOT BOOST_URL_TEST_FLAGS STREQUAL "")
+    set_source_files_properties(limits.cpp PROPERTIES COMPILE_FLAGS ${BOOST_URL_TEST_FLAGS})
+    set_target_properties(boost_url_small_limits PROPERTIES COMPILE_FLAGS ${BOOST_URL_TEST_FLAGS})
+endif ()
 
 # Folders
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES limits.cpp Jamfile)

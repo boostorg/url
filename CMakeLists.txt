@@ -35,6 +35,7 @@ option(BOOST_URL_BUILD_TESTS "Build boost::url tests even if BUILD_TESTING is OF
 option(BOOST_URL_BUILD_FUZZERS "Build boost::url fuzzers" OFF)
 option(BOOST_URL_BUILD_EXAMPLES "Build boost::url examples" ${BOOST_URL_IS_ROOT})
 option(BOOST_URL_DISABLE_THREADS "Disable threads" OFF)
+option(BOOST_URL_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 set(BOOST_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.." CACHE STRING "Boost source dir to use when running CMake from this directory")
 
 #-------------------------------------------------
@@ -138,6 +139,7 @@ function(boost_url_setup_properties target)
     target_link_libraries(${target} PUBLIC ${BOOST_URL_DEPENDENCIES})
     target_compile_definitions(${target} PUBLIC $<IF:$<BOOL:${BUILD_SHARED_LIBS}>,BOOST_URL_DYN_LINK=1,BOOST_URL_STATIC_LINK=1>)
     target_compile_definitions(${target} PRIVATE BOOST_URL_SOURCE)
+    target_compile_options(${target} PUBLIC $<$<CXX_COMPILER_ID:MSVC>:/EHsc>)
 endfunction()
 add_library(boost_url ${BOOST_URL_HEADERS} ${BOOST_URL_SOURCES})
 add_library(Boost::url ALIAS boost_url)
