@@ -14,13 +14,7 @@ project boost/url
       <define>BOOST_URL_SOURCE
       <toolset>msvc-14.0:<build>no
       # Warnings in dependencies
-      <toolset>gcc-7:<cxxflags>"-Wno-maybe-uninitialized"
-      <toolset>gcc-8:<cxxflags>"-Wno-maybe-uninitialized"
-      <toolset>gcc-9:<cxxflags>"-Wno-maybe-uninitialized"
-      <toolset>gcc-10:<cxxflags>"-Wno-maybe-uninitialized"
-      <toolset>gcc-11:<cxxflags>"-Wno-maybe-uninitialized"
-      <toolset>gcc-12:<cxxflags>"-Wno-maybe-uninitialized"
-      <toolset>gcc-13:<cxxflags>"-Wno-maybe-uninitialized"
+      <toolset>gcc:<cxxflags>"-Wno-maybe-uninitialized"
       <toolset>gcc,<target-os>windows:<cxxflags>"-Wno-error=array-bounds"
     : common-requirements
       <link>shared:<define>BOOST_URL_DYN_LINK=1
