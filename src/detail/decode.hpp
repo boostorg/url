@@ -11,7 +11,7 @@
 #ifndef BOOST_URL_DETAIL_DECODE_HPP
 #define BOOST_URL_DETAIL_DECODE_HPP
 
-#include <boost/url/encoding_opts.hpp>
+#include "boost/url/encoding_opts.hpp"
 #include <boost/core/detail/string_view.hpp>
 #include <cstdlib>
 

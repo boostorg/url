@@ -10,9 +10,9 @@
 #ifndef BOOST_URL_RFC_DETAIL_SCHEME_RULE_HPP
 #define BOOST_URL_RFC_DETAIL_SCHEME_RULE_HPP
 
-#include <boost/url/detail/config.hpp>
-#include <boost/url/error_types.hpp>
-#include <boost/url/scheme.hpp>
+#include "boost/url/detail/config.hpp"
+#include "boost/url/error_types.hpp"
+#include "boost/url/scheme.hpp"
 #include <boost/core/detail/string_view.hpp>
 
 namespace boost {
