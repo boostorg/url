@@ -10,8 +10,8 @@
 #ifndef BOOST_URL_DETAIL_PATTERN_HPP
 #define BOOST_URL_DETAIL_PATTERN_HPP
 
-#include <boost/url/error_types.hpp>
-#include <boost/url/url_base.hpp>
+#include "boost/url/error_types.hpp"
+#include "boost/url/url_base.hpp"
 #include <boost/core/detail/string_view.hpp>
 
 // This file includes functions and classes

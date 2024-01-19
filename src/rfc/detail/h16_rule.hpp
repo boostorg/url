@@ -10,8 +10,8 @@
 #ifndef BOOST_URL_RFC_DETAIL_H16_RULE_HPP
 #define BOOST_URL_RFC_DETAIL_H16_RULE_HPP
 
-#include <boost/url/detail/config.hpp>
-#include <boost/url/error_types.hpp>
+#include "boost/url/detail/config.hpp"
+#include "boost/url/error_types.hpp"
 #include <cstdint>
 
 namespace boost {

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+// Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -7,12 +7,10 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_RFC_DETAIL_IPV6ADDRZ_RULE_HPP
-#define BOOST_URL_RFC_DETAIL_IPV6ADDRZ_RULE_HPP
+#ifndef BOOST_URL_RFC_DETAIL_IPVFUTURE_RULE_HPP
+#define BOOST_URL_RFC_DETAIL_IPVFUTURE_RULE_HPP
 
-#include <boost/url/error_types.hpp>
-#include <boost/url/ipv6_address.hpp>
-#include <boost/url/pct_string_view.hpp>
+#include "boost/url/error_types.hpp"
 #include <boost/core/detail/string_view.hpp>
 
 namespace boost {
@@ -23,20 +21,20 @@ namespace detail {
 
     @par BNF
     @code
-    IPv6addrz = IPv6address "%25" ZoneID
-    ZoneID = 1*( unreserved / pct-encoded )
+    IPvFuture     = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
     @endcode
 
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
         >3.2.2. Host (rfc3986)</a>
 */
-struct ipv6_addrz_rule_t
+struct ipvfuture_rule_t
 {
     struct value_type
     {
-        ipv6_address ipv6;
-        pct_string_view zone_id;
+        core::string_view str;
+        core::string_view major;
+        core::string_view minor;
     };
 
     auto
@@ -47,7 +45,7 @@ struct ipv6_addrz_rule_t
         system::result<value_type>;
 };
 
-constexpr ipv6_addrz_rule_t ipv6_addrz_rule{};
+constexpr ipvfuture_rule_t ipvfuture_rule{};
 
 } // detail
 } // urls

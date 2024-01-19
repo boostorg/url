@@ -10,9 +10,9 @@
 #ifndef BOOST_URL_RFC_DETAIL_FRAGMENT_PART_RULE_HPP
 #define BOOST_URL_RFC_DETAIL_FRAGMENT_PART_RULE_HPP
 
-#include <boost/url/rfc/pct_encoded_rule.hpp>
-#include <boost/url/rfc/detail/charsets.hpp>
-#include <boost/url/grammar/parse.hpp>
+#include "boost/url/rfc/pct_encoded_rule.hpp"
+#include "charsets.hpp"
+#include "boost/url/grammar/parse.hpp"
 
 namespace boost {
 namespace urls {

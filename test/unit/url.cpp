@@ -13,9 +13,6 @@
 
 #include <boost/url/encode.hpp>
 #include <boost/url/parse.hpp>
-#include <boost/url/url_view.hpp>
-#include <boost/url/rfc/detail/charsets.hpp>
-#include <boost/url/detail/normalize.hpp>
 
 #include "test_suite.hpp"
 
@@ -1148,15 +1145,6 @@ struct url_test
                 url u2 = parse_relative_ref(e).value();
                 BOOST_TEST_EQ(u1.compare(u2), 0);
                 BOOST_TEST_EQ(u1, u2);
-
-                // remove_dot_segments
-                std::string str;
-                str.resize(p.size());
-                std::size_t n =
-                    urls::detail::remove_dot_segments(
-                    &str[0], &str[0] + str.size(), p);
-                str.resize(n);
-                BOOST_TEST_EQ(str, e);
 
                 // hash
                 std::hash<url_view> h;

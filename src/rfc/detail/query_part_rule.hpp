@@ -10,11 +10,11 @@
 #ifndef BOOST_URL_RFC_DETAIL_QUERY_PART_RULE_HPP
 #define BOOST_URL_RFC_DETAIL_QUERY_PART_RULE_HPP
 
-#include <boost/url/detail/config.hpp>
-#include <boost/url/error_types.hpp>
-#include <boost/url/pct_string_view.hpp>
-#include <boost/url/rfc/query_rule.hpp>
-#include <boost/url/grammar/parse.hpp>
+#include "boost/url/detail/config.hpp"
+#include "boost/url/error_types.hpp"
+#include "boost/url/pct_string_view.hpp"
+#include "boost/url/rfc/query_rule.hpp"
+#include "boost/url/grammar/parse.hpp"
 #include <cstdlib>
 
 namespace boost {

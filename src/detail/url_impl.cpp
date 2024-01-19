@@ -11,7 +11,7 @@
 #define BOOST_URL_DETAIL_IMPL_URL_IMPL_IPP
 
 #include <boost/url/detail/config.hpp>
-#include <boost/url/detail/path.hpp>
+#include "path.hpp"
 #include <boost/url/detail/url_impl.hpp>
 #include <boost/url/authority_view.hpp>
 #include <boost/assert.hpp>
