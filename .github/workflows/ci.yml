@@ -69,7 +69,7 @@ jobs:
           factors: |
             gcc ASan Shared No-Threads
             msvc Shared x86
-            clang Time-Trace Fuzz ASan+UBSan
+            clang Time-Trace Fuzz ASan+UBSan IntegerSan
             mingw Shared
           trace-commands: true
 
@@ -151,9 +151,9 @@ jobs:
           echo 'CMAKE_GENERATOR_TOOLSET=${{ matrix.generator-toolset || '' }}' >> $GITHUB_ENV
           echo 'CMAKE_BUILD_TYPE=${{ matrix.build-type || '' }}' >> $GITHUB_ENV
           echo 'CC=${{ steps.setup-cpp.outputs.cc || matrix.cc || '' }}' >> $GITHUB_ENV
-          echo 'CFLAGS=${{ matrix.ccflags || '' }}' >> $GITHUB_ENV
+          echo 'CFLAGS=${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize-recover=integer -fno-omit-frame-pointer') || matrix.ccflags || '' }}' >> $GITHUB_ENV
           echo 'CXX=${{ steps.setup-cpp.outputs.cxx || matrix.cxx || '' }}' >> $GITHUB_ENV
-          echo 'CXXFLAGS=${{ matrix.cxxflags || '' }}' >> $GITHUB_ENV
+          echo 'CXXFLAGS=${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize-recover=integer -fno-omit-frame-pointer') || matrix.cxxflags || '' }}' >> $GITHUB_ENV
           echo 'CXXSTD=${{ matrix.latest-cxxstd || '' }}' >> $GITHUB_ENV
           echo 'BUILD_SHARED_LIBS=${{ matrix.shared || '' }}' >> $GITHUB_ENV
           echo 'CMAKE_RUN_TESTS=true' >> $GITHUB_ENV
@@ -180,11 +180,11 @@ jobs:
         if: matrix.is-no-factor-intermediary != 'true'
         with:
           source-dir: ../boost-root
-          build-dir: __build_cmake__
+          build-dir: build_cmake
           build-target: tests
           install: true
           install-prefix: .local
-          cmake-version: '>=3.15'
+          cmake-version: '>=3.20'
           extra-args: |
             -D Boost_VERBOSE=ON
             -D BOOST_INCLUDE_LIBRARIES=${{ steps.patch.outputs.module }}
@@ -200,9 +200,9 @@ jobs:
         if: matrix.is-no-factor-intermediary != 'true'
         with:
           source-dir: ../boost-root/libs/${{ steps.patch.outputs.module }}/test/cmake_test
-          build-dir: __build_cmake_test__
+          build-dir: build_cmake_test
           install: false
-          cmake-version: '>=3.11'
+          cmake-version: '>=3.20'
           extra-args: |
             'find_package(Boost)': -D BOOST_CI_INSTALL_TEST=ON -D CMAKE_PREFIX_PATH=${{ steps.patch.outputs.workspace_root }}/.local
             'find_package(boost_url)': -D BOOST_CI_INSTALL_MODULE_TEST=ON -D CMAKE_PREFIX_PATH=${{ steps.patch.outputs.workspace_root }}/.local
@@ -216,11 +216,11 @@ jobs:
         if: matrix.is-no-factor-intermediary != 'true'
         with:
           source-dir: .
-          build-dir: __build_cmake_root__
+          build-dir: build_cmake_root
           build-target: tests
           run-tests: true
           install: false
-          cmake-version: '>=3.11'
+          cmake-version: '>=3.20'
           extra-args: |
             -D BOOST_SRC_DIR="../boost-root"
             -D BOOST_URL_DISABLE_THREADS=${{ ( matrix.no-threads && 'ON' ) || 'OFF' }}
@@ -246,8 +246,11 @@ jobs:
           cxxstd: ${{ ( matrix.is-latest && ((matrix.cxxstd && format('{0},latest', matrix.cxxstd)) || 'latest' )) || matrix.cxxstd }}
           address-model: ${{ (matrix.x86 && '32') || '64' }}
           asan: ${{ matrix.asan }}
-          ubsan: ${{ matrix.ubsan }}
+          ubsan: ${{ matrix.ubsan || matrix.integersan }}
           tsan: ${{ matrix.tsan }}
+          # integer-sanitizer is passed directly as flags
+          ccflags: ${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize-recover=integer -fno-omit-frame-pointer') || '' }}
+          cxxflags: ${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize-recover=integer -fno-omit-frame-pointer') || '' }}
           shared: ${{ matrix.shared }}
           coverage: ${{ matrix.coverage }}
           define: ${{ (matrix.no-threads && 'BOOST_URL_DISABLE_THREADS') || '' }}
@@ -258,7 +261,7 @@ jobs:
         if: matrix.time-trace
         with:
           source-dir: ../boost-root/libs/url
-          build-dir: ../boost-root/__build_cmake__
+          build-dir: ../boost-root/build_cmake
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Codecov
@@ -273,10 +276,10 @@ jobs:
           elif command -v "gcov-${{ steps.setup-cpp.outputs.version-major }}" &> /dev/null; then
               gcov_tool="gcov-${{ steps.setup-cpp.outputs.version-major }}"
           fi
-          lcov -c -q -o "../boost-root/__build_cmake__/coverage.info" -d "../boost-root/__build_cmake__" --include "$(pwd)/../boost-root/libs/${{steps.patch.outputs.module}}/*" --gcov-tool "$gcov_tool"
+          lcov -c -q -o "../boost-root/build_cmake/coverage.info" -d "../boost-root/build_cmake" --include "$(pwd)/../boost-root/libs/${{steps.patch.outputs.module}}/*" --gcov-tool "$gcov_tool"
 
           # Upload to codecov
-          bash <(curl -s https://codecov.io/bash) -f "../boost-root/__build_cmake__/coverage.info"
+          bash <(curl -s https://codecov.io/bash) -f "../boost-root/build_cmake/coverage.info"
 
           # Summary
           echo "# Coverage" >> $GITHUB_STEP_SUMMARY
