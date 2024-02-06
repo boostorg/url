@@ -279,7 +279,7 @@ split(
 // add n to [first, last]
 void
 url_impl::
-adjust(
+adjust_right(
     int first,
     int last,
     std::size_t n) noexcept
@@ -287,6 +287,19 @@ adjust(
     for(int i = first;
             i <= last; ++i)
         offset_[i] += n;
+}
+
+// remove n from [first, last]
+void
+url_impl::
+adjust_left(
+    int first,
+    int last,
+    std::size_t n) noexcept
+{
+    for(int i = first;
+            i <= last; ++i)
+        offset_[i] -= n;
 }
 
 // set [first, last) offset
