@@ -151,9 +151,9 @@ jobs:
           echo 'CMAKE_GENERATOR_TOOLSET=${{ matrix.generator-toolset || '' }}' >> $GITHUB_ENV
           echo 'CMAKE_BUILD_TYPE=${{ matrix.build-type || '' }}' >> $GITHUB_ENV
           echo 'CC=${{ steps.setup-cpp.outputs.cc || matrix.cc || '' }}' >> $GITHUB_ENV
-          echo 'CFLAGS=${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize-recover=integer -fno-omit-frame-pointer') || matrix.ccflags || '' }}' >> $GITHUB_ENV
+          echo 'CFLAGS=${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize=unsigned-integer-overflow -fno-sanitize-recover=integer -fno-omit-frame-pointer') || matrix.ccflags || '' }}' >> $GITHUB_ENV
           echo 'CXX=${{ steps.setup-cpp.outputs.cxx || matrix.cxx || '' }}' >> $GITHUB_ENV
-          echo 'CXXFLAGS=${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize-recover=integer -fno-omit-frame-pointer') || matrix.cxxflags || '' }}' >> $GITHUB_ENV
+          echo 'CXXFLAGS=${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize=unsigned-integer-overflow -fno-sanitize-recover=integer -fno-omit-frame-pointer') || matrix.cxxflags || '' }}' >> $GITHUB_ENV
           echo 'CXXSTD=${{ matrix.latest-cxxstd || '' }}' >> $GITHUB_ENV
           echo 'BUILD_SHARED_LIBS=${{ matrix.shared || '' }}' >> $GITHUB_ENV
           echo 'CMAKE_RUN_TESTS=true' >> $GITHUB_ENV
@@ -249,8 +249,8 @@ jobs:
           ubsan: ${{ matrix.ubsan || matrix.integersan }}
           tsan: ${{ matrix.tsan }}
           # integer-sanitizer is passed directly as flags
-          ccflags: ${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize-recover=integer -fno-omit-frame-pointer') || '' }}
-          cxxflags: ${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize-recover=integer -fno-omit-frame-pointer') || '' }}
+          ccflags: ${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize=unsigned-integer-overflow -fno-sanitize-recover=integer -fno-omit-frame-pointer') || '' }}
+          cxxflags: ${{ (matrix.integersan && '-fsanitize=integer -fno-sanitize=unsigned-integer-overflow -fno-sanitize-recover=integer -fno-omit-frame-pointer') || '' }}
           shared: ${{ matrix.shared }}
           coverage: ${{ matrix.coverage }}
           define: ${{ (matrix.no-threads && 'BOOST_URL_DISABLE_THREADS') || '' }}
