@@ -8,8 +8,6 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_DETAIL_IMPL_NORMALIZE_IPP
-#define BOOST_URL_DETAIL_IMPL_NORMALIZE_IPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/decode_view.hpp>
@@ -906,4 +904,4 @@ segments_compare(
 } // urls
 } // boost
 
-#endif
+

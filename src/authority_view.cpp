@@ -7,8 +7,6 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_IMPL_AUTHORITY_VIEW_IPP
-#define BOOST_URL_IMPL_AUTHORITY_VIEW_IPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/authority_view.hpp>
@@ -405,4 +403,3 @@ compare(const authority_view& other) const noexcept
 } // urls
 } // boost
 
-#endif

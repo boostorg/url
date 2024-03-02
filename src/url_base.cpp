@@ -8,8 +8,6 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_IMPL_URL_BASE_IPP
-#define BOOST_URL_IMPL_URL_BASE_IPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/url_base.hpp>
@@ -2843,4 +2841,3 @@ to_lower_impl(int id) noexcept
 } // urls
 } // boost
 
-#endif

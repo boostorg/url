@@ -8,8 +8,6 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_IMPL_PARAMS_ENCODED_REF_IPP
-#define BOOST_URL_IMPL_PARAMS_ENCODED_REF_IPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/decode_view.hpp>
@@ -314,4 +312,3 @@ find_last_impl(
 } // urls
 } // boost
 
-#endif

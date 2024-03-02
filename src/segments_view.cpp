@@ -8,8 +8,6 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_IMPL_SEGMENTS_VIEW_IPP
-#define BOOST_URL_IMPL_SEGMENTS_VIEW_IPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/segments_view.hpp>
@@ -37,4 +35,3 @@ segments_view(
 } // urls
 } // boost
 
-#endif

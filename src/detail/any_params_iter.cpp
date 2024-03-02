@@ -7,8 +7,6 @@
 // Official repository: https://github.com/boostorg/url
 //
 
-#ifndef BOOST_URL_DETAIL_IMPL_ANY_PARAMS_ITER_IPP
-#define BOOST_URL_DETAIL_IMPL_ANY_PARAMS_ITER_IPP
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/detail/any_params_iter.hpp>
@@ -506,4 +504,3 @@ copy(
 } // urls
 } // boost
 
-#endif
