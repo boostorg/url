@@ -1131,6 +1131,9 @@ struct url_test
             BOOST_TEST_NE(
                 url("https://:@www.boost.org/"),
                 url("https://@www.boost.org/"));
+            // issue 818
+            check("HtTp://cppalliance.org/%2F",
+                  "http://cppalliance.org/%2F");
 
         }
 
@@ -1227,6 +1230,7 @@ struct url_test
             check("http://cppalliance.org:10", "http://cppalliance.org:00", +1);
             check("http://cppalliance.org:10", "http://cppalliance.org:10", 0);
             check("http://cppalliance.org:10", "http://cppalliance.org:100", -1);
+            check("http://cppalliance.org:100", "http://cppalliance.org:10", +1);
             check("http://cppalliance.org:100", "http://cppalliance.org:10", +1);
         }
 

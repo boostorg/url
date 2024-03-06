@@ -190,52 +190,71 @@ ci_digest(
     }
 }
 
+/* Check if a string ends with the specified suffix (decoded comparison)
+
+   This function determines if a string ends with the specified suffix
+   when the string and suffix are compared after percent-decoding.
+
+   @param str The string to check (percent-encoded)
+   @param suffix The suffix to check for (percent-decoded)
+   @return The number of encoded chars consumed in the string
+ */
 std::size_t
 path_ends_with(
-    core::string_view lhs,
-    core::string_view rhs) noexcept
+    core::string_view str,
+    core::string_view suffix) noexcept
 {
+    BOOST_ASSERT(!str.empty());
+    BOOST_ASSERT(!suffix.empty());
+    BOOST_ASSERT(!suffix.contains("%2F"));
+    BOOST_ASSERT(!suffix.contains("%2f"));
     auto consume_last = [](
         core::string_view::iterator& it,
         core::string_view::iterator& end,
         char& c)
     {
+        BOOST_ASSERT(end > it);
+        BOOST_ASSERT(it != end);
         if ((end - it) < 3 ||
             *(std::prev(end, 3)) != '%')
         {
             c = *--end;
-            return;
+            return false;
         }
         detail::decode_unsafe(
             &c,
             &c + 1,
             core::string_view(std::prev(
                 end, 3), 3));
-        if (c != '/')
-        {
-            end -= 3;
-            return;
-        }
-        c = *--end;
+        end -= 3;
+        return true;
     };
 
-    auto it0 = lhs.begin();
-    auto it1 = rhs.begin();
-    auto end0 = lhs.end();
-    auto end1 = rhs.end();
+    auto it0 = str.begin();
+    auto end0 = str.end();
+    auto it1 = suffix.begin();
+    auto end1 = suffix.end();
     char c0 = 0;
     char c1 = 0;
     while(
         it0 < end0 &&
         it1 < end1)
     {
-        consume_last(it0, end0, c0);
+        bool const is_encoded = consume_last(it0, end0, c0);
+        // The suffix never contains an encoded slash (%2F), and a decoded
+        // slash is not equivalent to an encoded slash
+        if (is_encoded && c0 == '/')
+            return 0;
         consume_last(it1, end1, c1);
         if (c0 != c1)
             return 0;
     }
-    if (it1 == end1)
-        return lhs.end() - end0;
+    bool const consumed_suffix = it1 == end1;
+    if (consumed_suffix)
+    {
+        std::size_t const consumed_encoded = str.end() - end0;
+        return consumed_encoded;
+    }
     return 0;
 }
 
