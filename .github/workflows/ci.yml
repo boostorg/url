@@ -58,7 +58,7 @@ jobs:
         with:
           compilers: |
             gcc >=4.8
-            clang >=3.8
+            clang >=3.8 <18
             msvc >=14.20
             apple-clang *
             mingw *
