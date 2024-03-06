@@ -1182,15 +1182,26 @@ struct url_test
                 url_view u2 = parse_uri(e2).value();
                 BOOST_TEST_EQ(u1.compare(u2), cmp);
                 BOOST_TEST_EQ(u2.compare(u1), -cmp);
-                BOOST_TEST_NE(u1, u2);
-                BOOST_TEST_EQ((u1 < u2), (cmp < 0));
-                BOOST_TEST_EQ((u1 <= u2), (cmp <= 0));
-                BOOST_TEST_EQ((u1 > u2), (cmp > 0));
-                BOOST_TEST_EQ((u1 >= u2), (cmp >= 0));
-                std::hash<url_view> h;
-                BOOST_TEST_NE(h(u1), h(u2));
-                h = std::hash<url_view>(10);
-                BOOST_TEST_NE(h(u1), h(u2));
+                if (cmp != 0)
+                {
+                    BOOST_TEST_NE(u1, u2);
+                    BOOST_TEST_EQ((u1 < u2), (cmp < 0));
+                    BOOST_TEST_EQ((u1 <= u2), (cmp <= 0));
+                    BOOST_TEST_EQ((u1 > u2), (cmp > 0));
+                    BOOST_TEST_EQ((u1 >= u2), (cmp >= 0));
+                    std::hash<url_view> h;
+                    BOOST_TEST_NE(h(u1), h(u2));
+                    h = std::hash<url_view>(10);
+                    BOOST_TEST_NE(h(u1), h(u2));
+                }
+                else
+                {
+                    BOOST_TEST_EQ(u1, u2);
+                    std::hash<url_view> h;
+                    BOOST_TEST_EQ(h(u1), h(u2));
+                    h = std::hash<url_view>(10);
+                    BOOST_TEST_EQ(h(u1), h(u2));
+                }
             };
 
             check("http://cppalliance.org", "https://cppalliance.org", -1);
@@ -1211,6 +1222,12 @@ struct url_test
             // issue 653
             check("http://httpbin.org/redirect/10", "http://httpbin.org/get", +1);
             check("http://httpbin.org/redirect/10//10", "http://httpbin.org/11/../get", +1);
+            // issue 818
+            check("http://cppalliance.org:00", "http://cppalliance.org:10", -1);
+            check("http://cppalliance.org:10", "http://cppalliance.org:00", +1);
+            check("http://cppalliance.org:10", "http://cppalliance.org:10", 0);
+            check("http://cppalliance.org:10", "http://cppalliance.org:100", -1);
+            check("http://cppalliance.org:100", "http://cppalliance.org:10", +1);
         }
 
         // path inequality
