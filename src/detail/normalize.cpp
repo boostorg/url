@@ -191,54 +191,6 @@ ci_digest(
 }
 
 std::size_t
-path_starts_with(
-    core::string_view lhs,
-    core::string_view rhs) noexcept
-{
-    auto consume_one = [](
-        core::string_view::iterator& it,
-        char &c)
-    {
-        if(*it != '%')
-        {
-            c = *it;
-            ++it;
-            return;
-        }
-        detail::decode_unsafe(
-            &c,
-            &c + 1,
-            core::string_view(it, 3));
-        if (c != '/')
-        {
-            it += 3;
-            return;
-        }
-        c = *it;
-        ++it;
-    };
-
-    auto it0 = lhs.begin();
-    auto it1 = rhs.begin();
-    auto end0 = lhs.end();
-    auto end1 = rhs.end();
-    char c0 = 0;
-    char c1 = 0;
-    while (
-        it0 < end0 &&
-        it1 < end1)
-    {
-        consume_one(it0, c0);
-        consume_one(it1, c1);
-        if (c0 != c1)
-            return 0;
-    }
-    if (it1 == end1)
-        return it0 - lhs.begin();
-    return 0;
-}
-
-std::size_t
 path_ends_with(
     core::string_view lhs,
     core::string_view rhs) noexcept
