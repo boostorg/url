@@ -322,21 +322,33 @@ remove_dot_segments(
             {
                 str.remove_prefix(1);
                 ++n;
+                continue;
             }
-            else if (str.size() > 2 &&
-                     str[0] == '%' &&
-                     str[1] == '2' &&
-                     (str[2] == 'e' ||
-                      str[2] == 'E'))
-            {
-                str.remove_prefix(3);
-                n += 3;
-            }
-            else
-            {
-                n = 0;
-                return false;
-            }
+
+            // In the general case, we would need to
+            // check if the next char is an encoded
+            // dot.
+            // However, an encoded dot in `str`
+            // would have already been decoded in
+            // url_base::normalize_path().
+            // This needs to be undone if
+            // `remove_dot_segments` is used in a
+            // different context.
+            // if (str.size() > 2 &&
+            //     c == '.'
+            //     &&
+            //     str[0] == '%' &&
+            //     str[1] == '2' &&
+            //     (str[2] == 'e' ||
+            //      str[2] == 'E'))
+            // {
+            //     str.remove_prefix(3);
+            //     n += 3;
+            //     continue;
+            // }
+
+            n = 0;
+            return false;
         }
         return true;
     };
@@ -455,6 +467,12 @@ remove_dot_segments(
                 }
                 else
                 {
+                    // AFREITAS: Although we have no formal proof
+                    // for that, the output can't be relative
+                    // and empty at this point because relative
+                    // paths will fall in the `dest0 != dest`
+                    // case above of this rule C and then the
+                    // general case of rule E for "..".
                     append(dest, end, "..");
                 }
             }
@@ -506,6 +524,12 @@ remove_dot_segments(
                 }
                 else
                 {
+                    // AFREITAS: Although we have no formal proof
+                    // for that, the output can't be relative
+                    // and empty at this point because relative
+                    // paths will fall in the `dest0 != dest`
+                    // case above of this rule C and then the
+                    // general case of rule E for "..".
                     append(dest, end, "..");
                 }
             }
