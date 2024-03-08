@@ -582,32 +582,32 @@ path_pop_back( core::string_view& s )
 
 void
 pop_last_segment(
-    core::string_view& s,
-    core::string_view& c,
+    core::string_view& str,
+    core::string_view& seg,
     std::size_t& level,
-    bool r) noexcept
+    bool remove_unmatched) noexcept
 {
-    c = {};
+    seg = {};
     std::size_t n = 0;
-    while (!s.empty())
+    while (!str.empty())
     {
         // B.  if the input buffer begins with a
         // prefix of "/./" or "/.", where "." is
         // a complete path segment, then replace
         // that prefix with "/" in the input
         // buffer; otherwise,
-        n = detail::path_ends_with(s, "/./");
+        n = detail::path_ends_with(str, "/./");
         if (n)
         {
-            c = s.substr(s.size() - n);
-            s.remove_suffix(n);
+            seg = str.substr(str.size() - n);
+            str.remove_suffix(n);
             continue;
         }
-        n = detail::path_ends_with(s, "/.");
+        n = detail::path_ends_with(str, "/.");
         if (n)
         {
-            c = s.substr(s.size() - n, 1);
-            s.remove_suffix(n);
+            seg = str.substr(str.size() - n, 1);
+            str.remove_suffix(n);
             continue;
         }
 
@@ -619,19 +619,19 @@ pop_last_segment(
         // segment and its preceding "/"
         // (if any) from the output buffer
         // otherwise,
-        n = detail::path_ends_with(s, "/../");
+        n = detail::path_ends_with(str, "/../");
         if (n)
         {
-            c = s.substr(s.size() - n);
-            s.remove_suffix(n);
+            seg = str.substr(str.size() - n);
+            str.remove_suffix(n);
             ++level;
             continue;
         }
-        n = detail::path_ends_with(s, "/..");
+        n = detail::path_ends_with(str, "/..");
         if (n)
         {
-            c = s.substr(s.size() - n);
-            s.remove_suffix(n);
+            seg = str.substr(str.size() - n);
+            str.remove_suffix(n);
             ++level;
             continue;
         }
@@ -643,64 +643,71 @@ pop_last_segment(
         // characters up to, but not including,
         // the next "/" character or the end of
         // the input buffer.
-        std::size_t p = s.size() > 1
-            ? s.find_last_of('/', s.size() - 2)
+        std::size_t p = str.size() > 1
+            ? str.find_last_of('/', str.size() - 2)
             : core::string_view::npos;
         if (p != core::string_view::npos)
         {
-            c = s.substr(p + 1);
-            s.remove_suffix(c.size());
+            seg = str.substr(p + 1);
+            str.remove_suffix(seg.size());
         }
         else
         {
-            c = s;
-            s = {};
+            seg = str;
+            str = {};
         }
 
         if (level == 0)
             return;
-        if (!s.empty())
+        if (!str.empty())
             --level;
     }
     // we still need to skip n_skip + 1
     // but the string is empty
-    if (r && level)
+    if (remove_unmatched && level)
     {
-        c = "/";
+        seg = "/";
         level = 0;
         return;
     }
     else if (level)
     {
-        if (c.empty())
-            c = "/..";
+        if (!seg.empty())
+        {
+            seg = "/../";
+        }
         else
-            c = "/../";
+        {
+            // AFREITAS: this condition
+            // is correct, but it might
+            // unreachable.
+            seg = "/..";
+        }
         --level;
         return;
     }
-    c = {};
+    seg = {};
 }
 
 void
 normalized_path_digest(
-    core::string_view s,
+    core::string_view str,
     bool remove_unmatched,
     fnv_1a& hasher) noexcept
 {
-    core::string_view child;
+    core::string_view seg;
     std::size_t level = 0;
     do
     {
         pop_last_segment(
-            s, child, level, remove_unmatched);
-        while (!child.empty())
+            str, seg, level, remove_unmatched);
+        while (!seg.empty())
         {
-            char c = path_pop_back(child);
+            char c = path_pop_back(seg);
             hasher.put(c);
         }
     }
-    while (!s.empty());
+    while (!str.empty());
 }
 
 // compare segments as if there were a normalized
