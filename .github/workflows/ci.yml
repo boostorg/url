@@ -266,8 +266,15 @@ jobs:
 
       - name: Codecov
         if: matrix.coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           set -x
+          
+          if [ -z "$CODECOV_TOKEN" ]; then
+              echo "CODECOV_TOKEN is not set. Skipping coverage report."
+              exit 0
+          fi
           
           # Find gcov
           gcov_tool="gcov"
