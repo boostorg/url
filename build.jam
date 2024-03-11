@@ -1,0 +1,47 @@
+# Copyright René Ferdinand Rivera Morell 2023
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+import-search /boost/config/checks ;
+
+import project ;
+import config : requires ;
+
+constant c11-requires :
+    [ requires
+    cxx11_constexpr
+    cxx11_decltype
+    cxx11_hdr_tuple
+    cxx11_template_aliases
+    cxx11_variadic_templates
+    ]
+    ;
+
+project /boost/url
+    : common-requirements
+        <source>/boost/align//boost_align
+        <source>/boost/assert//boost_assert
+        <source>/boost/config//boost_config
+        <source>/boost/core//boost_core
+        <source>/boost/mp11//boost_mp11
+        <source>/boost/optional//boost_optional
+        <source>/boost/static_assert//boost_static_assert
+        <source>/boost/system//boost_system
+        <source>/boost/throw_exception//boost_throw_exception
+        <source>/boost/type_traits//boost_type_traits
+        <source>/boost/variant2//boost_variant2
+        <include>include
+    : requirements
+        $(c11-requires)
+    ;
+
+explicit
+    [ alias boost_url : build//boost_url ]
+    [ alias url_sources : build//url_sources ]
+    [ alias all : boost_url url_sources example test ]
+    ;
+
+call-if : boost-library url
+    : library boost_url
+    ;

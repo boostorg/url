@@ -8,9 +8,8 @@
 # Official repository: https://github.com/vinniefalco/url
 #
 
-project boost/url
+project
     : requirements
-      $(c11-requires)
       <define>BOOST_URL_SOURCE
       <toolset>msvc-14.0:<build>no
       # Warnings in dependencies
@@ -31,5 +30,3 @@ explicit url_sources ;
 lib boost_url
    : url_sources
    ;
-
-boost-install boost_url ;

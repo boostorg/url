@@ -11,7 +11,6 @@ import testing ;
 
 project
     : requirements
-      $(c11-requires)
       <library>/boost/filesystem//boost_filesystem/<warnings>off
       <library>/boost/url//boost_url
       <source>../../extra/test_main.cpp
@@ -52,7 +51,6 @@ local SOURCES =
     segments_encoded_view.cpp
     segments_ref.cpp
     segments_view.cpp
-    snippets.cpp
     static_url.cpp
     string_view.cpp
     url.cpp
@@ -64,7 +62,6 @@ local SOURCES =
     grammar/alnum_chars.cpp
     grammar/alpha_chars.cpp
     grammar/charset.cpp
-    grammar/ci_string.cpp
     grammar/dec_octet_rule.cpp
     grammar/delim_rule.cpp
     grammar/digit_chars.cpp
