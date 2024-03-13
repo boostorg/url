@@ -300,17 +300,13 @@ measure(std::size_t& n) noexcept
 {
     if(at_end_)
         return false;
-    encoding_opts opt;
-    opt.space_as_plus = false;
     n += detail::re_encoded_size_unsafe(
         s0,
-        detail::param_key_chars,
-        opt);
+        detail::param_key_chars);
     if(has_value_)
         n += detail::re_encoded_size_unsafe(
             s1,
-            detail::param_value_chars,
-            opt) + 1; // for '='
+            detail::param_value_chars) + 1; // for '='
     at_end_ = true;
     return true;
 }
@@ -321,14 +317,11 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    encoding_opts opt;
-    opt.space_as_plus = false;
     detail::re_encode_unsafe(
         dest,
         end,
         s0,
-        detail::param_key_chars,
-        opt);
+        detail::param_key_chars);
     if(has_value_)
     {
         *dest++ = '=';
@@ -336,8 +329,7 @@ copy(
             dest,
             end,
             s1,
-            detail::param_value_chars,
-            opt);
+            detail::param_value_chars);
     }
 }
 
@@ -354,17 +346,13 @@ measure_impl(
     std::size_t& n,
     param_view const& p) noexcept
 {
-    encoding_opts opt;
-    opt.space_as_plus = false;
     n += detail::re_encoded_size_unsafe(
         p.key,
-        detail::param_key_chars,
-        opt);
+        detail::param_key_chars);
     if(p.has_value)
         n += detail::re_encoded_size_unsafe(
             p.value,
-            detail::param_value_chars,
-            opt) + 1; // for '='
+            detail::param_value_chars) + 1; // for '='
 }
 
 void
@@ -374,14 +362,11 @@ copy_impl(
     char const* end,
     param_view const& p) noexcept
 {
-    encoding_opts opt;
-    opt.space_as_plus = false;
     detail::re_encode_unsafe(
         dest,
         end,
         p.key,
-        detail::param_key_chars,
-        opt);
+        detail::param_key_chars);
     if(p.has_value)
     {
         *dest++ = '=';
@@ -389,8 +374,7 @@ copy_impl(
             dest,
             end,
             p.value,
-            detail::param_value_chars,
-            opt);
+            detail::param_value_chars);
     }
 }
 
@@ -469,12 +453,9 @@ measure(
     n += nk_; // skip key
     if(has_value_)
     {
-        encoding_opts opt;
-        opt.space_as_plus = false;
         n += detail::re_encoded_size_unsafe(
             s0,
-            detail::param_value_chars,
-            opt) + 1; // for '='
+            detail::param_value_chars) + 1; // for '='
     }
     at_end_ = true;
     return true;
@@ -490,14 +471,11 @@ copy(
     if(! has_value_)
         return;
     *dest++ = '=';
-    encoding_opts opt;
-    opt.space_as_plus = false;
     detail::re_encode_unsafe(
         dest,
         end,
         s0,
-        detail::param_value_chars,
-        opt);
+        detail::param_value_chars);
 }
 
 } // detail
