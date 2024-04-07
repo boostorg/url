@@ -43,5 +43,5 @@ explicit
     ;
 
 call-if : boost-library url
-    : library boost_url
+    : install boost_url
     ;
