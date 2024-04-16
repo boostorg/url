@@ -26,7 +26,7 @@ segments_view(
 segments_view::
 segments_view(
     core::string_view s)
-    : segments_view(
+    : segments_base(
         parse_path(s).value(
             BOOST_URL_POS))
 {
