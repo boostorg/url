@@ -18,6 +18,8 @@ project
     : common-requirements
       <link>shared:<define>BOOST_URL_DYN_LINK=1
       <link>static:<define>BOOST_URL_STATIC_LINK=1
+    : usage-requirements
+        <define>BOOST_URL_NO_LIB=1
     : source-location ../src
     ;
 
