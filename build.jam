@@ -6,6 +6,7 @@
 import-search /boost/config/checks ;
 
 import project ;
+import-search /boost/config/checks ;
 import config : requires ;
 
 constant c11-requires :
