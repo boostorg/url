@@ -18,7 +18,7 @@ const DOMParser = require('xmldom').DOMParser;
     Default tag files come from the cpp_tags directory.
     We still need to implement other strategies and sources for tag files.
 
-    To include cppreference tags you can get them from
+    To generate cppreference tags, you can get them from
     https://en.cppreference.com/w/Cppreference:Archives or generate a
     more recent version using the following commands:
 
@@ -78,6 +78,15 @@ module.exports = function (registry) {
     if (!registry) {
         throw new Error('registry must be defined');
     }
+
+    // Try to convert this into an antora extension so that it can receive
+    // parameters just like mermaid can receive parameters:
+    // https://github.com/snt/antora-mermaid-extension/blob/master/lib/extension.js
+    //
+    // From these parameters, we can already determine other tag files to load
+    // according to the component.
+    // Here's how the components set these tagfiles:
+    // https://gitlab.com/antora/antora-collector-extension/-/tree/main/packages/collector-extension?ref_type=heads
 
     /**
      * Processes the "cpp" inline macro.
