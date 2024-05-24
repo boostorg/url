@@ -70,9 +70,10 @@ module.exports = function (registry) {
     registry.inlineMacro('boost', function () {
         const self = this;
         self.process(function (parent, target, attr) {
-            let title = attr.$positional ? attr.$positional[0] : `Boost.${toPascalCase(target)}`;
-            let is_tool = ['auto_index', 'bcp', 'boostbook', 'boostdep', 'boost_install', 'build', 'check_build', 'cmake', 'docca', 'inspect', 'litre', 'quickbook'].includes(toSnakeCase(target));
-            let text = `https://www.boost.org/${is_tool ? 'tools' : 'libs'}/${toSnakeCase(target)}[${title}]`;
+            const title = attr.$positional ? attr.$positional[0] : `Boost.${toPascalCase(target)}`;
+            const boost_tools = ['auto_index', 'bcp', 'boostbook', 'boostdep', 'boost_install', 'build', 'check_build', 'cmake', 'docca', 'inspect', 'litre', 'quickbook'];
+            const is_tool = boost_tools.includes(toSnakeCase(target));
+            const text = `https://www.boost.org/${is_tool ? 'tools' : 'libs'}/${toSnakeCase(target)}[${title}]`;
             return self.createInline(parent, 'quoted', text);
         });
     });

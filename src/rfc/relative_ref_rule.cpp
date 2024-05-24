@@ -23,7 +23,7 @@ namespace boost {
 namespace urls {
 
 auto
-relative_ref_rule_t::
+implementation_defined::relative_ref_rule_t::
 parse(
     char const*& it,
     char const* const end

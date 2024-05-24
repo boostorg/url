@@ -193,11 +193,11 @@ if (isBoostDir(cwdParentParent)) {
 
     Install MrDocs with:
         - Linux:
-            wget https://github.com/cppalliance/mrdocs/releases/download/develop-release/MrDocs-1.0.0-Linux.tar.gz
-            sudo tar -xzf MrDocs-1.0.0-Linux.tar.gz -C /usr/local --strip-components=1
+            wget https://github.com/cppalliance/mrdocs/releases/download/develop-release/MrDocs-0.0.1-Linux.tar.gz
+            sudo tar -xzf MrDocs-0.0.1-Linux.tar.gz -C /usr/local --strip-components=1
         - Windows (Powershell):
-            Invoke-WebRequest -Uri 'https://github.com/cppalliance/mrdocs/releases/download/develop-release/MrDocs-1.0.0-win64.7z' -OutFile 'MrDocs-1.0.0-win64.7z'
-            7z x -o"C:\Users\$env:USERNAME\Applications" 'MrDocs-1.0.0-win64.7z'
+            Invoke-WebRequest -Uri 'https://github.com/cppalliance/mrdocs/releases/download/develop-release/MrDocs-0.0.1-win64.7z' -OutFile 'MrDocs-0.0.1-win64.7z'
+            7z x -o"C:\Users\$env:USERNAME\Applications" 'MrDocs-0.0.1-win64.7z'
             ( Adapt the destination path as needed )
 
  */
@@ -254,7 +254,9 @@ let mrDocsExitCode = 0
 try {
     const mrDocsOutput = execSync(mrDocsCmd)
     console.log(mrDocsOutput.toString())
+    console.log(`Generated documentation at ${mrDocsOutputDir}`)
 } catch (error) {
+    console.error('Failed to run MrDocs')
     console.error(error.stdout.toString())
     mrDocsExitCode = error.status
 }
@@ -262,5 +264,7 @@ if (tempDir) {
     console.log(`Deleting temporary directory ${tempDir}`)
     execSync(`rm -rf ${tempDir}`)
 }
-console.log(`Generated documentation at ${mrDocsOutputDir}`)
+if (mrDocsExitCode !== 0) {
+    console.log(`Exiting with code ${mrDocsExitCode}`)
+}
 process.exit(mrDocsExitCode)
