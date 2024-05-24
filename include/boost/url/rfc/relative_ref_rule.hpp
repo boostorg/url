@@ -60,6 +60,33 @@ struct relative_ref_rule_t
         system::result<value_type>;
 };
 
+/** Rule for relative-ref
+
+    @par Value Type
+    @code
+    using value_type = url_view;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref grammar::parse.
+    @code
+    system::result< url_view > rv = grammar::parse( "images/dot.gif?v=hide#a", relative_ref_rule );
+    @endcode
+
+    @par BNF
+    @code
+    relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
+        >4.2. Relative Reference (rfc3986)</a>
+
+    @see
+        @ref grammar::parse,
+        @ref parse_relative_ref,
+        @ref url_view.
+*/
 constexpr relative_ref_rule_t relative_ref_rule{};
 #endif
 

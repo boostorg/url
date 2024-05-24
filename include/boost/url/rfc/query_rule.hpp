@@ -69,6 +69,42 @@ struct query_rule_t
             ) const noexcept;
 };
 
+/** Rule for query
+
+    @par Value Type
+    @code
+    using value_type = params_encoded_view;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref grammar::parse.
+    @code
+    system::result< params_encoded_view > rv = grammar::parse( "format=web&id=42&compact", query_rule );
+    @endcode
+
+    @par BNF
+    @code
+    query           = *( pchar / "/" / "?" )
+
+    query-params    = [ query-param ] *( "&" query-param )
+    query-param     = key [ "=" value ]
+    key             = *qpchar
+    value           = *( qpchar / "=" )
+    qpchar          = unreserved
+                    / pct-encoded
+                    / "!" / "$" / "'" / "(" / ")"
+                    / "*" / "+" / "," / ";"
+                    / ":" / "@" / "/" / "?"
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
+        >3.4. Query (rfc3986)</a>
+
+    @see
+        @ref grammar::parse,
+        @ref params_encoded_view.
+*/
 constexpr query_rule_t query_rule{};
 #endif
 

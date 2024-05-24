@@ -60,6 +60,33 @@ struct authority_rule_t
         system::result<value_type>;
 };
 
+/** Rule for authority
+
+    @par Value Type
+    @code
+    using value_type = authority_view;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref grammar::parse.
+    @code
+    system::result< authority_view > rv = grammar::parse( "user:pass@example.com:8080", authority_rule );
+    @endcode
+
+    @par BNF
+    @code
+    authority   = [ userinfo "@" ] host [ ":" port ]
+    @endcode
+
+    @par Specification
+    @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
+        >3.2. Authority (rfc3986)</a>
+
+    @see
+        @ref authority_view,
+        @ref grammar::parse,
+        @ref parse_authority.
+*/
 constexpr authority_rule_t authority_rule{};
 #endif
 

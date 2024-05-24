@@ -67,12 +67,22 @@ struct arg
     */
     virtual char* prepare(std::size_t n) = 0;
 
-    // prevent misuse
+    /// Virtual destructor
     virtual ~arg() = default;
+
+    /// Default constructor
     arg() = default;
+
+    /// Default move constructor
     arg(arg&&) = default;
+
+    /// Deleted copy constructor
     arg(arg const&) = delete;
+
+    /// Deleted move assignment
     arg& operator=(arg&&) = delete;
+
+    /// Deleted copy assignment
     arg& operator=(arg const&) = delete;
 };
 
@@ -84,9 +94,13 @@ struct arg
 template<class T>
 using is_token = __see_below__;
 #else
+/** Metafunction returning true if T is a StringToken
+ */
 template<class T, class = void>
 struct is_token : std::false_type {};
 
+/** Metafunction returning true if T is a StringToken
+ */
 template<class T>
 struct is_token<T, void_t<
     decltype(std::declval<T&>().prepare(
@@ -189,6 +203,8 @@ private:
     string_type& s_;
 };
 
+/** Create a token for appending to a plain string
+ */
 template<
     class Alloc =
         std::allocator<char>>
@@ -252,6 +268,8 @@ private:
     string_type& s_;
 };
 
+/** A token for assigning to a plain string
+ */
 template<
     class Alloc =
         std::allocator<char>>
@@ -321,6 +339,8 @@ private:
     std::size_t n_ = 0;
 };
 
+/** A token for producing a durable core::string_view from a temporary string
+ */
 template<
     class Alloc =
         std::allocator<char>>

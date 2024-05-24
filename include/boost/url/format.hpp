@@ -400,11 +400,7 @@ format_to(
 
 */
 template <class T>
-#ifdef BOOST_URL_DOCS
-__implementation_defined__
-#else
-detail::named_arg<T>
-#endif
+BOOST_URL_IMPLEMENTATION_DEFINED(detail::named_arg<T>)
 arg(core::string_view name, T const& arg)
 {
     return {name, arg};
