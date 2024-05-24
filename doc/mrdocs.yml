@@ -12,9 +12,26 @@ source-root: ..
 filters:
   symbols:
     exclude:
+      # We don't want namespace pages for other libraries
+      - 'std'
+      - 'std::*'
+      - 'boost::system'
+      - 'boost::empty_'
+      - 'boost::system::*'
+      # Exclude implementation details
       - 'boost::urls::detail'
       - 'boost::urls::*::detail'
-      - 'boost::empty_'
+      # Exclude implementation details defined elsewhere
+      - 'boost::urls::*_unsafe'
+      - 'boost::urls::*_t'
+      - 'boost::urls::make_error_code'
+      - 'boost::urls::make_void'
+      - 'boost::urls::grammar::*_t'
+      - 'boost::urls::grammar::make_error_*'
+      - 'boost::urls::grammar::operator_*'
+      - 'boost::urls::string_token::*_t'
+    include:
+      - 'boost::urls::no_value_t'
 inaccessible-members: never
 inaccessible-bases: never
 
