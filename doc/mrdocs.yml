@@ -26,5 +26,26 @@ base-url: https://www.github.com/boostorg/url/blob/develop/include/ # boost/url/
 verbose: true
 multipage: true
 
-# BUILD_TESTING is required for header-only functionality to be extracted
-cmake: '-D BUILD_TESTING=ON -D BOOST_URL_BUILD_EXAMPLES=OFF'
+# The target for MrDocs simply includes all symbols defined in all
+# headers with the appropriate compilation options.
+# Nothing else should be included in the MrDocs configuration or 
+# would be useful to MrDocs.
+#
+# This single source file not only includes all symbols (the source
+# files do not collectively include all headers) but also makes MrDocs
+# run much faster than relying on the entire library.
+#
+# The time to extract the declarations went from ~8m6s to ~3s in our
+# experiments: a 162x speedup while including all symbols!
+#
+# In practice, this special target is simply emulating the
+# default behavior of the standardese tool with MrDocs, which
+# requires the user to clearly specify the targets via the
+# compilation database.
+#
+# The BOOST_URL_MRDOCS_BUILD=ON is the only option we usually need
+# here.
+# The other options are set just to ensure other targets are
+# ignored even if these options are set as ON in the cache.
+#
+cmake: '-D BOOST_URL_MRDOCS_BUILD=ON -D BOOST_URL_BUILD_FUZZERS=OFF -D BOOST_URL_BUILD_EXAMPLES=OFF -D BOOST_URL_BUILD_TESTS=OFF -D BUILD_TESTING=OFF'
