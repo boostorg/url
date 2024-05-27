@@ -139,6 +139,12 @@
 #define BOOST_URL_IMPLEMENTATION_DEFINED(Type) __implementation_defined__
 #endif
 
+#ifndef BOOST_URL_DOCS
+#define BOOST_URL_SEE_BELOW(Type) Type
+#else
+#define BOOST_URL_SEE_BELOW(Type) __see_below__
+#endif
+
 
 
 // avoid Boost.TypeTraits for these traits

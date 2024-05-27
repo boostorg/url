@@ -21,6 +21,22 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
+namespace detail
+{
+template<class T, class = void>
+struct is_charset : std::false_type {};
+
+template<class T>
+struct is_charset<T, void_t<
+    decltype(
+    std::declval<bool&>() =
+        std::declval<T const&>().operator()(
+            std::declval<char>())
+            ) > > : std::true_type
+{
+};
+}
+
 /** Alias for `std::true_type` if T satisfies <em>CharSet</em>.
 
     This metafunction determines if the
@@ -43,23 +59,8 @@ namespace grammar {
 
     @tparam T the type to check.
 */
-#ifdef BOOST_URL_DOCS
 template<class T>
-using is_charset = __see_below__;
-#else
-template<class T, class = void>
-struct is_charset : std::false_type {};
-
-template<class T>
-struct is_charset<T, void_t<
-    decltype(
-    std::declval<bool&>() =
-        std::declval<T const&>().operator()(
-            std::declval<char>())
-            ) > > : std::true_type
-{
-};
-#endif
+using is_charset = BOOST_URL_SEE_BELOW(detail::is_charset<T>);
 
 //------------------------------------------------
 

@@ -229,9 +229,9 @@ xref:reference:boost/urls/grammar/variant_rule.adoc[`variant_rule`]
 
 **Type Traits**
 
-xref:reference:boost/urls/grammar/is_charset-0c.adoc[`is_charset`]
+xref:reference:boost/urls/grammar/is_charset.adoc[`is_charset`]
 
-xref:reference:boost/urls/grammar/is_rule-0a.adoc[`is_rule`]
+xref:reference:boost/urls/grammar/is_rule.adoc[`is_rule`]
 
 | **Types**
 
