@@ -18,7 +18,7 @@ namespace boost {
 namespace urls {
 
 auto
-query_rule_t::
+implementation_defined::query_rule_t::
 parse(
     char const*& it,
     char const* end

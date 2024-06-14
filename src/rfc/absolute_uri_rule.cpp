@@ -23,7 +23,7 @@ namespace boost {
 namespace urls {
 
 auto
-absolute_uri_rule_t::
+implementation_defined::absolute_uri_rule_t::
 parse(
     char const*& it,
     char const* const end
