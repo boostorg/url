@@ -63,6 +63,7 @@ namespace urls {
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ ipv6_address_rule;
 #else
+namespace implementation_defined {
 struct ipv6_address_rule_t
 {
     using value_type =
@@ -76,6 +77,7 @@ struct ipv6_address_rule_t
             ) const noexcept ->
         system::result<ipv6_address>;
 };
+} // implementation_defined
 
 /** Rule for An IP version 6 style address
 
@@ -120,7 +122,7 @@ struct ipv6_address_rule_t
         @ref parse_ipv6_address,
         @ref grammar::parse.
 */
-constexpr ipv6_address_rule_t ipv6_address_rule{};
+constexpr implementation_defined::ipv6_address_rule_t ipv6_address_rule{};
 #endif
 
 } // urls

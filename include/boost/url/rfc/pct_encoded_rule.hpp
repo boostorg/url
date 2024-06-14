@@ -65,25 +65,17 @@ __implementation_defined__
 pct_encoded_rule( CharSet const& cs ) noexcept;
 /**@}*/
 #else
+namespace implementation_defined {
 template<class CharSet>
 struct pct_encoded_rule_t
 {
     using value_type = pct_string_view;
-
-    template<class CharSet_>
-    friend
-    constexpr
-    auto
-    pct_encoded_rule(
-        CharSet_ const& cs) noexcept ->
-            pct_encoded_rule_t<CharSet_>;
 
     system::result<value_type>
     parse(
         char const*& it,
         char const* end) const noexcept;
 
-private:
     constexpr
     pct_encoded_rule_t(
         CharSet const& cs) noexcept
@@ -91,8 +83,10 @@ private:
     {
     }
 
+private:
     CharSet cs_;
 };
+} // implementation_defined
 
 /** Rule for a string with percent-encoded escapes
 
@@ -138,7 +132,7 @@ constexpr
 auto
 pct_encoded_rule(
     CharSet const& cs) noexcept ->
-        pct_encoded_rule_t<CharSet>
+        implementation_defined::pct_encoded_rule_t<CharSet>
 {
     // If an error occurs here it means that
     // the value of your type does not meet
@@ -148,7 +142,7 @@ pct_encoded_rule(
         grammar::is_charset<CharSet>::value,
         "CharSet requirements not met");
 
-    return pct_encoded_rule_t<CharSet>(cs);
+    return implementation_defined::pct_encoded_rule_t<CharSet>(cs);
 }
 
 #endif

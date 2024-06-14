@@ -145,7 +145,11 @@
 #define BOOST_URL_SEE_BELOW(Type) __see_below__
 #endif
 
-
+#ifdef __cpp_lib_array_constexpr
+#define BOOST_URL_LIB_ARRAY_CONSTEXPR constexpr
+#else
+#define BOOST_URL_LIB_ARRAY_CONSTEXPR
+#endif
 
 // avoid Boost.TypeTraits for these traits
 namespace boost {

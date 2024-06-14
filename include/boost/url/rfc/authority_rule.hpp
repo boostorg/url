@@ -47,6 +47,8 @@ namespace urls {
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ authority_rule;
 #else
+
+namespace implementation_defined {
 struct authority_rule_t
 {
     using value_type = authority_view;
@@ -59,6 +61,7 @@ struct authority_rule_t
             ) const noexcept ->
         system::result<value_type>;
 };
+} // implementation_defined
 
 /** Rule for authority
 
@@ -87,7 +90,7 @@ struct authority_rule_t
         @ref grammar::parse,
         @ref parse_authority.
 */
-constexpr authority_rule_t authority_rule{};
+constexpr implementation_defined::authority_rule_t authority_rule{};
 #endif
 
 } // urls

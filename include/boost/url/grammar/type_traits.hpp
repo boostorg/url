@@ -18,7 +18,7 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-namespace detail
+namespace see_below
 {
 template<class T, class = void>
 struct is_rule : std::false_type {};
@@ -60,7 +60,7 @@ struct is_rule<T, void_t<decltype(
         @ref parse.
 */
 template<class T>
-using is_rule = BOOST_URL_SEE_BELOW(detail::is_rule<T>);
+using is_rule = BOOST_URL_SEE_BELOW(see_below::is_rule<T>);
 
 } // grammar
 } // urls

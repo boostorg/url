@@ -149,6 +149,7 @@ if (BOOST_URL_MRDOCS_BUILD)
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp" "#include <boost/url.hpp>\n")
     add_library(boost_url_mrdocs "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp")
     boost_url_setup_properties(boost_url_mrdocs)
+    target_compile_definitions(boost_url_mrdocs PUBLIC BOOST_URL_MRDOCS BOOST_URL_NO_SSE2)
     return()
 endif()
 

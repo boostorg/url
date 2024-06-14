@@ -47,6 +47,7 @@ namespace urls {
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ relative_ref_rule;
 #else
+namespace implementation_defined {
 struct relative_ref_rule_t
 {
     using value_type = url_view;
@@ -59,6 +60,7 @@ struct relative_ref_rule_t
             ) const noexcept ->
         system::result<value_type>;
 };
+} // implementation_defined
 
 /** Rule for relative-ref
 
@@ -87,7 +89,7 @@ struct relative_ref_rule_t
         @ref parse_relative_ref,
         @ref url_view.
 */
-constexpr relative_ref_rule_t relative_ref_rule{};
+constexpr implementation_defined::relative_ref_rule_t relative_ref_rule{};
 #endif
 
 } // urls

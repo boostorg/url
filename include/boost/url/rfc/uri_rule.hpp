@@ -47,6 +47,7 @@ namespace urls {
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ uri_rule{};
 #else
+namespace implementation_defined {
 struct uri_rule_t
 {
     using value_type = url_view;
@@ -59,6 +60,7 @@ struct uri_rule_t
             ) const noexcept ->
         system::result<value_type>;
 };
+} // implementation_defined
 
 /** Rule for URI
 
@@ -87,7 +89,7 @@ struct uri_rule_t
         @ref parse_uri,
         @ref url_view.
 */
-constexpr uri_rule_t uri_rule{};
+constexpr implementation_defined::uri_rule_t uri_rule{};
 #endif
 
 } // urls

@@ -50,6 +50,7 @@ namespace urls {
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ uri_reference_rule{};
 #else
+namespace implementation_defined {
 struct uri_reference_rule_t
 {
     using value_type = url_view;
@@ -62,13 +63,14 @@ struct uri_reference_rule_t
             ) const noexcept ->
     system::result<value_type>;
 };
+} // implementation_defined
 
 /** Rule for URI-reference
 
     @par Value Type
     @code
     using value_type = url_view;
-    @endcode;
+    @endcode
 
     @par Example
     Rules are used with the function @ref grammar::parse.
@@ -93,7 +95,7 @@ struct uri_reference_rule_t
         @ref parse_uri_reference,
         @ref url_view.
 */
-constexpr uri_reference_rule_t uri_reference_rule{};
+constexpr implementation_defined::uri_reference_rule_t uri_reference_rule{};
 #endif
 
 } // urls

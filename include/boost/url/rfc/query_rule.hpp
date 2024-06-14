@@ -57,6 +57,7 @@ namespace urls {
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ query_rule;
 #else
+namespace implementation_defined {
 struct query_rule_t
 {
     using value_type = params_encoded_view;
@@ -68,6 +69,7 @@ struct query_rule_t
         char const* end
             ) const noexcept;
 };
+} // implementation_defined
 
 /** Rule for query
 
@@ -105,7 +107,7 @@ struct query_rule_t
         @ref grammar::parse,
         @ref params_encoded_view.
 */
-constexpr query_rule_t query_rule{};
+constexpr implementation_defined::query_rule_t query_rule{};
 #endif
 
 } // urls

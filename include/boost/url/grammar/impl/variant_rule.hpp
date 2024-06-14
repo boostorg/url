@@ -83,7 +83,7 @@ parse_variant(
 
 template<class R0, class... Rn>
 auto
-variant_rule_t<R0, Rn...>::
+implementation_defined::variant_rule_t<R0, Rn...>::
 parse(
     char const*& it,
     char const* end) const ->
@@ -104,7 +104,7 @@ constexpr
 variant_rule(
     R0 const& r0,
     Rn const&... rn) noexcept ->
-        variant_rule_t<R0, Rn...>
+        implementation_defined::variant_rule_t<R0, Rn...>
 {
     return { r0, rn... };
 }

@@ -21,7 +21,7 @@ namespace boost {
 namespace urls {
 namespace grammar {
 
-namespace detail
+namespace see_below
 {
 template<class T, class = void>
 struct is_charset : std::false_type {};
@@ -60,7 +60,7 @@ struct is_charset<T, void_t<
     @tparam T the type to check.
 */
 template<class T>
-using is_charset = BOOST_URL_SEE_BELOW(detail::is_charset<T>);
+using is_charset = BOOST_URL_SEE_BELOW(see_below::is_charset<T>);
 
 //------------------------------------------------
 
@@ -194,22 +194,41 @@ struct charset_ref
     `ref` should only be used with compile-time
     constants.
 */
+#ifdef BOOST_URL_DOCS
 template<class CharSet>
 constexpr
-#ifdef BOOST_URL_DOCS
 __implementation_defined__
+ref(CharSet const& cs) noexcept;
 #else
+
+/** Return a reference to a character set
+
+    This function returns a character set which
+    references the specified object. This is
+    used to reduce the number of bytes of
+    storage (`sizeof`) required by a combinator
+    when it stores a copy of the object.
+    <br>
+    Ownership of the object is not transferred;
+    the caller is responsible for ensuring the
+    lifetime of the object is extended until it
+    is no longer referenced. For best results,
+    `ref` should only be used with compile-time
+    constants.
+*/
+template<class CharSet>
+constexpr
 typename std::enable_if<
     is_charset<CharSet>::value &&
     ! std::is_same<CharSet,
         detail::charset_ref<CharSet> >::value,
     detail::charset_ref<CharSet> >::type
-#endif
 ref(CharSet const& cs) noexcept
 {
     return detail::charset_ref<
         CharSet>{cs};
 }
+#endif
 
 } // grammar
 } // urls

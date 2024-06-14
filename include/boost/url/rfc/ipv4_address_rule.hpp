@@ -55,6 +55,7 @@ namespace urls {
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ ipv4_address_rule;
 #else
+namespace implementation_defined {
 struct ipv4_address_rule_t
 {
     using value_type =
@@ -68,6 +69,7 @@ struct ipv4_address_rule_t
             ) const noexcept ->
         system::result<ipv4_address>;
 };
+} // implementation_defined
 
 /** Rule for an IP version 4 style address
 
@@ -104,7 +106,7 @@ struct ipv4_address_rule_t
         @ref parse_ipv4_address,
         @ref grammar::parse.
 */
-constexpr ipv4_address_rule_t ipv4_address_rule{};
+constexpr implementation_defined::ipv4_address_rule_t ipv4_address_rule{};
 #endif
 
 } // urls

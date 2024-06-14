@@ -266,7 +266,7 @@ format(
 #ifdef BOOST_URL_DOCS
     std::initializer_list<__see_below__> args
 #else
-    std::initializer_list<detail::format_arg> args
+    std::initializer_list<see_below::format_arg> args
 #endif
     )
 {
@@ -364,7 +364,7 @@ format_to(
 #ifdef BOOST_URL_DOCS
     std::initializer_list<__see_below__> args
 #else
-    std::initializer_list<detail::format_arg> args
+    std::initializer_list<see_below::format_arg> args
 #endif
     )
 {
@@ -400,7 +400,7 @@ format_to(
 
 */
 template <class T>
-BOOST_URL_IMPLEMENTATION_DEFINED(detail::named_arg<T>)
+BOOST_URL_IMPLEMENTATION_DEFINED(implementation_defined::named_arg<T>)
 arg(core::string_view name, T const& arg)
 {
     return {name, arg};

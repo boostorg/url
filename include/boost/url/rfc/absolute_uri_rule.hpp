@@ -52,6 +52,7 @@ namespace urls {
 #ifdef BOOST_URL_DOCS
 constexpr __implementation_defined__ absolute_uri_rule;
 #else
+namespace implementation_defined {
 struct absolute_uri_rule_t
 {
     using value_type = url_view;
@@ -64,6 +65,7 @@ struct absolute_uri_rule_t
             ) const noexcept ->
         system::result<value_type>;
 };
+} // implementation_defined
 
 /** Rule for absolute-URI
 
@@ -97,7 +99,7 @@ struct absolute_uri_rule_t
         @ref parse_absolute_uri,
         @ref url_view.
 */
-constexpr absolute_uri_rule_t absolute_uri_rule{};
+constexpr implementation_defined::absolute_uri_rule_t absolute_uri_rule{};
 #endif
 
 } // urls
