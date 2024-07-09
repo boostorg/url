@@ -353,7 +353,13 @@ jobs:
     name: Antora Docs
     needs: [ runner-selection ]
     runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['ubuntu-latest'] }}
+    container: ubuntu:23.10
     steps:
+      - name: Install packages
+        uses: alandefreitas/cpp-actions/package-install@v1.8.3
+        with:
+          apt-get: git cmake
+
       - name: Clone Boost.URL
         uses: actions/checkout@v4
 
@@ -366,12 +372,29 @@ jobs:
         id: setup-cpp
         with:
           compiler: clang
-          version: 17
+          version: 18
+
+      - name: Set environment variables
+        run: |
+          set -x
+          clangpp_path="$(which clang++-18)"
+          clang_path="$(which clang-18)"
+          echo "CXX_COMPILER=$clangpp_path" >> $GITHUB_ENV
+          echo "CXX=$clang_path" >> $GITHUB_ENV
+          echo "C_COMPILER=$clang_path" >> $GITHUB_ENV
+          echo "CC=$clang_path" >> $GITHUB_ENV
+          git config --global --add safe.directory "$(pwd)"
 
       - name: Build Antora Docs
         run: |
           cd doc
           bash ./build_antora.sh
+          
+          # Antora returns zero even if it fails, so we check if the site directory exists
+          if [ ! -d "build/site" ]; then
+              echo "Antora build failed"
+              exit 1
+          fi
 
       - name: Create Antora Docs Artifact
         uses: actions/upload-artifact@v4

@@ -100,11 +100,19 @@ if (cxxCompiler && process.platform === "win32") {
     // Replace "\" with "/" in CXX_COMPILER
     cxxCompiler = cxxCompiler.replace(/\\/g, '/')
 }
+if (cxxCompiler === undefined) {
+    console.error('Could not find a C++ compiler. Please set the CXX_COMPILER environment variable.')
+    process.exit(1)
+}
 const cxxCompilerName = path.basename(cxxCompiler).replace(/\.exe$/, '')
 let cCompiler = findExecutable(['clang', 'gcc', 'cl']) || process.env.C_COMPILER || process.env.CC
 if (cCompiler && process.platform === "win32") {
     // Replace "\" with "/" in CXX_COMPILER
     cCompiler = cCompiler.replace(/\\/g, '/')
+}
+if (cCompiler === undefined) {
+    console.error('Could not find a C compiler. Please set the C_COMPILER environment variable.')
+    process.exit(1)
 }
 const cCompilerName = path.basename(cCompiler).replace(/\.exe$/, '')
 
