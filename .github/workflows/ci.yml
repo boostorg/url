@@ -374,19 +374,9 @@ jobs:
           compiler: clang
           version: 18
 
-      - name: Set environment variables
-        run: |
-          set -x
-          clangpp_path="$(which clang++-18)"
-          clang_path="$(which clang-18)"
-          echo "CXX_COMPILER=$clangpp_path" >> $GITHUB_ENV
-          echo "CXX=$clang_path" >> $GITHUB_ENV
-          echo "C_COMPILER=$clang_path" >> $GITHUB_ENV
-          echo "CC=$clang_path" >> $GITHUB_ENV
-          git config --global --add safe.directory "$(pwd)"
-
       - name: Build Antora Docs
         run: |
+          git config --global --add safe.directory "$(pwd)"
           cd doc
           bash ./build_antora.sh
           
