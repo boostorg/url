@@ -10,15 +10,19 @@
 const path = require('path');
 const fs = require('fs');
 const xpath = require('xpath');
-const DOMParser = require('xmldom').DOMParser;
+const {XMLParser} = require("fast-xml-parser");
+const he = require('he');
 
 /*
     Load tag files
 
     Default tag files come from the cpp_tags directory.
-    We still need to implement other strategies and sources for tag files.
+    It already includes the tags for cppreference.com.
 
-    To generate cppreference tags, you can get them from
+    We still need to implement other strategies and sources for tag files.
+    This will require this to become an antora extension.
+
+    To generate the most recent cppreference tags, you can get them from
     https://en.cppreference.com/w/Cppreference:Archives or generate a
     more recent version using the following commands:
 
@@ -34,13 +38,135 @@ const DOMParser = require('xmldom').DOMParser;
 let tagDocs = {}
 // Read all files in __dirname
 const defaultTagsDir = path.join(__dirname, 'cpp_tags');
+const parser = new XMLParser({
+    ignoreDeclaration: true,
+    ignoreAttributes: false,
+    attributesGroupName: "@attributes",
+    attributeNamePrefix: "",
+    allowBooleanAttributes: true
+});
 fs.readdirSync(defaultTagsDir).forEach(file => {
     if (file.endsWith('.tag.xml')) {
-        const tagFile = path.join(defaultTagsDir, file);
-        const xml = fs.readFileSync(tagFile, 'utf8');
-        tagDocs[file.replace('.tag.xml', '')] = new DOMParser().parseFromString(xml, 'text/xml');
+        const tagFilePath = path.join(defaultTagsDir, file);
+        const xml = fs.readFileSync(tagFilePath, 'utf8');
+        let tagFileKey = file.replace('.tag.xml', '');
+        tagDocs[tagFileKey] = parser.parse(xml);
     }
 })
+
+function getFileFilename(doc, symbolName) {
+    const targetFilename = symbolName.substring(1, symbolName.length - 1)
+    const tagFileObj = doc['tagfile']
+    for (const compound of tagFileObj['compound']) {
+        if (compound['name'] === targetFilename) {
+            return compound['filename']
+
+        }
+    }
+    return undefined
+}
+
+function getSymbolFilename(obj, symbolName, curNamespace) {
+    // Iterate <compound kind="class">
+    if ('compound' in obj) {
+        for (const compound of obj['compound']) {
+            const kind = compound['@attributes']["kind"];
+            if (kind !== 'class') {
+                continue
+            }
+            const name = compound['name'];
+            if (symbolName === name && 'filename' in compound) {
+                return compound['filename']
+            }
+        }
+    }
+
+    // Iterate <member kind="function">
+    if ('member' in obj) {
+        for (const member of obj['member']) {
+            const kind = member['@attributes']["kind"];
+            if (kind !== 'function') {
+                continue
+            }
+            const name = member['name']
+            const qualifiedName = curNamespace ? curNamespace + "::" + name : name
+            if (symbolName === qualifiedName && 'anchorfile' in member) {
+                return member['anchorfile'] + (('anchor' in member && member['anchor']) ? `#${member["anchor"]}` : '')
+            }
+        }
+    }
+
+    // <compound kind="namespace">
+    if ('compound' in obj) {
+        for (const compound of obj['compound']) {
+            const kind = compound['@attributes']["kind"];
+            if (kind !== 'namespace' && kind !== 'class') {
+                continue
+            }
+            const name = compound['name'];
+            if (symbolName === name && 'filename' in compound) {
+                return compound['filename']
+            }
+            if (symbolName.startsWith(name + '::')) {
+                const res = getSymbolFilename(compound, symbolName, name)
+                if (res) {
+                    return res
+                }
+            }
+        }
+    }
+
+    return undefined
+}
+
+function splitCppSymbol(symbolName) {
+    let mainSymbolName = ''
+    let curTemplate = ''
+    let templateParameters = []
+    let rest = ''
+    let level = 0
+    let inTemplateParameters = false
+
+    for (let i = 0; i < symbolName.length; i++) {
+        let c = symbolName[i];
+        if (c === '<') {
+            inTemplateParameters = true
+            level++;
+        } else if (c === '>') {
+            level--;
+        }
+
+        if (level === 0) {
+            if (!inTemplateParameters) {
+                mainSymbolName += c
+            } else {
+                rest = symbolName.substring(i + 1)
+                break
+            }
+        } else if (level === 1 && [',', '>', '<'].includes(c)) {
+            if (curTemplate) {
+                if (c === '>') {
+                    curTemplate += c
+                }
+                templateParameters.push(curTemplate.trim())
+                curTemplate = ''
+            }
+        } else {
+            curTemplate += c
+        }
+    }
+
+    if (curTemplate) {
+        templateParameters.push(curTemplate.trim())
+    }
+
+    return {
+        mainSymbolName: mainSymbolName,
+        templateParameters: templateParameters,
+        rest: rest
+    };
+}
+
 
 /**
  * Gets the URL for a symbol.
@@ -50,15 +176,78 @@ fs.readdirSync(defaultTagsDir).forEach(file => {
  * @returns {undefined|string} The URL for the symbol, or undefined if the symbol is not found.
  */
 function getSymbolLink(doc, symbolName) {
-    const select = xpath.useNamespaces({'ns': 'http://www.w3.org/1999/xhtml'})
-    let result = select(`//compound[name="${symbolName}"]`, doc)
-    if (result.length > 0) {
-        const symbolNode = result[0]
-        const symbolName = symbolNode.getElementsByTagName('name')[0].textContent
-        const symbolFilename = symbolNode.getElementsByTagName('filename')[0].textContent
-        return `https://en.cppreference.com/w/${symbolFilename}[${symbolName},window="_blank"]`
+    if (isFundamentalType(symbolName)) {
+        return `https://en.cppreference.com/w/cpp/language/types[${symbolName},window=_blank]`
+    }
+
+    const isIncludeFile = symbolName.startsWith('"') && symbolName.endsWith('"') ||
+        symbolName.startsWith('<') && symbolName.endsWith('>');
+    if (isIncludeFile) {
+        const filename = getFileFilename(doc, symbolName)
+        if (filename) {
+            return `https://en.cppreference.com/w/${filename}[${he.encode(symbolName)},window="_blank"]`
+        }
+        return undefined
+    }
+
+    const tagFileObj = doc['tagfile']
+    const isTemplate = symbolName.includes('<')
+    if (!isTemplate) {
+        const filename = getSymbolFilename(tagFileObj, symbolName, '')
+        if (filename !== undefined) {
+            return `https://en.cppreference.com/w/${filename}[${he.encode(symbolName)},window="_blank"]`
+        }
+    } else {
+        const {mainSymbolName, templateParameters, rest} = splitCppSymbol(symbolName)
+        let fullLink = ''
+        const mainLink = getSymbolLink(doc, mainSymbolName)
+        if (mainLink) {
+            fullLink = mainLink
+        } else {
+            fullLink = he.encode(mainSymbolName)
+        }
+        fullLink += he.encode('<')
+        let isFirst = true
+        for (const templateParameter of templateParameters) {
+            const templateParameterLink = getSymbolLink(doc, templateParameter)
+            if (!isFirst) {
+                fullLink += he.encode(', ')
+            }
+            if (templateParameterLink) {
+                fullLink += templateParameterLink
+            } else {
+                fullLink += he.encode(templateParameter)
+            }
+            isFirst = false
+        }
+        fullLink += he.encode('>')
+        if (rest.startsWith('::')) {
+            fullLink += he.encode('::')
+            const restLink = getSymbolLink(doc, mainSymbolName + rest)
+            if (restLink) {
+                fullLink += restLink
+            } else {
+                fullLink += he.encode(rest.substring(2))
+            }
+        } else {
+            fullLink += he.encode(rest)
+        }
+        return fullLink
     }
     return undefined
+}
+
+/**
+ * Returns true if the given type is a fundamental type.
+ * This is used to link to the cppreference.com documentation for the type.
+ *
+ * @see https://en.cppreference.com/w/cpp/language/types
+ *
+ * @param type - The type to check.
+ * @returns {boolean} True if the type is a fundamental type.
+ */
+function isFundamentalType(type) {
+    return ['bool', 'char', 'char8_t', 'char16_t', 'char32_t', 'wchar_t', 'int', 'signed', 'unsigned', 'short', 'long', 'float', 'true', 'false', 'double', 'void'].includes(type)
 }
 
 /**
@@ -102,6 +291,8 @@ module.exports = function (registry) {
     registry.inlineMacro('cpp', function () {
         const self = this;
         self.process(function (parent, target, attr) {
+            // Decode HTML
+            target = he.decode(target)
             // const DEFAULT_BOOST_BRANCH = 'master'
             // const branch = parent.getDocument().getAttribute('page-boost-branch', DEFAULT_BOOST_BRANCH)
             for (const [tag, doc] of Object.entries(tagDocs)) {
@@ -110,11 +301,28 @@ module.exports = function (registry) {
                     return self.createInline(parent, 'quoted', link, {type: 'monospaced'})
                 }
             }
-            if (['bool', 'char', 'char8_t', 'char16_t', 'char32_t', 'wchar_t', 'int', 'signed', 'unsigned', 'short', 'long', 'float', 'true', 'false', 'double', 'void'].includes(target)) {
-                return self.createInline(parent, 'quoted', `https://en.cppreference.com/w/cpp/language/types[${target},window=_blank]`, {type: 'monospaced'})
-            }
+            // If the symbol is not found, return the target as monospaced text
             return self.createInline(parent, 'quoted', target, {type: 'monospaced'})
         })
     })
 }
 
+if (require.main === module) {
+    console.log('Tests')
+    for (const [tag, doc] of Object.entries(tagDocs)) {
+        console.log(getSymbolLink(doc, 'std'))
+        console.log(getSymbolLink(doc, 'bool'))
+        console.log(getSymbolLink(doc, 'std::string_view'))
+        console.log(getSymbolLink(doc, 'std::string_view'))
+        console.log(getSymbolLink(doc, 'std::FILE'))
+        console.log(getSymbolLink(doc, 'std::vector'))
+        console.log(getSymbolLink(doc, 'std::vector<int>'))
+        console.log(getSymbolLink(doc, 'std::vector<std::vector<int>,std::allocator<int>>'))
+        console.log(getSymbolLink(doc, 'MyClass<int,std::vector<double>,std::map<int,std::string>>'))
+        console.log(getSymbolLink(doc, 'std::vector<std::vector<int>,std::allocator<int>>::const_iterator'))
+        console.log(getSymbolLink(doc, '"algorithm"'))
+        console.log(getSymbolLink(doc, '<algorithm>'))
+        console.log(getSymbolLink(doc, 'std::abort'))
+        console.log(getSymbolLink(doc, 'std::allocator::address'))
+    }
+}
