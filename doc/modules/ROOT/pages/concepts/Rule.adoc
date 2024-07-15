@@ -41,7 +41,7 @@ In this table:
 // Row 1, Column 3
 |Copy construction of `T` throws nothing.
 
-`std::is_nothrow_copy_constructible<T>::value == true`
+cpp:std::is_nothrow_copy_constructible<T>::value[] == true`
 
 // Row 2, Column 1
 |`T::value_type`
