@@ -13,6 +13,7 @@ const path = require('path');
 const he = require("he");
 const {XMLParser} = require("fast-xml-parser");
 const fs = require("fs");
+const assert = require("assert");
 
 /**
  * CppTagfilesExtension is a class that handles the registration and processing of C++ tagfiles.
@@ -54,6 +55,8 @@ class CppTagfilesExtension {
             .on('beforeProcess', this.onBeforeProcess.bind(this))
 
         this.tagfiles = []
+        this.usingNamespaces = []
+        this.cache = {}
 
         // https://www.npmjs.com/package/@antora/logger
         // https://github.com/pinojs/pino/blob/main/docs/api.md
@@ -61,7 +64,54 @@ class CppTagfilesExtension {
         this.logger.info('Registering cpp-tagfile-extension')
 
         this.config = config
-        this.playbook = playbook
+        // playbook = playbook
+    }
+
+    /**
+     * Checks if a cached result exists for a given symbol and component.
+     *
+     * The cache is a map of maps. The first map is the symbol. The second level map is the component.
+     * The value in the second map is the link.
+     *
+     * The reason we have two levels is that components might have different tagfiles. Thus,
+     * the same target can have different links depending on the component.
+     *
+     * @param {string} symbol - The symbol for which the cached result is to be checked.
+     * @param {string} component - The component for which the cached result is to be checked.
+     * @returns {boolean} True if a cached result exists for the given symbol and component, false otherwise.
+     */
+    hasCachedResult(symbol, component) {
+        return symbol in this.cache && component in this.cache[symbol]
+    }
+
+    /**
+     * Retrieves a cached result for a given symbol and component.
+     *
+     * @param {string} symbol - The symbol for which the cached result is to be retrieved.
+     * @param {string} component - The component for which the cached result is to be retrieved.
+     * @returns {string} The cached result for the given symbol and component.
+     */
+    getCachedResult(symbol, component) {
+        if (this.hasCachedResult(symbol, component)) {
+            return this.cache[symbol][component]
+        }
+        return undefined
+    }
+
+    /**
+     * Sets a cached result for a given symbol and component.
+     *
+     * If no cache exists for the given symbol, a new cache is created.
+     *
+     * @param {string} symbol - The symbol for which the cached result is to be set.
+     * @param {string} component - The component for which the cached result is to be set.
+     * @param {string} result - The result to be cached.
+     */
+    setCachedResult(symbol, component, result) {
+        if (!(symbol in this.cache)) {
+            this.cache[symbol] = {}
+        }
+        this.cache[symbol][component] = result
     }
 
     // https://docs.antora.org/antora/latest/extend/add-event-listeners/
@@ -75,8 +125,6 @@ class CppTagfilesExtension {
      * This method reads the tagfiles and parses them. The tagfiles are registered
      * in the playbook file or the component descriptor files.
      *
-     * The first tagfile is always <script directory>/cpp_tags/cppreference-doxygen-web.tag.xml.
-     *
      * The method also removes duplicate tagfiles and logs the final list of tagfiles.
      *
      * @param {Object} playbook - The playbook object.
@@ -87,33 +135,74 @@ class CppTagfilesExtension {
     onContentAggregated({playbook, siteAsciiDocConfig, siteCatalog, contentAggregate}) {
         this.logger.info('Reading tagfiles')
 
-        // The first tagfile is always <script directory>/cpp_tags/cppreference-doxygen-web.tag.xml
-        const defaultTagfilesDir = path.join(__dirname, 'cpp_tagfiles');
-        this.tagfiles.push({
-            file: path.join(defaultTagfilesDir, 'cppreference-doxygen-web.tag.xml'),
-            baseUrl: 'https://en.cppreference.com/w/'
-        })
+        function externalAsBoolean(tagfile) {
+            const baseUrl = tagfile.baseUrl ? tagfile.baseUrl : '';
+            const baseUrlIsHttp = baseUrl.startsWith('http://') || baseUrl.startsWith('https://')
+            const externalIsBoolean = typeof tagfile.external === 'boolean'
+            const externalIsString = typeof tagfile.external === 'string'
+            return externalIsBoolean ?
+                tagfile.external :
+                externalIsString ?
+                    tagfile.external === 'true' :
+                    baseUrlIsHttp
+        }
 
-        // Iterate files in playbook.
-        const playbookFiles = this.config.files || []
-        playbookFiles.forEach(tagfile => {
-            this.tagfiles.push({file: path.join(playbook.dir, tagfile.file), baseUrl: tagfile.baseUrl})
-        })
-
-        // Look for tagfiles set in the components
+        // Iterate tagfiles set in the components
         for (const componentVersionBucket of contentAggregate.slice()) {
             const {origins = []} = componentVersionBucket
             for (const origin of origins) {
                 const {descriptor, worktree} = origin
                 let tagFilesConfig = descriptor?.ext?.cppTagfiles?.files || []
                 for (const tagfile of tagFilesConfig) {
-                    this.tagfiles.push({file: path.join(worktree, tagfile.file), baseUrl: tagfile.baseUrl})
+                    this.tagfiles.push({
+                        file: path.join(worktree, tagfile.file),
+                        baseUrl: tagfile.baseUrl ? tagfile.baseUrl : '',
+                        component: descriptor.name,
+                        external: externalAsBoolean(tagfile)
+                    })
                 }
             }
         }
 
-        // Remove duplicates
-        this.tagfiles = this.tagfiles.filter((tagfile, index, self) => self.findIndex(t => t.file === tagfile.file) === index)
+        // Iterate tagfiles in the playbook
+        const playbookFiles = this.config?.cppTagfiles?.files || []
+        playbookFiles.forEach(tagfile => {
+            const baseUrl = tagfile.baseUrl ? tagfile.baseUrl : '';
+            this.tagfiles.push({
+                file: path.join(playbook.dir, tagfile.file),
+                baseUrl: baseUrl,
+                component: null,
+                external: externalAsBoolean(tagfile.external)
+            })
+        })
+
+        // Add the cppreference tagfile
+        //
+        // To generate the most recent cppreference tags, you can get them from
+        // https://en.cppreference.com/w/Cppreference:Archives or generate a
+        // more recent version using the following commands:
+        //
+        // ```
+        // git clone https://github.com/PeterFeicht/cppreference-doc
+        // cd cppreference-doc
+        // make source
+        // make doc_doxygen
+        // ```
+        //
+        // The result will be in ./output.
+        const defaultTagfilesDir = path.join(__dirname, 'cpp_tagfiles');
+        this.tagfiles.push({
+            file: path.join(defaultTagfilesDir, 'cppreference-doxygen-web.tag.xml'),
+            baseUrl: 'https://en.cppreference.com/w/',
+            component: null,
+            external: true
+        })
+
+        // Remove duplicates considering both the file and the component
+        this.tagfiles = this.tagfiles.filter((tagfile, index, self) =>
+            index === self.findIndex((t) => (
+                t.file === tagfile.file && t.component === tagfile.component
+            )))
         this.logger.info(this.tagfiles, 'tagfiles')
 
         // Read the tagfiles
@@ -125,7 +214,7 @@ class CppTagfilesExtension {
             allowBooleanAttributes: true
         });
         this.tagfiles.forEach(tagfile => {
-            const {file, baseUrl} = tagfile
+            const {file} = tagfile
             if (!fs.existsSync(file)) {
                 this.logger.error(`Tagfile not found: ${file}`)
                 return
@@ -133,6 +222,42 @@ class CppTagfilesExtension {
             const xml = fs.readFileSync(file, 'utf8');
             tagfile.doc = parser.parse(xml);
         })
+
+        // Iterate using-namespace set in the components
+        for (const componentVersionBucket of contentAggregate.slice()) {
+            const {origins = []} = componentVersionBucket
+            for (const origin of origins) {
+                const {descriptor, worktree} = origin
+                let usingNamespacesConfig = descriptor?.ext?.cppTagfiles?.usingNamespaces || []
+                for (const namespace of usingNamespacesConfig) {
+                    this.usingNamespaces.push({
+                        namespace: namespace.endsWith('::') ? namespace : namespace + '::',
+                        component: descriptor.name
+                    })
+                }
+            }
+        }
+
+        // Iterate tagfiles in the playbook
+        const playbookNamespaces = this.config?.cppTagfiles?.usingNamespaces || []
+        playbookNamespaces.forEach(namespace => {
+            this.usingNamespaces.push({
+                namespace: namespace.endsWith('::') ? namespace : namespace + '::',
+                component: null
+            })
+        })
+
+        // Add the default using namespace
+        this.usingNamespaces.push({
+            namespace: 'std::',
+            component: null
+        })
+
+        // Remove duplicates considering both the file and the component
+        this.usingNamespaces = this.usingNamespaces.filter((tagfile, index, self) =>
+            index === self.findIndex((t) => (
+                t.namespace === tagfile.namespace && t.component === tagfile.component
+            )))
     }
 
     /**
@@ -156,11 +281,22 @@ class CppTagfilesExtension {
                 registry.inlineMacro('cpp', function () {
                     const self = this;
                     self.process(function (parent, target, attr) {
-                        const link = extensionSelf.getSymbolLink(he.decode(target))
+                        const linkText = '$positional' in attr ? attr['$positional'][0] : undefined
+                        const component = parent.document.getAttributes()['page-component-name'] || null
+                        const decodedSymbol = he.decode(target);
+                        const fromCache = linkText ? false :
+                            extensionSelf.hasCachedResult(decodedSymbol, component)
+                        let link =
+                            fromCache ?
+                                extensionSelf.getCachedResult(decodedSymbol, component) :
+                                extensionSelf.getSymbolLink(decodedSymbol, linkText, component, '')
+                        if (!fromCache && !linkText) {
+                            extensionSelf.setCachedResult(decodedSymbol, component, link)
+                        }
                         if (link) {
                             return self.createInline(parent, 'quoted', link, {type: 'monospaced'})
                         }
-                        return self.createInline(parent, 'quoted', target, {type: 'monospaced'})
+                        return self.createInline(parent, 'quoted', linkText ? linkText : target, {type: 'monospaced'})
                     })
                 })
                 return registry
@@ -172,11 +308,13 @@ class CppTagfilesExtension {
      * Gets the URL for a symbol.
      *
      * @param symbol - The name of the symbol.
+     * @param component - The Antora component the symbol belongs to.
+     * @param namespace - The namespace where we will look for the symbol
      * @returns {undefined|string} The URL for the symbol, or undefined if the symbol is not found.
      */
-    getSymbolLink(symbol) {
+    getSymbolLink(symbol, linkText, component, namespace) {
         if (CppTagfilesExtension.isFundamentalType(symbol)) {
-            return `https://en.cppreference.com/w/cpp/language/types[${symbol},window=_blank]`
+            return `https://en.cppreference.com/w/cpp/language/types${CppTagfilesExtension.getFundamentalTypeAnchor(symbol)}[${symbol},window=_blank]`
         }
 
         // Handle links to include files
@@ -184,37 +322,64 @@ class CppTagfilesExtension {
             symbol.startsWith('<') && symbol.endsWith('>');
         if (isIncludeFile) {
             for (const tagfile of this.tagfiles) {
-                const filename = CppTagfilesExtension.getFileFilename(tagfile.doc['tagfile'], symbol)
+                if (tagfile.component !== null && tagfile.component !== component) {
+                    continue
+                }
+                const filename = CppTagfilesExtension.getFileFilename(tagfile.doc, symbol)
                 if (filename) {
-                    return `https://en.cppreference.com/w/${filename}[${he.encode(symbol)},window="_blank"]`
+                    return `${tagfile.baseUrl}${filename}[${linkText ? linkText : he.encode(symbol)}${tagfile.external ? ',window="_blank"' : ''}]`
                 }
             }
             return undefined
         }
 
         // Handle symbols
-        if (!symbol.includes('<')) {
+        const isTemplate = symbol.includes('<');
+        if (!isTemplate) {
             // Handle symbols that are not templates
             for (const tagfile of this.tagfiles) {
-                const filename = CppTagfilesExtension.getSymbolFilename(tagfile.doc['tagfile'], symbol, '')
+                if (tagfile.component !== null && tagfile.component !== component) {
+                    continue
+                }
+                const qualifiedSymbol = namespace + symbol
+                this.logger.trace(`Looking for ${symbol} in namespace ${namespace} in ${tagfile.file}`)
+                const filename = CppTagfilesExtension.getSymbolFilename(tagfile.doc['tagfile'], qualifiedSymbol, '')
                 if (filename !== undefined) {
-                    return `${tagfile.baseUrl}${filename}[${he.encode(symbol)},window="_blank"]`
+                    return `${tagfile.baseUrl}${filename}[${linkText ? linkText : he.encode(symbol)}${tagfile.external ? ',window="_blank"' : ''}]`
+                }
+            }
+
+            const lookInNamespaces = namespace === ''
+            if (lookInNamespaces) {
+                for (const usingNamespace of this.usingNamespaces) {
+                    if (usingNamespace.component !== null && usingNamespace.component !== component) {
+                        continue
+                    }
+                    assert(usingNamespace.namespace.endsWith('::'), 'Namespace should end with ::')
+                    const result = this.getSymbolLink(symbol, linkText, component, usingNamespace.namespace)
+                    if (result !== undefined) {
+                        return result
+                    }
                 }
             }
         } else {
             // Handle symbols that are templates
             const {mainSymbolName, templateParameters, rest} = CppTagfilesExtension.splitCppSymbol(symbol)
-            let fullLink = ''
-            const mainLink = this.getSymbolLink(mainSymbolName)
+            let fullLink
+            const mainLink = this.getSymbolLink(mainSymbolName, linkText, component, namespace)
             if (mainLink) {
                 fullLink = mainLink
             } else {
                 fullLink = he.encode(mainSymbolName)
             }
+            if (linkText) {
+                // If the link text is provided, we return a single link to the main symbol
+                return fullLink
+            }
             fullLink += he.encode('<')
             let isFirst = true
             for (const templateParameter of templateParameters) {
-                const templateParameterLink = this.getSymbolLink(templateParameter)
+                const templateParameterLink = this.getSymbolLink(templateParameter, linkText, component, namespace)
                 if (!isFirst) {
                     fullLink += he.encode(', ')
                 }
@@ -228,7 +393,7 @@ class CppTagfilesExtension {
             fullLink += he.encode('>')
             if (rest.startsWith('::')) {
                 fullLink += he.encode('::')
-                const restLink = this.getSymbolLink(mainSymbolName + rest)
+                const restLink = this.getSymbolLink(mainSymbolName + rest, linkText, component, namespace)
                 if (restLink) {
                     fullLink += restLink
                 } else {
@@ -243,6 +408,43 @@ class CppTagfilesExtension {
     }
 
     /**
+     * Returns the anchor for a given fundamental type symbol.
+     *
+     * This function checks if the provided symbol is a fundamental type. If it is, the function returns the anchor for the type.
+     * The anchors are used to link to the cppreference.com documentation for the type.
+     *
+     * @see https://en.cppreference.com/w/cpp/language/types
+     *
+     * @param {string} symbol - The fundamental type symbol.
+     * @returns {string} The anchor for the fundamental type symbol, or an empty string if the symbol is not a fundamental type.
+     */
+    static getFundamentalTypeAnchor(symbol) {
+        const anchors = {
+            'bool': '#Boolean_type',
+            'char': '#Character_types',
+            'char8_t': '#Character_types',
+            'char16_t': '#Character_types',
+            'char32_t': '#Character_types',
+            'wchar_t': '#Character_types',
+            'int': '#Standard_integer_types',
+            'signed': '#Standard_integer_types',
+            'unsigned': '#Standard_integer_types',
+            'short': '#Standard_integer_types',
+            'long': '#Standard_integer_types',
+            'float': '#Floating-point_types',
+            'true': '#Boolean_type',
+            'false': '#Boolean_type',
+            'double': '#Floating-point_types',
+            'long double': '#Floating-point_types',
+            'void': '#void',
+        }
+        if (symbol in anchors) {
+            return anchors[symbol]
+        }
+        return ''
+    }
+
+    /**
      * Returns true if the given type is a fundamental type.
      * This is used to link to the cppreference.com documentation for the type.
      *
@@ -252,7 +454,7 @@ class CppTagfilesExtension {
      * @returns {boolean} True if the type is a fundamental type.
      */
     static isFundamentalType(type) {
-        return ['bool', 'char', 'char8_t', 'char16_t', 'char32_t', 'wchar_t', 'int', 'signed', 'unsigned', 'short', 'long', 'float', 'true', 'false', 'double', 'void'].includes(type)
+        return ['bool', 'char', 'char8_t', 'char16_t', 'char32_t', 'wchar_t', 'int', 'signed', 'unsigned', 'short', 'long', 'float', 'true', 'false', 'double', 'long double', 'void'].includes(type)
     }
 
     /**
@@ -271,11 +473,14 @@ class CppTagfilesExtension {
      */
     static getFileFilename(doc, symbol) {
         const targetFilename = symbol.substring(1, symbol.length - 1)
+        assert('tagfile' in doc, 'tagfile should be in doc')
         const tagFileObj = doc['tagfile']
-        for (const compound of tagFileObj['compound']) {
-            if (compound['name'] === targetFilename) {
-                return compound['filename']
+        if ('compound' in tagFileObj) {
+            for (const compound of tagFileObj['compound']) {
+                if (compound['name'] === targetFilename) {
+                    return compound['filename']
 
+                }
             }
         }
         return undefined
@@ -303,7 +508,7 @@ class CppTagfilesExtension {
     static getSymbolFilename(obj, symbol, curNamespace) {
         // Iterate <compound kind="class">
         if ('compound' in obj) {
-            for (const compound of obj['compound']) {
+            for (const compound of Array.isArray(obj['compound']) ? obj['compound'] : [obj['compound']]) {
                 const kind = compound['@attributes']["kind"];
                 if (kind !== 'class') {
                     continue
@@ -317,7 +522,7 @@ class CppTagfilesExtension {
 
         // Iterate <member kind="function">
         if ('member' in obj) {
-            for (const member of obj['member']) {
+            for (const member of Array.isArray(obj['member']) ? obj['member'] : [obj['member']]) {
                 const kind = member['@attributes']["kind"];
                 if (kind !== 'function') {
                     continue
@@ -330,9 +535,9 @@ class CppTagfilesExtension {
             }
         }
 
-        // <compound kind="namespace">
+        // Recursively look for symbol in <compound kind="namespace"> or <compound kind="class">
         if ('compound' in obj) {
-            for (const compound of obj['compound']) {
+            for (const compound of Array.isArray(obj['compound']) ? obj['compound'] : [obj['compound']]) {
                 const kind = compound['@attributes']["kind"];
                 if (kind !== 'namespace' && kind !== 'class') {
                     continue

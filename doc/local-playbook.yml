@@ -35,6 +35,9 @@ antora:
       index_latest_only: true
     - '@antora/collector-extension'
     - require: ./lib/cpp-tagfiles.js
+      cpp-tagfiles:
+        using-namespaces:
+          - 'boost::'
 asciidoc:
   attributes:
     # Enable pagination
