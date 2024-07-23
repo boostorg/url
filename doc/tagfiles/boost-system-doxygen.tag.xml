@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<tagfile>
+  <compound kind="file">
+    <name>boost/system/result</name>
+    <filename>system.html#ref_boostsystemresult_hpp</filename>
+    <namespace>boost::system</namespace>
+  </compound>
+  <compound kind="namespace">
+    <name>boost::system</name>
+    <filename></filename>
+    <class kind="class">boost::system::result</class>
+  </compound>
+  <compound kind="class">
+    <name>boost::system::result</name>
+    <filename>system.html#ref_resultt_e</filename>
+  </compound>
+</tagfile>

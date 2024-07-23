@@ -23,4 +23,8 @@ ext:
       command: node doc/generate-files.mjs
     scan:
       dir: doc/build/generated-files
+  cpp-tagfiles:
+    files:
+      - file: ./doc/tagfiles/boost-system-doxygen.tag.xml
+        base_url: https://www.boost.org/doc/libs/master/libs/system/doc/html/
 

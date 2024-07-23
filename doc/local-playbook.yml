@@ -34,6 +34,7 @@ antora:
     - require: '@antora/lunr-extension' # https://gitlab.com/antora/antora-lunr-extension
       index_latest_only: true
     - '@antora/collector-extension'
+    - require: ./lib/cpp-tagfiles.js
 asciidoc:
   attributes:
     # Enable pagination
@@ -42,5 +43,4 @@ asciidoc:
     remove-sidenav: ''
   extensions:
     - ./lib/boost-link-inline-macro.js
-    - ./lib/cpp.js
     - '@asciidoctor/tabs'

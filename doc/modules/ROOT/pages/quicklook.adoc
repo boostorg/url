@@ -63,7 +63,7 @@ You can parse the string by calling this function:
 include::example$unit/snippets.cpp[tag=code_urls_parsing_2,indent=0]
 ----
 
-The function `parse_uri` returns an object of type ``result`<`url_view`>` which is a container resembling a variant that holds either an error or an object.
+The function `parse_uri` returns an object of type cpp:result<url_view>[] which is a container resembling a variant that holds either an error or an object.
 A number of functions are available to parse different types of URL.
 
 We can immediately call `result::value` to obtain a `url_view`.
