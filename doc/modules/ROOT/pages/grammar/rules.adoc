@@ -11,7 +11,7 @@
 = Parse Rules
 
 A __Rule__ is an object which tries to match the beginning of an input character buffer against a particular syntax.
-It returns a `result` containing a value if the match was successful, or an `error_code` if the match failed.
+It returns a cpp:boost::system::result[] containing a value if the match was successful, or an `error_code` if the match failed.
 Rules are not invoked directly.
 Instead they are passed as values to a `parse` function, along with the input character buffer to process.
 The first overload requires that the entire input string match, otherwise else an error occurs.
