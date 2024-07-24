@@ -9,6 +9,7 @@
 #
 
 project
+    : common-requirements <library>$(boost_dependencies)
     : requirements
       <define>BOOST_URL_SOURCE
       <toolset>msvc-14.0:<build>no
