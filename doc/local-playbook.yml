@@ -26,7 +26,7 @@ content:
 
 ui:
   bundle:
-    url: https://github.com/cppalliance/site-docs/releases/download/ui-master/ui-bundle.zip
+    url: https://github.com/boostorg/website-v2-docs/releases/download/ui-master/ui-bundle.zip
     snapshot: true
 
 antora:
@@ -34,8 +34,16 @@ antora:
     - require: '@antora/lunr-extension' # https://gitlab.com/antora/antora-lunr-extension
       index_latest_only: true
     - '@antora/collector-extension'
+    - require: ./lib/cpp-tagfiles.js
+      cpp-tagfiles:
+        using-namespaces:
+          - 'boost::'
 asciidoc:
+  attributes:
+    # Enable pagination
+    page-pagination: ''
+    # Remove the sidenav and include TOC in index.adoc page
+    remove-sidenav: ''
   extensions:
     - ./lib/boost-link-inline-macro.js
-    - ./lib/cpp.js
     - '@asciidoctor/tabs'

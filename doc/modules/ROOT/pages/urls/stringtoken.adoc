@@ -27,7 +27,7 @@ The library provides a special customization mechanism called
 __StringToken__ to control how algorithms which require an output
 buffer acquire their storage.
 
-The __StringToken__ `string_token::assign_to` can be used to assign
+The __StringToken__ cpp:string_token::assign_to[] can be used to assign
 the decoded value to an existing string:
 
 [source,cpp]
@@ -35,7 +35,7 @@ the decoded value to an existing string:
 include::example$unit/snippets.cpp[tag=snippet_string_token_2,indent=0]
 ----
 
-The __StringToken__ `string_token::append_to` can be used to append
+The __StringToken__ cpp:string_token::append_to[] can be used to append
 the decoded value to an existing string:
 
 [source,cpp]
@@ -43,9 +43,9 @@ the decoded value to an existing string:
 include::example$unit/snippets.cpp[tag=snippet_string_token_3,indent=0]
 ----
 
-The __StringToken__ `string_token::preserve_size` can be used to
-return a `string_view` instead of a cpp:std::string[].
-The underlying storage for the `string_view` is
+The __StringToken__ cpp:string_token::preserve_size[] can be used to
+return a cpp:string_view[] instead of a cpp:std::string[].
+The underlying storage for the cpp:string_view[] is
 provided to the token.
 
 [source,cpp]
@@ -54,9 +54,9 @@ include::example$unit/snippets.cpp[tag=snippet_string_token_4,indent=0]
 ----
 
 When no customization is provided, the default behavior
-is to use the default `string_token::return_string` token which returns a cpp:std::string[].
+is to use the default cpp:string_token::return_string[] token which returns a cpp:std::string[].
 
-The trait `string_token::is_token` can be used to determine if a type
+The trait cpp:string_token::is_token[] can be used to determine if a type
 is a __StringToken__:
 
 [source,cpp]
