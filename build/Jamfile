@@ -8,9 +8,14 @@
 # Official repository: https://github.com/vinniefalco/url
 #
 
+constant boost_dependencies_private :
+    /boost/throw_exception//boost_throw_exception
+    ;
+
 project
     : common-requirements <library>$(boost_dependencies)
     : requirements
+      <library>$(boost_dependencies_private)
       <define>BOOST_URL_SOURCE
       <toolset>msvc-14.0:<build>no
       # Warnings in dependencies
