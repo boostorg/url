@@ -37,7 +37,14 @@ option(BOOST_URL_BUILD_EXAMPLES "Build boost::url examples" ${BOOST_URL_IS_ROOT}
 option(BOOST_URL_MRDOCS_BUILD "Build the target for MrDocs: see mrdocs.yml" OFF)
 option(BOOST_URL_DISABLE_THREADS "Disable threads" OFF)
 option(BOOST_URL_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
-set(BOOST_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.." CACHE STRING "Boost source dir to use when running CMake from this directory")
+
+# Check if environment variable BOOST_SRC_DIR is set
+if (NOT DEFINED BOOST_SRC_DIR AND DEFINED ENV{BOOST_SRC_DIR})
+    set(DEFAULT_BOOST_SRC_DIR "$ENV{BOOST_SRC_DIR}")
+else ()
+    set(DEFAULT_BOOST_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../..")
+endif ()
+set(BOOST_SRC_DIR ${DEFAULT_BOOST_SRC_DIR} CACHE STRING "Boost source dir to use when running CMake from this directory")
 
 #-------------------------------------------------
 #
