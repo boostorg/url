@@ -45,5 +45,5 @@ asciidoc:
     # Remove the sidenav and include TOC in index.adoc page
     remove-sidenav: ''
   extensions:
-    - ./lib/boost-link-inline-macro.js
+    - '@alandefreitas/asciidoctor-boost-links'
     - '@asciidoctor/tabs'
