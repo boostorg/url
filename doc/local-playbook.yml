@@ -38,6 +38,13 @@ antora:
       cpp-tagfiles:
         using-namespaces:
           - 'boost::'
+    - require: '@alandefreitas/antora-cpp-reference-extension'
+      dependencies:
+        - name: 'boost'
+          repo: 'https://github.com/boostorg/boost.git'
+          tag: 'develop'
+          variable: 'BOOST_SRC_DIR'
+
 asciidoc:
   attributes:
     # Enable pagination
