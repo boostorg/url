@@ -5,19 +5,6 @@
 
 require-b2 5.2 ;
 
-import-search /boost/config/checks ;
-import config : requires ;
-
-constant c11-requires :
-    [ requires
-    cxx11_constexpr
-    cxx11_decltype
-    cxx11_hdr_tuple
-    cxx11_template_aliases
-    cxx11_variadic_templates
-    ]
-    ;
-
 constant boost_dependencies :
     /boost/align//boost_align
     /boost/assert//boost_assert
@@ -33,8 +20,6 @@ constant boost_dependencies :
 project /boost/url
     : common-requirements
         <include>include
-    : requirements
-        $(c11-requires)
     ;
 
 explicit
