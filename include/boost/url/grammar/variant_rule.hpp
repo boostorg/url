@@ -79,7 +79,7 @@ template<
 class variant_rule_t
 {
 public:
-    using value_type = variant<
+    using value_type = variant2::variant<
         typename R0::value_type,
         typename Rn::value_type...>;
 
