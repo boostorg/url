@@ -33,7 +33,6 @@ antora:
   extensions:
     - require: '@antora/lunr-extension' # https://gitlab.com/antora/antora-lunr-extension
       index_latest_only: true
-    - '@antora/collector-extension'
     - require: '@alandefreitas/antora-cpp-tagfiles-extension'
       cpp-tagfiles:
         using-namespaces:
