@@ -214,33 +214,7 @@ using boost::system::system_category;
     the library.
 
  */
-#ifdef BOOST_URL_DOCS
-enum errc
-{
-    __see_below__
-};
-#else
-
-/** The set of constants used for cross-platform error codes
-
-    @warning This alias is no longer supported and
-    should not be used in new code. Please use
-    `core::string_view` instead.
-
-    This alias is included for backwards
-    compatibility with earlier versions of the
-    library.
-
-    However, it will be removed in future releases,
-    and using it in new code is not recommended.
-
-    Please use the updated version instead to
-    ensure compatibility with future versions of
-    the library.
-
- */
 namespace errc = boost::system::errc;
-#endif
 
 /** The type of result returned by library functions
 
