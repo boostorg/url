@@ -2253,6 +2253,7 @@ public:
         Linear.
 
         @param ps The params to set.
+        @param opts The options for encoding.
 
         @par BNF
         @code
@@ -2275,7 +2276,9 @@ public:
             @ref set_query.
     */
     url_base&
-    set_params( std::initializer_list<param_view> ps ) noexcept;
+    set_params(
+        std::initializer_list<param_view> ps,
+        encoding_opts opts = {}) noexcept;
 
     /** Set the query params
 

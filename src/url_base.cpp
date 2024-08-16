@@ -1413,9 +1413,11 @@ encoded_params() noexcept
 
 url_base&
 url_base::
-set_params( std::initializer_list<param_view> ps ) noexcept
+set_params(
+    std::initializer_list<param_view> ps,
+    encoding_opts opts) noexcept
 {
-    params().assign(ps);
+    params(opts).assign(ps);
     return *this;
 }
 
