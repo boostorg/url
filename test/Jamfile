@@ -21,6 +21,7 @@ project
     <toolset>gcc:<cxxflags>"-Wno-unused-but-set-variable"
     <toolset>gcc:<cxxflags>"-Wno-maybe-uninitialized"
     <toolset>clang:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>clang:<cxxflags>"-Wno-unused-parameter"
     <toolset>gcc,<target-os>windows:<cxxflags>"-Wno-error=array-bounds"
     <toolset>clang:<cxxflags>"-Wno-unknown-warning-option"
     <toolset>clang-13:<cxxflags>"-Wno-unused-but-set-variable"
