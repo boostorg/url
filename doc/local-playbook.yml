@@ -26,7 +26,7 @@ content:
 
 ui:
   bundle:
-    url: https://github.com/boostorg/website-v2-docs/releases/download/ui-master/ui-bundle.zip
+    url: https://github.com/boostorg/website-v2-docs/releases/download/ui-develop/ui-bundle.zip
     snapshot: true
 
 antora:
@@ -48,8 +48,6 @@ asciidoc:
   attributes:
     # Enable pagination
     page-pagination: ''
-    # Remove the sidenav and include TOC in index.adoc page
-    remove-sidenav: ''
   extensions:
     - '@alandefreitas/asciidoctor-boost-links'
     - '@asciidoctor/tabs'
