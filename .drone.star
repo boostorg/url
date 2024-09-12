@@ -30,6 +30,7 @@ def main(ctx):
         '>=11',
         # Asan is delegated to GHA
         asan=False,
+        docs=False,
         cache_dir='cache') + [
                linux_cxx("GCC 12 (no-mutex)", "g++-12", packages="g++-12", buildscript="drone", buildtype="boost",
                          image="cppalliance/droneubuntu2204:1",
