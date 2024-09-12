@@ -43,6 +43,7 @@ antora:
           repo: 'https://github.com/boostorg/boost.git'
           tag: 'develop'
           variable: 'BOOST_SRC_DIR'
+          system-env: 'BOOST_SRC_DIR'
 
 asciidoc:
   attributes:
