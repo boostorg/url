@@ -5,8 +5,8 @@
     "antora": "3.1.3"
   },
   "dependencies": {
-    "@alandefreitas/antora-cpp-reference-extension": "^0.0.1",
-    "@alandefreitas/antora-cpp-tagfiles-extension": "^0.0.1",
+    "@alandefreitas/antora-cpp-reference-extension": "^0.0.3",
+    "@alandefreitas/antora-cpp-tagfiles-extension": "^0.0.3",
     "@alandefreitas/asciidoctor-boost-links": "^0.0.1",
     "@antora/expand-path-helper": "^2.0.0",
     "@antora/lunr-extension": "^1.0.0-alpha.8",

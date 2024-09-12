@@ -365,6 +365,15 @@ jobs:
       - name: Clone Boost.URL
         uses: actions/checkout@v4
 
+      - name: Clone Boost
+        uses: alandefreitas/cpp-actions/boost-clone@v1.8.7
+        id: boost-clone
+        with:
+          branch: ${{ (github.ref_name == 'master' && github.ref_name) || 'develop' }}
+          boost-dir: ../boost-source
+          scan-modules-dir: .
+          scan-modules-ignore: url
+
       - uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -379,6 +388,12 @@ jobs:
       - name: Build Antora Docs
         run: |
           git config --global --add safe.directory "$(pwd)"
+          
+          cd ..
+          BOOST_SRC_DIR="$(pwd)/boost-source"
+          export BOOST_SRC_DIR
+          cd url
+          
           cd doc
           bash ./build_antora.sh
           
