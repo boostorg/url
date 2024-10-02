@@ -49,8 +49,6 @@ asciidoc:
   attributes:
     # Enable pagination
     page-pagination: ''
-    # Remove the sidenav and include TOC in index.adoc page
-    remove-sidenav: ''
   extensions:
     - '@alandefreitas/asciidoctor-boost-links'
     - '@asciidoctor/tabs'
