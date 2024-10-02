@@ -70,8 +70,7 @@ parse(
             // map "?" to { {} }
             u.apply_query(
                 rv->query,
-                rv->count +
-                    rv->query.empty());
+                rv->count);
         }
     }
 

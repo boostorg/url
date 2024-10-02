@@ -52,13 +52,13 @@ parse(
             it, end, detail::query_part_rule);
         if(! rv)
             return rv.error();
-        if(rv->has_query)
+        auto& v = *rv;
+        if(v.has_query)
         {
             // map "?" to { {} }
             u.apply_query(
-                rv->query,
-                rv->count +
-                    rv->query.empty());
+                v.query,
+                v.count);
         }
     }
 
