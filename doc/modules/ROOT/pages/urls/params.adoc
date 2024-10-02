@@ -31,6 +31,17 @@ This URL has two query parameters, cpp:first[] and cpp:last[] whose values are "
 https://www.example.com?first=John&last=Doe
 ----
 
+[cols="2,3"]
+|===
+// Headers
+|s| `params( s )`
+
+// Row 1, Column 1
+|`"?first=John&last=Doe"`
+// Row 1, Column 2
+|`{ { "first", "John" }, { "last", "Doe" } }`
+|===
+
 Like the path, the library permits access to the params as using these separate, bidirectional view types which reference the underlying URL:
 
 [cols="1,1,3"]
@@ -70,7 +81,34 @@ Like the path, the library permits access to the params as using these separate,
 
 A param always has a key, even if it is the empty string.
 The value is optional; an empty string is distinct from no value.
-To represent individual params the library uses these types, distinguished by their ownership model and whether or not percent-escapes are possible:
+The lack of an `=` character in the query param is interpreted as no value, while an `=` character with no value is interpreted as an empty string.
+
+[cols="2,3"]
+|===
+// Headers
+|s| `params( s )`
+
+|`"?name=John"`
+|`{ { "name", "John" } }`
+
+|`"?=John"`
+|`{ { "", "John" } }`
+
+|`"?name="`
+|`{ { "name", "" } }`
+
+|`"?name"`
+|`{ { "name", no_value } }`
+
+|`"?"`
+|`{ { "", no_value } }`
+
+|`""`
+|`{}`
+
+|===
+
+To represent individual params the library uses these types, distinguished by their ownership model and whether percent-escapes are possible:
 
 [cols="1,1,3"]
 |===
@@ -117,38 +155,38 @@ This table shows some examples of initializer lists used to construct a param ty
 |Statement|cpp:qp.key[]|cpp:qp.value[]|cpp:qp.has_value[]
 
 // Row 1, Column 1
-|cpp:param qp = { "first", "John" };[]
+|`param qp = { "first", "John" };`
 // Row 1, Column 2
-|cpp:"First"[]
+|`"First"`
 // Row 1, Column 3
-|cpp:"John"[]
+|`"John"`
 // Row 1, Column 4
 |cpp:true[]
 
 // Row 2, Column 1
-|cpp:param qp = { "first", "" };[]
+|`param qp = { "first", "" };`
 // Row 2, Column 2
-|cpp:"First"[]
+|`"First"`
 // Row 2, Column 3
-|cpp:""[]
+|`""`
 // Row 2, Column 4
 |cpp:true[]
 
 // Row 3, Column 1
-|cpp:param qp = { "first", no_value };[]
+|`param qp = { "first", no_value };`
 // Row 3, Column 2
-|cpp:"First"[]
+|`"First"`
 // Row 3, Column 3
-|cpp:""[]
+|`""`
 // Row 3, Column 4
 |cpp:false[]
 
 // Row 4, Column 1
-|cpp:param qp = { "", "Doe" };[]
+|`param qp = { "", "Doe" };`
 // Row 4, Column 2
-|cpp:""[]
+|`""`
 // Row 4, Column 3
-|cpp:"Doe"[]
+|`"Doe"`
 // Row 4, Column 4
 |cpp:true[]
 
@@ -167,37 +205,37 @@ This demonstrates how the syntax of the query maps to the parameter structure:
 [cols="2,3"]
 |===
 // Headers
-|s|cpp:parms( s )[]
+|s| `params( s )`
 
 // Row 1, Column 1
-|cpp:"?first=John&last=Doe"[]
+|`"?first=John&last=Doe"`
 // Row 1, Column 2
-|cpp:{ { "first", "John" }, { "last", "Doe" } }[]
+|`{ { "first", "John" }, { "last", "Doe" } }`
 
 // Row 2, Column 1
-|cpp:"?id=42&unsorted"[]
+|`"?id=42&unsorted"`
 // Row 2, Column 2
-|cpp:{ { "id", "42" }, { "last", no_value } }[]
+|`{ { "id", "42" }, { "last", no_value } }`
 
 // Row 3, Column 1
-|cpp:"?col=cust&row="[]
+|`"?col=cust&row="`
 // Row 3, Column 2
-|cpp:{ { "col", "cust" }, { "row", "" } }[]
+|`{ { "col", "cust" }, { "row", "" } }`
 
 // Row 4, Column 1
-|cpp:"?justify=left&"[]
+|`"?justify=left&"`
 // Row 4, Column 2
-|cpp:{ { "justify", "left" }, { "", no_value } }[]
+|`{ { "justify", "left" }, { "", no_value } }`
 
 // Row 5, Column 1
-|cpp:"?"[]
+|`"?"`
 // Row 5, Column 2
-|cpp:{ { "", no_value } }[]
+|`{ { "", no_value } }`
 
 // Row 6, Column 1
-|cpp:""[]
+|`""`
 // Row 6, Column 2
-|cpp:{ }[]
+|`{ }`
 
 |===
 
