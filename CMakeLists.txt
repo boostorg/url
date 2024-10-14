@@ -149,7 +149,8 @@ function(boost_url_setup_properties target)
     target_link_libraries(${target} PUBLIC ${BOOST_URL_DEPENDENCIES})
     target_compile_definitions(${target} PUBLIC $<IF:$<BOOL:${BUILD_SHARED_LIBS}>,BOOST_URL_DYN_LINK=1,BOOST_URL_STATIC_LINK=1>)
     target_compile_definitions(${target} PRIVATE BOOST_URL_SOURCE)
-    target_compile_options(${target} PUBLIC $<$<CXX_COMPILER_ID:MSVC>:/EHsc>)
+    # issue #868
+    # target_compile_options(${target} PUBLIC $<$<CXX_COMPILER_ID:MSVC>:/EHsc>)
 endfunction()
 
 if (BOOST_URL_MRDOCS_BUILD)
