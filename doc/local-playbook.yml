@@ -33,11 +33,11 @@ antora:
   extensions:
     - require: '@antora/lunr-extension' # https://gitlab.com/antora/antora-lunr-extension
       index_latest_only: true
-    - require: '@alandefreitas/antora-cpp-tagfiles-extension'
+    - require: '@cppalliance/antora-cpp-tagfiles-extension'
       cpp-tagfiles:
         using-namespaces:
           - 'boost::'
-    - require: '@alandefreitas/antora-cpp-reference-extension'
+    - require: '@cppalliance/antora-cpp-reference-extension'
       dependencies:
         - name: 'boost'
           repo: 'https://github.com/boostorg/boost.git'
@@ -50,5 +50,5 @@ asciidoc:
     # Enable pagination
     page-pagination: ''
   extensions:
-    - '@alandefreitas/asciidoctor-boost-links'
+    - '@cppalliance/asciidoctor-boost-links'
     - '@asciidoctor/tabs'
