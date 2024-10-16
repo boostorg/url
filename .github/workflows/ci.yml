@@ -354,10 +354,18 @@ jobs:
           trace-commands: true
 
   antora:
-    name: Antora Docs
     needs: [ runner-selection ]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['ubuntu-latest'] }}
-    container: ubuntu:23.10
+    strategy:
+      matrix:
+        include:
+          - { name: Windows, os: windows-latest }
+          - { name: Ubuntu, os: ubuntu-latest }
+          - { name: MacOS, os: macos-latest }
+    name: Antora Docs (${{ matrix.name }})
+    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)[matrix.os] }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Install packages
         uses: alandefreitas/cpp-actions/package-install@v1.8.7
@@ -380,14 +388,13 @@ jobs:
         with:
           node-version: 18
 
-      - name: Setup C++
-        uses: alandefreitas/cpp-actions/setup-cpp@v1.8.7
-        id: setup-cpp
-        with:
-          compiler: clang
-          version: 18
+      - name: Setup Ninja
+        if: runner.os == 'Windows'
+        uses: seanmiddleditch/gha-setup-ninja@v5
 
       - name: Build Antora Docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global --add safe.directory "$(pwd)"
           
@@ -408,6 +415,6 @@ jobs:
       - name: Create Antora Docs Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: antora-docs
+          name: antora-docs-${{ matrix.name }}
           path: doc/build/site
           
