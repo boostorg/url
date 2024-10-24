@@ -2922,11 +2922,6 @@ private:
         detail::any_params_iter&&) ->
             detail::params_iter_impl;
 
-    system::result<void>
-    resolve_impl(
-        url_view_base const& base,
-        url_view_base const& ref);
-
     template<class CharSet>
     void normalize_octets_impl(int,
         CharSet const& allowed, op_t&) noexcept;
