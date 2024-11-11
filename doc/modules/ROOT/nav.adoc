@@ -22,8 +22,7 @@
 ** xref:examples/file-router.adoc[]
 ** xref:examples/router.adoc[]
 ** xref:examples/sanitize.adoc[]
-* Reference
-** xref:reference.adoc[Index]
+* xref:reference.adoc[Reference]
 ** Concepts
 *** xref:concepts/CharSet.adoc[]
 *** xref:concepts/Rule.adoc[]
