@@ -857,16 +857,6 @@ public:
 
     //--------------------------------------------
 
-    /** Return the hash of this value
-    */
-    friend
-    std::size_t
-    hash_value(
-        string_view_base const& s) noexcept
-    {
-        return hash_value(s.s_);
-    }
-
     /** Format a string to an output stream
      */
     BOOST_URL_DECL
