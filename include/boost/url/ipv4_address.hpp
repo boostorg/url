@@ -130,8 +130,7 @@ public:
         @par Exception Safety
         Exceptions thrown on invalid input.
 
-        @throw system_error
-        The input failed to parse correctly.
+        @throw system_error The input failed to parse correctly.
 
         @param s The string to parse.
 
@@ -194,8 +193,7 @@ public:
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
-    to_string(
-        BOOST_URL_STRTOK_ARG(token)) const
+    to_string(StringToken&& token = {}) const
     {
         to_string_impl(token);
         return token.result();

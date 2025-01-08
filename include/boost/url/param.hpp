@@ -25,7 +25,7 @@ struct param_pct_view;
 struct param_view;
 #endif
 
-/** The type of no_value
+/** The type of @ref no_value
 */
 struct no_value_t
 {
@@ -324,15 +324,20 @@ struct param
     param&
     operator=(param_pct_view const& other);
 
-#ifndef BOOST_URL_DOCS
-    // arrow support
+    /** Arrow support
+
+        This operator returns the address of the
+        object so that it can be used in pointer
+        contexts.
+
+     */
     param const*
     operator->() const noexcept
     {
         return this;
     }
 
-    // aggregate construction
+    /// Aggregate construction
     param(
         core::string_view key,
         core::string_view value,
@@ -344,7 +349,6 @@ struct param
         , has_value(has_value)
     {
     }
-#endif
 
 private:
     param(
@@ -357,7 +361,7 @@ private:
 
 //------------------------------------------------
 
-/** A query parameter
+/** A view of a query parameter
 
     Objects of this type represent a single key
     and value pair in a query string where a key
@@ -558,15 +562,20 @@ struct param_view
         return { key, value, has_value };
     }
 
-#ifndef BOOST_URL_DOCS
-    // arrow support
+    /** Arrow support
+
+        This operator returns the address of the
+        object so that it can be used in pointer
+        contexts.
+
+     */
     param_view const*
     operator->() const noexcept
     {
         return this;
     }
 
-    // aggregate construction
+    /// Aggregate construction
     param_view(
         core::string_view key_,
         core::string_view value_,
@@ -578,7 +587,6 @@ struct param_view
         , has_value(has_value_)
     {
     }
-#endif
 
 private:
     param_view(
@@ -591,7 +599,7 @@ private:
 
 //------------------------------------------------
 
-/** A query parameter
+/** A view of a percent-encoded query parameter
 
     Objects of this type represent a single key
     and value pair in a query string where a key
@@ -863,15 +871,20 @@ struct param_pct_view
             key, value, has_value);
     }
 
-#ifndef BOOST_URL_DOCS
-    /// Arrow support
+    /** Arrow support
+
+        This operator returns the address of the
+        object so that it can be used in pointer
+        contexts.
+
+     */
     param_pct_view const*
     operator->() const noexcept
     {
         return this;
     }
 
-    /// aggregate construction
+    /// Aggregate construction
     param_pct_view(
         pct_string_view key,
         pct_string_view value,
@@ -883,7 +896,6 @@ struct param_pct_view
         , has_value(has_value)
     {
     }
-#endif
 
 private:
     param_pct_view(

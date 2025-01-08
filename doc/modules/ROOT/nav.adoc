@@ -23,8 +23,4 @@
 ** xref:examples/router.adoc[]
 ** xref:examples/sanitize.adoc[]
 * xref:reference.adoc[Reference]
-** Concepts
-*** xref:concepts/CharSet.adoc[]
-*** xref:concepts/Rule.adoc[]
-*** xref:concepts/StringToken.adoc[]
-** xref:HelpCard.adoc[]
+* xref:HelpCard.adoc[]

@@ -388,7 +388,8 @@ public:
         @par Exception Safety
         Throws nothing
 
-        @param v0, v1 The objects to swap
+        @param v0 The first object to swap
+        @param v1 The second object to swap
 
         @see
             @ref url::swap

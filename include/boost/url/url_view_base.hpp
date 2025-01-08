@@ -210,8 +210,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
-            >4.2.  Relative Reference (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2">4.2.  Relative Reference (rfc3986)</a>
     */
     bool
     empty() const noexcept
@@ -344,8 +343,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
-            >3.1. Scheme (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">3.1. Scheme (rfc3986)</a>
 
         @see
             @ref scheme,
@@ -380,8 +378,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
-            >3.1. Scheme (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">3.1. Scheme (rfc3986)</a>
 
         @see
             @ref has_scheme,
@@ -429,8 +426,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1"
-            >3.1. Scheme (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.1">3.1. Scheme (rfc3986)</a>
 
         @see
             @ref has_scheme,
@@ -485,8 +481,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
-            >3.2. Authority (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">3.2. Authority (rfc3986)</a>
 
         @see
             @ref authority,
@@ -520,8 +515,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
-            >3.2. Authority (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">3.2. Authority (rfc3986)</a>
 
         @see
             @ref encoded_authority,
@@ -556,8 +550,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2"
-            >3.2. Authority (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2">3.2. Authority (rfc3986)</a>
 
         @see
             @ref authority,
@@ -596,8 +589,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1. User Information (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">3.2.1. User Information (rfc3986)</a>
 
         @see
             @ref has_password,
@@ -638,8 +630,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1. User Information (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">3.2.1. User Information (rfc3986)</a>
 
         @see
             @ref has_userinfo,
@@ -695,8 +686,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1. User Information (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">3.2.1. User Information (rfc3986)</a>
 
         @see
             @ref has_password,
@@ -710,7 +700,7 @@ public:
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     userinfo(
-        BOOST_URL_STRTOK_ARG(token)) const
+        StringToken&& token = {}) const
     {
         encoding_opts opt;
         opt.space_as_plus = false;
@@ -746,8 +736,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1. User Information (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">3.2.1. User Information (rfc3986)</a>
 
         @see
             @ref has_password,
@@ -792,8 +781,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1. User Information (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">3.2.1. User Information (rfc3986)</a>
 
         @see
             @ref has_password,
@@ -807,7 +795,7 @@ public:
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     user(
-        BOOST_URL_STRTOK_ARG(token)) const
+        StringToken&& token = {}) const
     {
         encoding_opts opt;
         opt.space_as_plus = false;
@@ -844,8 +832,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1. User Information (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">3.2.1. User Information (rfc3986)</a>
 
         @see
             @ref has_password,
@@ -888,8 +875,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1. User Information (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">3.2.1. User Information (rfc3986)</a>
 
         @see
             @ref has_password,
@@ -903,7 +889,7 @@ public:
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     password(
-        BOOST_URL_STRTOK_ARG(token)) const
+        StringToken&& token = {}) const
     {
         encoding_opts opt;
         opt.space_as_plus = false;
@@ -936,8 +922,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1"
-            >3.2.1. User Information (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">3.2.1. User Information (rfc3986)</a>
 
         @see
             @ref has_password,
@@ -984,8 +969,7 @@ public:
         Throws nothing.
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
     */
     urls::host_type
     host_type() const noexcept
@@ -1022,13 +1006,12 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     host(
-        BOOST_URL_STRTOK_ARG(token)) const
+        StringToken&& token = {}) const
     {
         encoding_opts opt;
         opt.space_as_plus = false;
@@ -1065,8 +1048,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
     */
     pct_string_view
     encoded_host() const noexcept;
@@ -1117,13 +1099,12 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     host_address(
-        BOOST_URL_STRTOK_ARG(token)) const
+        StringToken&& token = {}) const
     {
         encoding_opts opt;
         opt.space_as_plus = false;
@@ -1179,8 +1160,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
     */
     pct_string_view
     encoded_host_address() const noexcept;
@@ -1218,8 +1198,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
     */
     ipv4_address
     host_ipv4_address() const noexcept;
@@ -1265,8 +1244,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
     */
     ipv6_address
     host_ipv6_address() const noexcept;
@@ -1297,8 +1275,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
     */
     core::string_view
     host_ipvfuture() const noexcept;
@@ -1332,13 +1309,12 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     host_name(
-        BOOST_URL_STRTOK_ARG(token)) const
+        StringToken&& token = {}) const
     {
         encoding_opts opt;
         opt.space_as_plus = false;
@@ -1377,8 +1353,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2. Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
     */
     pct_string_view
     encoded_host_name() const noexcept;
@@ -1414,13 +1389,12 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc6874"
-            >Representing IPv6 Zone Identifiers in Address Literals and Uniform Resource Identifiers</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc6874">Representing IPv6 Zone Identifiers in Address Literals and Uniform Resource Identifiers</a>
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     zone_id(
-        BOOST_URL_STRTOK_ARG(token)) const
+        StringToken&& token = {}) const
     {
         encoding_opts opt;
         opt.space_as_plus = false;
@@ -1459,8 +1433,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc6874"
-            >Representing IPv6 Zone Identifiers in Address Literals and Uniform Resource Identifiers</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc6874">Representing IPv6 Zone Identifiers in Address Literals and Uniform Resource Identifiers</a>
     */
     pct_string_view
     encoded_zone_id() const noexcept;
@@ -1495,8 +1468,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
-            >3.2.3. Port (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">3.2.3. Port (rfc3986)</a>
 
         @see
             @ref encoded_host_and_port,
@@ -1530,8 +1502,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
-            >3.2.3. Port (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">3.2.3. Port (rfc3986)</a>
 
         @see
             @ref encoded_host_and_port,
@@ -1565,8 +1536,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
-            >3.2.3. Port (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">3.2.3. Port (rfc3986)</a>
 
         @see
             @ref encoded_host_and_port,
@@ -1614,8 +1584,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3.  Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">3.3.  Path (rfc3986)</a>
 
         @see
             @ref encoded_path,
@@ -1665,8 +1634,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">3.3. Path (rfc3986)</a>
 
         @see
             @ref is_path_absolute,
@@ -1677,7 +1645,7 @@ public:
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     path(
-        BOOST_URL_STRTOK_ARG(token)) const
+        StringToken&& token = {}) const
     {
         encoding_opts opt;
         opt.space_as_plus = false;
@@ -1719,8 +1687,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">3.3. Path (rfc3986)</a>
 
         @see
             @ref is_path_absolute,
@@ -1758,8 +1725,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">3.3. Path (rfc3986)</a>
 
         @see
             @ref is_path_absolute,
@@ -1808,8 +1774,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">3.3. Path (rfc3986)</a>
 
         @see
             @ref is_path_absolute,
@@ -1853,10 +1818,8 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
-            >3.4.  Query (rfc3986)</a>
-        @li <a href="https://en.wikipedia.org/wiki/Query_string"
-            >Query string (Wikipedia)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string">Query string (Wikipedia)</a>
 
         @see
             @ref encoded_params,
@@ -1901,10 +1864,8 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
-            >3.4.  Query (rfc3986)</a>
-        @li <a href="https://en.wikipedia.org/wiki/Query_string"
-            >Query string (Wikipedia)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string">Query string (Wikipedia)</a>
 
         @see
             @ref encoded_params,
@@ -1915,7 +1876,7 @@ public:
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     query(
-        BOOST_URL_STRTOK_ARG(token)) const
+        StringToken&& token = {}) const
     {
         // When interacting with the query as
         // an intact string, we do not treat
@@ -1954,10 +1915,8 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
-            >3.4.  Query (rfc3986)</a>
-        @li <a href="https://en.wikipedia.org/wiki/Query_string"
-            >Query string (Wikipedia)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">3.4. Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string">Query string (Wikipedia)</a>
 
         @see
             @ref encoded_params,
@@ -1998,10 +1957,8 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
-            >3.4.  Query (rfc3986)</a>
-        @li <a href="https://en.wikipedia.org/wiki/Query_string"
-            >Query string (Wikipedia)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">3.4.  Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string">Query string (Wikipedia)</a>
 
         @see
             @ref encoded_params,
@@ -2036,23 +1993,16 @@ public:
         @par Exception Safety
         Throws nothing.
 
-        @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
-
         @par BNF
         @code
         query           = *( pchar / "/" / "?" )
-
         query-param     = key [ "=" value ]
         query-params    = [ query-param ] *( "&" query-param )
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
-            >3.4.  Query (rfc3986)</a>
-        @li <a href="https://en.wikipedia.org/wiki/Query_string"
-            >Query string (Wikipedia)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">3.4. Query (rfc3986)</a>
+        @li <a href="https://en.wikipedia.org/wiki/Query_string">Query string (Wikipedia)</a>
 
         @see
             @ref encoded_query,
@@ -2095,8 +2045,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
-            >3.5. Fragment (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5">3.5. Fragment (rfc3986)</a>
 
         @see
             @ref encoded_fragment,
@@ -2153,8 +2102,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
-            >3.5. Fragment (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5">3.5. Fragment (rfc3986)</a>
 
         @see
             @ref encoded_fragment,
@@ -2163,7 +2111,7 @@ public:
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
     fragment(
-        BOOST_URL_STRTOK_ARG(token)) const
+        StringToken&& token = {}) const
     {
         encoding_opts opt;
         opt.space_as_plus = false;
@@ -2199,8 +2147,7 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5"
-            >3.5. Fragment (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.5">3.5. Fragment (rfc3986)</a>
 
         @see
             @ref fragment,
@@ -2241,10 +2188,8 @@ public:
         @endcode
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2"
-            >3.2.2.  Host (rfc3986)</a>
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3"
-            >3.2.3. Port (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2.  Host (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3">3.2.3. Port (rfc3986)</a>
 
         @see
             @ref has_port,
@@ -2302,10 +2247,8 @@ public:
         Throws nothing.
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">3.3. Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">3.4. Query (rfc3986)</a>
 
         @see
             @ref encoded_origin,
@@ -2334,10 +2277,8 @@ public:
         Throws nothing.
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
-            >3.3. Path (rfc3986)</a>
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
-            >3.4. Query (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3">3.3. Path (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4">3.4. Query (rfc3986)</a>
 
         @see
             @ref encoded_origin,
@@ -2365,11 +2306,9 @@ public:
         Throws nothing.
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
-            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2">6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
-        @return -1 if `*this < other`, 0 if
-            `this == other`, and 1 if `this > other`.
+        @return -1 if `*this < other`, 0 if `this == other`, and 1 if `this > other`.
     */
     int
     compare(url_view_base const& other) const noexcept;
@@ -2405,8 +2344,7 @@ public:
         @return `true` if `u0 == u1`
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
-            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2">6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2448,8 +2386,7 @@ public:
         @return `true` if `u0 != u1`
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
-            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2">6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2491,8 +2428,7 @@ public:
         @return `true` if `u0 < u1`
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
-            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2">6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2534,8 +2470,7 @@ public:
         @return `true` if `u0 <= u1`
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
-            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2">6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2577,8 +2512,7 @@ public:
         @return `true` if `u0 > u1`
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
-            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2">6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool
@@ -2620,8 +2554,7 @@ public:
         @return `true` if `u0 >= u1`
 
         @par Specification
-        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
-            >6.2.2 Syntax-Based Normalization (rfc3986)</a>
+        @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2">6.2.2 Syntax-Based Normalization (rfc3986)</a>
     */
     friend
     bool

@@ -1222,7 +1222,7 @@ public:
         @par Exception Safety
         Throws nothing.
 
-        @return -1 if `*this < other`, 0 if
+        @return `-1` if `*this < other`, `0` if
         `this == other`, and 1 if `this > other`.
 
         @par Specification

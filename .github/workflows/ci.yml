@@ -172,6 +172,7 @@ jobs:
           echo 'CXX=${{ steps.setup-cpp.outputs.cxx || matrix.cxx || '' }}' >> $GITHUB_ENV
           echo 'CXXFLAGS=${{ (matrix.intsan && '-fsanitize=integer -fno-sanitize=unsigned-integer-overflow -fno-sanitize-recover=integer -fno-omit-frame-pointer') || (matrix.boundssan && '-fsanitize=bounds -fno-sanitize-recover=bounds -fno-omit-frame-pointer') || matrix.cxxflags || '' }}' >> $GITHUB_ENV
           echo 'CXXSTD=${{ matrix.latest-cxxstd || '' }}' >> $GITHUB_ENV
+          echo 'BUILD_SHARED_LIB=${{ matrix.shared || '' }}' >> $GITHUB_ENV
           echo 'BUILD_SHARED_LIBS=${{ matrix.shared || '' }}' >> $GITHUB_ENV
           echo 'CMAKE_RUN_TESTS=true' >> $GITHUB_ENV
           echo 'CMAKE_PACKAGE=false' >> $GITHUB_ENV

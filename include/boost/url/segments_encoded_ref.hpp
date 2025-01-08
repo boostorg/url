@@ -155,15 +155,14 @@ public:
 
         @param other The segments to assign.
     */
-    /** @{ */
     BOOST_URL_DECL
     segments_encoded_ref&
     operator=(segments_encoded_ref const& other);
 
+    /// @copydoc operator=(segments_encoded_ref const&)
     BOOST_URL_DECL
     segments_encoded_ref&
     operator=(segments_encoded_view const& other);
-    /** @} */
 
     /** Assignment
 
@@ -355,8 +354,8 @@ public:
         @throw system_error
         The range contains an invalid percent-encoding.
 
-        @param first, last The range of segments
-        to assign.
+        @param first The first element in the range.
+        @param last One past the last element in the range.
     */
     template<class FwdIt>
     void
@@ -498,8 +497,8 @@ public:
         the range is inserted. This may
         be equal to `end()`.
 
-        @param first, last The range of segments
-        to insert.
+        @param first The first element in the range to insert.
+        @param last One past the last element in the range to insert.
     */
     template<class FwdIt>
     iterator
@@ -618,7 +617,8 @@ public:
 
         @return An iterator to the new segment.
 
-        @param from, to The range of segments to replace.
+        @param from The first element in the range of segments to replace.
+        @param to One past the last element in the range of segments to replace.
 
         @param s The string to assign.
     */
@@ -663,7 +663,8 @@ public:
         segment inserted, or one past `to` if
         `init.size() == 0`.
 
-        @param from, to The range of segments to replace.
+        @param from The first element in the range of segments to replace.
+        @param to One past the last element in the range of segments to replace.
 
         @param init The list of segments to assign.
     */
@@ -708,9 +709,10 @@ public:
         segment inserted, or one past `to` if
         `init.size() == 0`.
 
-        @param from, to The range of segments to replace.
-
-        @param first, last The range of segments to assign.
+        @param from The first element in the range of segments to replace.
+        @param to One past the last element in the range of segments to replace.
+        @param first The first element in the new range of segments.
+        @param last One past the last element in the new range of segments.
     */
     template<class FwdIt>
     iterator
@@ -763,7 +765,7 @@ public:
 
         @par Preconditions
         @code
-        not this->empty()
+        !this->empty()
         @endcode
 
         @par Exception Safety
