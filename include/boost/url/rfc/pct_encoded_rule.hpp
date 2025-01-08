@@ -127,22 +127,21 @@ private:
         @ref pchars,
         @ref pct_string_view.
 */
-template<class CharSet>
+template<BOOST_URL_CONSTRAINT(grammar::CharSet) CS>
 constexpr
 auto
-pct_encoded_rule(
-    CharSet const& cs) noexcept ->
-        implementation_defined::pct_encoded_rule_t<CharSet>
+pct_encoded_rule(CS const& cs) noexcept ->
+    implementation_defined::pct_encoded_rule_t<CS>
 {
     // If an error occurs here it means that
     // the value of your type does not meet
     // the requirements. Please check the
     // documentation!
     static_assert(
-        grammar::is_charset<CharSet>::value,
+        grammar::is_charset<CS>::value,
         "CharSet requirements not met");
 
-    return implementation_defined::pct_encoded_rule_t<CharSet>(cs);
+    return implementation_defined::pct_encoded_rule_t<CS>(cs);
 }
 
 #endif

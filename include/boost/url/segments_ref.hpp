@@ -152,15 +152,14 @@ public:
 
         @param other The segments to assign.
     */
-    /** @{ */
     BOOST_URL_DECL
     segments_ref&
     operator=(segments_ref const& other);
 
+    /// @copydoc segments_ref::operator=(segments_ref const&)
     BOOST_URL_DECL
     segments_ref&
     operator=(segments_view const& other);
-    /** @} */
 
     /** Assignment
 
@@ -337,8 +336,8 @@ public:
         Strong guarantee.
         Calls to allocate may throw.
 
-        @param first, last The range of segments
-        to assign.
+        @param first The beginning of the range of segments to assign.
+        @param last The end of the range of segments to assign.
     */
     template<class FwdIt>
     void
@@ -464,8 +463,8 @@ public:
         the range is inserted. This may
         be equal to `end()`.
 
-        @param first, last The range of segments
-        to insert.
+        @param first The beginning of the range of segments to insert.
+        @param last The end of the range of segments to insert.
     */
     template<class FwdIt>
     iterator
@@ -516,8 +515,8 @@ public:
         @return An iterator to one past
         the removed range.
 
-        @param first, last The range of
-        segments to erase.
+        @param first The beginning of the range to remove.
+        @param last The end of the range to remove.
     */
     BOOST_URL_DECL
     iterator
@@ -577,7 +576,8 @@ public:
 
         @return An iterator to the new segment.
 
-        @param from, to The range of segments to replace.
+        @param from The beginning of the range of segments to replace.
+        @param to The end of the range of segments to replace.
 
         @param s The string to assign.
     */
@@ -617,7 +617,8 @@ public:
         segment inserted, or one past `to` if
         `init.size() == 0`.
 
-        @param from, to The range of segments to replace.
+        @param from The beginning of the range of segments to replace.
+        @param to The end of the range of segments to replace.
 
         @param init The list of segments to assign.
     */
@@ -657,9 +658,10 @@ public:
         segment inserted, or one past `to` if
         `init.size() == 0`.
 
-        @param from, to The range of segments to replace.
-
-        @param first, last The range of segments to assign.
+        @param from The beginning of the range of segments to replace.
+        @param to The end of the range of segments to replace.
+        @param first The beginning of the range of segments to assign.
+        @param last The end of the range of segments to assign.
     */
     template<class FwdIt>
     iterator

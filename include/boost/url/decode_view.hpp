@@ -68,21 +68,6 @@ make_decode_view(
     of the character buffer from which the view
     is constructed extends unmodified until the
     view is no longer accessed.
-
-    @par Operators
-    The following operators are supported between
-    @ref decode_view and any object that is convertible
-    to `core::string_view`
-
-    @code
-    bool operator==( decode_view, decode_view ) noexcept;
-    bool operator!=( decode_view, decode_view ) noexcept;
-    bool operator<=( decode_view, decode_view ) noexcept;
-    bool operator< ( decode_view, decode_view ) noexcept;
-    bool operator> ( decode_view, decode_view ) noexcept;
-    bool operator>=( decode_view, decode_view ) noexcept;
-    @endcode
-
 */
 class decode_view
 {
@@ -100,12 +85,18 @@ class decode_view
 #endif
 
     // unchecked
-    BOOST_URL_DECL
+    BOOST_CXX14_CONSTEXPR
     explicit
     decode_view(
         core::string_view s,
         std::size_t n,
-        encoding_opts opt) noexcept;
+        encoding_opts opt) noexcept
+        : p_(s.data())
+        , n_(s.size())
+        , dn_(n)
+        , space_as_plus_(
+            opt.space_as_plus)
+    {}
 
 public:
     /** The value type
@@ -130,25 +121,12 @@ public:
     /** An iterator of constant, decoded characters.
 
         This iterator is used to access the encoded
-        string as a bidirectional range of characters
-        with percent-decoding applied. Escape sequences
-        are not decoded until the iterator is
-        dereferenced.
-    */
-#ifdef BOOST_URL_DOCS
-    using iterator = __see_below__
-#else
-
-    /** An iterator of constant, decoded characters.
-
-        This iterator is used to access the encoded
-        string as a bidirectional range of characters
+        string as a *bidirectional* range of characters
         with percent-decoding applied. Escape sequences
         are not decoded until the iterator is
         dereferenced.
     */
     class iterator;
-#endif
 
     /// @copydoc iterator
     using const_iterator = iterator;
@@ -180,6 +158,7 @@ public:
         @par Exception Safety
         Throws nothing.
     */
+    BOOST_CXX14_CONSTEXPR
     decode_view() noexcept = default;
 
     /** Constructor
@@ -203,18 +182,21 @@ public:
         Linear in `s.size()`.
 
         @par Exception Safety
-        Exceptions thrown on invalid input.
-
-        @throw system_error
-        The string contains an invalid percent encoding.
+        Although this function does not throw exceptions,
+        implicitly constructing a @ref pct_string_view
+        for the first argument can throw exceptions
+        on invalid input.
 
         @param s A percent-encoded string that has
-        already been validated.
+        already been validated. Implicit conversion
+        from other string types is supported but
+        may throw exceptions.
 
         @param opt The options for decoding. If
         this parameter is omitted, the default
         options are used.
     */
+    BOOST_CXX14_CONSTEXPR
     explicit
     decode_view(
         pct_string_view s,
@@ -516,7 +498,7 @@ public:
         equal, positive value if this string is greater than the other
         character sequence
     */
-    BOOST_URL_DECL
+    BOOST_CXX14_CONSTEXPR
     int
     compare(core::string_view other) const noexcept;
 
@@ -537,14 +519,13 @@ public:
         equal, positive value if this string is greater than the other
         character sequence
     */
-    BOOST_URL_DECL
+    BOOST_CXX14_CONSTEXPR
     int
     compare(decode_view other) const noexcept;
 
     //--------------------------------------------
 
     // relational operators
-#ifndef BOOST_URL_DOCS
 private:
     template<class S0, class S1>
     using is_match = std::integral_constant<bool,
@@ -560,6 +541,7 @@ private:
             !std::is_convertible<S0, core::string_view>::value ||
             !std::is_convertible<S1, core::string_view>::value)>;
 
+    BOOST_CXX14_CONSTEXPR
     static
     int
     decode_compare(decode_view s0, decode_view s1) noexcept
@@ -568,6 +550,7 @@ private:
     }
 
     template <class S>
+    BOOST_CXX14_CONSTEXPR
     static
     int
     decode_compare(decode_view s0, S const& s1) noexcept
@@ -576,102 +559,294 @@ private:
     }
 
     template <class S>
+    BOOST_CXX14_CONSTEXPR
     static
     int
     decode_compare(S const& s0, decode_view s1) noexcept
     {
         return -s1.compare(s0);
     }
-public:
 
+public:
+#ifndef BOOST_URL_HAS_CONCEPTS
     /// Compare two decode views for equality
-    /**
-     * This function is only enabled if both types are
-     * decode_view or convertible to `core::string_view`,
-     * but not both are convertible to `core::string_view`
-     */
     template<class S0, class S1>
     BOOST_CXX14_CONSTEXPR friend auto operator==(
-        S0 const& s0, S1 const& s1) noexcept ->
+        S0 const& lhs, S1 const& rhs) noexcept ->
         typename std::enable_if<
             is_match<S0, S1>::value, bool>::type
     {
-        return decode_compare(s0, s1) == 0;
+        return decode_compare(lhs, rhs) == 0;
+    }
+#else
+    /// Compare two decode views for equality
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator==(
+        decode_view const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) == 0;
+    }
+
+    /// Compare two decode views for equality
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator==(
+        decode_view const& lhs,
+        S const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) == 0;
+    }
+
+    /// Compare two decode views for equality
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator==(
+        S const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) == 0;
+    }
+#endif
+
+#ifndef BOOST_URL_HAS_CONCEPTS
+    /// Compare two decode views for inequality
+    template<class S0, class S1>
+    BOOST_CXX14_CONSTEXPR friend auto operator!=(
+        S0 const& lhs, S1 const& rhs) noexcept ->
+        typename std::enable_if<
+            is_match<S0, S1>::value, bool>::type
+    {
+        return decode_compare(lhs, rhs) != 0;
+    }
+#else
+    /// Compare two decode views for inequality
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator!=(
+        decode_view const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) != 0;
     }
 
     /// Compare two decode views for inequality
-    /**
-     * This function is only enabled if both types are
-     * decode_view or convertible to `core::string_view`,
-     * but not both are convertible to `core::string_view`
-     */
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator!=(
+        decode_view const& lhs,
+        S const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) != 0;
+    }
+
+    /// Compare two decode views for inequality
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator!=(
+        S const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) != 0;
+    }
+#endif
+
+#ifndef BOOST_URL_HAS_CONCEPTS
+    /// Compare two decode views for less than
     template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator!=(
-        S0 const& s0, S1 const& s1) noexcept ->
+    BOOST_CXX14_CONSTEXPR friend auto operator<(
+        S0 const& lhs, S1 const& rhs) noexcept ->
         typename std::enable_if<
             is_match<S0, S1>::value, bool>::type
     {
-        return decode_compare(s0, s1) != 0;
+        return decode_compare(lhs, rhs) < 0;
+    }
+#else
+    /// Compare two decode views for less than
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator<(
+        decode_view const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) < 0;
     }
 
     /// Compare two decode views for less than
-    /**
-     * This function is only enabled if both types are
-     * decode_view or convertible to `core::string_view`,
-     * but not both are convertible to `core::string_view`
-     */
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator<(
+        decode_view const& lhs,
+        S const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) < 0;
+    }
+
+    /// Compare two decode views for less than
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator<(
+        S const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) < 0;
+    }
+#endif
+
+#ifndef BOOST_URL_HAS_CONCEPTS
+    /// Compare two decode views for less than or equal
     template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator<(
-        S0 const& s0, S1 const& s1) noexcept ->
+    BOOST_CXX14_CONSTEXPR friend auto operator<=(
+        S0 const& lhs, S1 const& rhs) noexcept ->
         typename std::enable_if<
             is_match<S0, S1>::value, bool>::type
     {
-        return decode_compare(s0, s1) < 0;
+        return decode_compare(lhs, rhs) <= 0;
+    }
+#else
+    /// Compare two decode views for less than or equal
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator<=(
+        decode_view const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) <= 0;
     }
 
     /// Compare two decode views for less than or equal
-    /**
-     * This function is only enabled if both types are
-     * decode_view or convertible to `core::string_view`,
-     * but not both are convertible to `core::string_view`
-     */
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator<=(
+        decode_view const& lhs,
+        S const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) <= 0;
+    }
+
+    /// Compare two decode views for less than or equal
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator<=(
+        S const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) <= 0;
+    }
+#endif
+
+#ifndef BOOST_URL_HAS_CONCEPTS
+    /// Compare two decode views for greater than
     template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator<=(
-        S0 const& s0, S1 const& s1) noexcept ->
+    BOOST_CXX14_CONSTEXPR friend auto operator>(
+        S0 const& lhs, S1 const& rhs) noexcept ->
         typename std::enable_if<
             is_match<S0, S1>::value, bool>::type
     {
-        return decode_compare(s0, s1) <= 0;
+        return decode_compare(lhs, rhs) > 0;
+    }
+#else
+    /// Compare two decode views for greater than
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator>(
+        decode_view const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) > 0;
     }
 
     /// Compare two decode views for greater than
-    /**
-     * This function is only enabled if both types are
-     * decode_view or convertible to `core::string_view`,
-     * but not both are convertible to `core::string_view`
-     */
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator>(
+        decode_view const& lhs,
+        S const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) > 0;
+    }
+
+    /// Compare two decode views for greater than
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator>(
+        S const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) > 0;
+    }
+#endif
+
+#ifndef BOOST_URL_HAS_CONCEPTS
+    /// Compare two decode views for greater than or equal
     template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator>(
-        S0 const& s0, S1 const& s1) noexcept ->
+    BOOST_CXX14_CONSTEXPR friend auto operator>=(
+        S0 const& lhs, S1 const& rhs) noexcept ->
         typename std::enable_if<
             is_match<S0, S1>::value, bool>::type
     {
-        return decode_compare(s0, s1) > 0;
+        return decode_compare(lhs, rhs) >= 0;
+    }
+#else
+    /// Compare two decode views for greater than or equal
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator>=(
+        decode_view const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) >= 0;
     }
 
     /// Compare two decode views for greater than or equal
-    /**
-     * This function is only enabled if both types are
-     * decode_view or convertible to `core::string_view`,
-     * but not both are convertible to `core::string_view`
-     */
-    template<class S0, class S1>
-    BOOST_CXX14_CONSTEXPR friend auto operator>=(
-        S0 const& s0, S1 const& s1) noexcept ->
-        typename std::enable_if<
-            is_match<S0, S1>::value, bool>::type
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator>=(
+        decode_view const& lhs,
+        S const& rhs) noexcept
     {
-        return decode_compare(s0, s1) >= 0;
+        return decode_compare(lhs, rhs) >= 0;
+    }
+
+    /// Compare two decode views for greater than or equal
+    template <std::convertible_to<core::string_view> S>
+    BOOST_CXX14_CONSTEXPR
+    friend
+    bool
+    operator>=(
+        S const& lhs,
+        decode_view const& rhs) noexcept
+    {
+        return decode_compare(lhs, rhs) >= 0;
     }
 #endif
 
