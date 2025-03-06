@@ -272,7 +272,7 @@ jobs:
           shared: ${{ matrix.shared }}
           coverage: ${{ matrix.coverage }}
           define: ${{ (matrix.no-threads && 'BOOST_URL_DISABLE_THREADS') || '' }}
-          warnings-as-errors: ${{ matrix.is-latest }}
+          warnings-as-errors: true
 
       - name: FlameGraph
         uses: alandefreitas/cpp-actions/flamegraph@v1.8.8
