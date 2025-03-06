@@ -150,6 +150,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return The maximum number of characters.
     */
     static
     constexpr
@@ -176,6 +178,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return The number of characters in the url.
     */
     std::size_t
     size() const noexcept
@@ -211,6 +215,8 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2">4.2.  Relative Reference (rfc3986)</a>
+
+        @return `true` if the url is empty.
     */
     bool
     empty() const noexcept
@@ -229,6 +235,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return A pointer to the first character.
     */
     char const*
     data() const noexcept
@@ -251,6 +259,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return The url as a string.
     */
     core::string_view
     buffer() const noexcept
@@ -267,6 +277,7 @@ public:
         @par Exception Safety
         Throws nothing.
 
+        @return A string view of the URL.
     */
     operator core::string_view() const noexcept
     {
@@ -307,6 +318,8 @@ public:
 
         @par Exception Safety
         Calls to allocate may throw.
+
+        @return A shared pointer to a read-only url_view.
     */
     std::shared_ptr<
         url_view const> persist() const;
@@ -348,6 +361,8 @@ public:
         @see
             @ref scheme,
             @ref scheme_id.
+
+        @return `true` if the url contains a scheme.
     */
     bool
     has_scheme() const noexcept;
@@ -383,6 +398,8 @@ public:
         @see
             @ref has_scheme,
             @ref scheme_id.
+
+        @return The scheme as a string.
     */
     core::string_view
     scheme() const noexcept;
@@ -431,6 +448,8 @@ public:
         @see
             @ref has_scheme,
             @ref scheme.
+
+        @return The scheme as an enumeration value.
     */
     urls::scheme
     scheme_id() const noexcept;
@@ -486,6 +505,8 @@ public:
         @see
             @ref authority,
             @ref encoded_authority.
+
+        @return `true` if the url contains an authority.
     */
     bool
     has_authority() const noexcept
@@ -520,6 +541,8 @@ public:
         @see
             @ref encoded_authority,
             @ref has_authority.
+
+        @return An authority_view representing the authority.
     */
     authority_view
     authority() const noexcept;
@@ -555,6 +578,8 @@ public:
         @see
             @ref authority,
             @ref has_authority.
+
+        @return The authority as a string.
     */
     pct_string_view
     encoded_authority() const noexcept;
@@ -600,6 +625,7 @@ public:
             @ref user,
             @ref userinfo.
 
+        @return `true` if the userinfo is present.
     */
     bool
     has_userinfo() const noexcept;
@@ -640,6 +666,8 @@ public:
             @ref password,
             @ref user,
             @ref userinfo.
+
+        @return `true` if the userinfo contains a password.
     */
     bool
     has_password() const noexcept;
@@ -696,6 +724,9 @@ public:
             @ref encoded_userinfo,
             @ref password,
             @ref user.
+
+        @param token The string token to use.
+        @return The userinfo as a string.
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
@@ -746,6 +777,8 @@ public:
             @ref password,
             @ref user,
             @ref userinfo.
+
+        @return The userinfo as a string.
     */
     pct_string_view
     encoded_userinfo() const noexcept;
@@ -791,6 +824,9 @@ public:
             @ref encoded_userinfo,
             @ref password,
             @ref userinfo.
+
+        @param token The string token to use.
+        @return The user as a string.
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
@@ -842,6 +878,8 @@ public:
             @ref password,
             @ref user,
             @ref userinfo.
+
+        @return The user as a string.
     */
     pct_string_view
     encoded_user() const noexcept;
@@ -885,6 +923,9 @@ public:
             @ref encoded_userinfo,
             @ref user,
             @ref userinfo.
+
+        @param token The string token to use.
+        @return The password as a string.
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
@@ -932,6 +973,8 @@ public:
             @ref password,
             @ref user,
             @ref userinfo.
+
+        @return The password as a string.
     */
     pct_string_view
     encoded_password() const noexcept;
@@ -970,6 +1013,8 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
+
+        @return The type of host present.
     */
     urls::host_type
     host_type() const noexcept
@@ -1007,6 +1052,9 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
+
+        @param token A string token customization
+        @return The host address as a string.
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
@@ -1049,6 +1097,8 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
+
+        @return The host address as a string.
     */
     pct_string_view
     encoded_host() const noexcept;
@@ -1100,6 +1150,9 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
+
+        @param token A string token customization
+        @return The host address as a string.
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
@@ -1161,6 +1214,8 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
+
+        @return The host address as a string.
     */
     pct_string_view
     encoded_host_address() const noexcept;
@@ -1199,6 +1254,8 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
+
+        @return The IPv4 address as a value of type @ref ipv4_address.
     */
     ipv4_address
     host_ipv4_address() const noexcept;
@@ -1245,6 +1302,8 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
+
+        @return The IPv6 address as a value of type @ref ipv6_address.
     */
     ipv6_address
     host_ipv6_address() const noexcept;
@@ -1276,6 +1335,8 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
+
+        @return The IPvFuture address as a string.
     */
     core::string_view
     host_ipvfuture() const noexcept;
@@ -1310,6 +1371,9 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
+
+        @param token A string token customization.
+        @return The host name as a string.
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
@@ -1354,6 +1418,8 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2">3.2.2. Host (rfc3986)</a>
+
+        @return The host name as a percent-encoded string.
     */
     pct_string_view
     encoded_host_name() const noexcept;
@@ -1390,6 +1456,9 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc6874">Representing IPv6 Zone Identifiers in Address Literals and Uniform Resource Identifiers</a>
+
+        @param token A string token customization.
+        @return The Zone ID as a string.
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
@@ -1434,6 +1503,8 @@ public:
 
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc6874">Representing IPv6 Zone Identifiers in Address Literals and Uniform Resource Identifiers</a>
+
+        @return The Zone ID as a percent-encoded string.
     */
     pct_string_view
     encoded_zone_id() const noexcept;
@@ -1474,6 +1545,8 @@ public:
             @ref encoded_host_and_port,
             @ref port,
             @ref port_number.
+
+        @return `true` if a port is present, `false` otherwise.
     */
     bool
     has_port() const noexcept;
@@ -1508,6 +1581,8 @@ public:
             @ref encoded_host_and_port,
             @ref has_port,
             @ref port_number.
+
+        @return The port as a string.
     */
     core::string_view
     port() const noexcept;
@@ -1542,6 +1617,8 @@ public:
             @ref encoded_host_and_port,
             @ref has_port,
             @ref port.
+
+        @return The port number as an unsigned integer.
     */
     std::uint16_t
     port_number() const noexcept;
@@ -1591,6 +1668,8 @@ public:
             @ref encoded_segments.
             @ref path,
             @ref segments.
+
+        @return `true` if the path is absolute, `false` otherwise.
     */
     bool
     is_path_absolute() const noexcept
@@ -1641,6 +1720,9 @@ public:
             @ref encoded_path,
             @ref encoded_segments.
             @ref segments.
+
+        @param token A string token to use for the result.
+        @return The path as a string.
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
@@ -1694,6 +1776,8 @@ public:
             @ref encoded_segments.
             @ref path,
             @ref segments.
+
+        @return The path as a string.
     */
     pct_string_view
     encoded_path() const noexcept;
@@ -1733,6 +1817,8 @@ public:
             @ref encoded_segments.
             @ref path,
             @ref segments_view.
+
+        @return A bidirectional view of segments.
     */
     segments_view
     segments() const noexcept;
@@ -1782,6 +1868,8 @@ public:
             @ref path,
             @ref segments,
             @ref segments_encoded_view.
+
+        @return A bidirectional view of encoded segments.
     */
     segments_encoded_view
     encoded_segments() const noexcept;
@@ -1826,6 +1914,8 @@ public:
             @ref encoded_query,
             @ref params,
             @ref query.
+
+        @return `true` if a query is present.
     */
     bool
     has_query() const noexcept;
@@ -1872,6 +1962,9 @@ public:
             @ref encoded_query,
             @ref has_query,
             @ref params.
+
+        @param token A token to use for the returned string.
+        @return The query as a string.
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
@@ -1923,6 +2016,8 @@ public:
             @ref has_query,
             @ref params,
             @ref query.
+
+        @return The query as a string.
     */
     pct_string_view
     encoded_query() const noexcept;
@@ -1965,6 +2060,8 @@ public:
             @ref encoded_query,
             @ref has_query,
             @ref query.
+
+        @return A bidirectional view of key/value pairs.
     */
     params_view
     params() const noexcept;
@@ -2009,6 +2106,8 @@ public:
             @ref has_query,
             @ref params,
             @ref query.
+
+        @return A bidirectional view of key/value pairs.
     */
     params_encoded_view
     encoded_params() const noexcept;
@@ -2050,6 +2149,8 @@ public:
         @see
             @ref encoded_fragment,
             @ref fragment.
+
+        @return `true` if the url contains a fragment.
     */
     bool
     has_fragment() const noexcept;
@@ -2094,6 +2195,8 @@ public:
         use. If this parameter is omitted, the
         function returns a new `std::string`.
 
+        @return The fragment portion of the url.
+
         @par BNF
         @code
         fragment        = *( pchar / "/" / "?" )
@@ -2107,6 +2210,7 @@ public:
         @see
             @ref encoded_fragment,
             @ref has_fragment.
+
     */
     template<BOOST_URL_STRTOK_TPARAM>
     BOOST_URL_STRTOK_RETURN
@@ -2152,6 +2256,8 @@ public:
         @see
             @ref fragment,
             @ref has_fragment.
+
+        @return The fragment portion of the url.
     */
     pct_string_view
     encoded_fragment() const noexcept;
@@ -2195,6 +2301,8 @@ public:
             @ref has_port,
             @ref port,
             @ref port_number.
+
+        @return The host and port portion of the url.
     */
     pct_string_view
     encoded_host_and_port() const noexcept;
@@ -2223,6 +2331,8 @@ public:
         @see
             @ref encoded_resource,
             @ref encoded_target.
+
+        @return The origin portion of the url.
     */
     pct_string_view
     encoded_origin() const noexcept;
@@ -2253,6 +2363,8 @@ public:
         @see
             @ref encoded_origin,
             @ref encoded_target.
+
+        @return The resource portion of the url.
     */
     pct_string_view
     encoded_resource() const noexcept;
@@ -2283,6 +2395,8 @@ public:
         @see
             @ref encoded_origin,
             @ref encoded_resource.
+
+        @return The target portion of the url.
     */
     pct_string_view
     encoded_target() const noexcept;
@@ -2308,6 +2422,7 @@ public:
         @par Specification
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2">6.2.2 Syntax-Based Normalization (rfc3986)</a>
 
+        @param other The url to compare
         @return -1 if `*this < other`, 0 if `this == other`, and 1 if `this > other`.
     */
     int
@@ -2341,6 +2456,8 @@ public:
         @par Exception Safety
         Throws nothing
 
+        @param u0 The first url to compare
+        @param u1 The second url to compare
         @return `true` if `u0 == u1`
 
         @par Specification
@@ -2383,6 +2500,8 @@ public:
         @par Exception Safety
         Throws nothing
 
+        @param u0 The first url to compare
+        @param u1 The second url to compare
         @return `true` if `u0 != u1`
 
         @par Specification
@@ -2425,6 +2544,8 @@ public:
         @par Exception Safety
         Throws nothing
 
+        @param u0 The first url to compare
+        @param u1 The second url to compare
         @return `true` if `u0 < u1`
 
         @par Specification
@@ -2467,6 +2588,8 @@ public:
         @par Exception Safety
         Throws nothing
 
+        @param u0 The first url to compare
+        @param u1 The second url to compare
         @return `true` if `u0 <= u1`
 
         @par Specification
@@ -2509,6 +2632,8 @@ public:
         @par Exception Safety
         Throws nothing
 
+        @param u0 The first url to compare
+        @param u1 The second url to compare
         @return `true` if `u0 > u1`
 
         @par Specification
@@ -2551,6 +2676,8 @@ public:
         @par Exception Safety
         Throws nothing
 
+        @param u0 The first url to compare
+        @param u1 The second url to compare
         @return `true` if `u0 >= u1`
 
         @par Specification

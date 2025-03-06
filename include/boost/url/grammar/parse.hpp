@@ -98,6 +98,7 @@ struct rule_ref
     constants.
 
     @param r The rule to use
+    @return The rule as a reference type
 */
 template<BOOST_URL_CONSTRAINT(Rule) R>
 constexpr

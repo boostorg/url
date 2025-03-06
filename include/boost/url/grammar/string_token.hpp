@@ -66,6 +66,9 @@ struct arg
         This function may only be called once.
         After invoking the function, the only
         valid operation is destruction.
+
+        @param n The number of characters needed
+        @return A pointer to the buffer
     */
     virtual char* prepare(std::size_t n) = 0;
 
@@ -322,6 +325,9 @@ private:
     Functions using this token will append
     the result to the existing string and
     return a reference to it.
+
+    @param s The string to append
+    @return A string token
  */
 template<
     class Alloc =
@@ -382,6 +388,9 @@ private:
     Functions using this token will assign
     the result to the existing string and
     return a reference to it.
+
+    @param s The string to assign
+    @return A string token
  */
 template<
     class Alloc =
@@ -448,6 +457,9 @@ private:
     Functions using this token will assign
     the result to the existing string and
     return a `core::string_view` to it.
+
+    @param s The string to preserve
+    @return A string token
  */
 template<
     class Alloc =

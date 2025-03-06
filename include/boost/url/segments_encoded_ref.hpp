@@ -154,6 +154,7 @@ public:
         Calls to allocate may throw.
 
         @param other The segments to assign.
+        @return A reference to this object.
     */
     BOOST_URL_DECL
     segments_encoded_ref&
@@ -206,6 +207,7 @@ public:
         The list contains an invalid percent-encoding.
 
         @param init The list of segments to assign.
+        @return A reference to this.
     */
     BOOST_URL_DECL
     segments_encoded_ref&
@@ -216,6 +218,8 @@ public:
 
         @see
             @ref segments_encoded_view.
+
+        @return A view of the segments.
     */
     BOOST_URL_DECL
     operator
@@ -241,6 +245,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return A reference to the url.
     */
     url_base&
     url() const noexcept
@@ -547,11 +553,9 @@ public:
         @par Exception Safety
         Throws nothing.
 
-        @return An iterator to one past
-        the removed range.
-
-        @param first, last The range of
-        segments to erase.
+        @param first The first element in the range to erase.
+        @param last One past the last element in the range to erase.
+        @return An iterator to one past the removed range.
     */
     BOOST_URL_DECL
     iterator

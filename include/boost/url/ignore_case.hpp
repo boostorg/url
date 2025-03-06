@@ -100,6 +100,8 @@ public:
         with the constant @ref ignore_case.
         Otherwise, they are default-constructed
         and evaluate to `false`.
+
+        @return `true` if case should be ignored
     */
     operator
     bool() const noexcept

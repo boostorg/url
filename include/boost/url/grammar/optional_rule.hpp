@@ -73,6 +73,7 @@ struct optional_rule_t
         >3.8.  Optional Sequence (rfc5234)</a>
 
     @param r The rule to match
+    @return The adapted rule
 
     @see
         @ref alpha_chars,

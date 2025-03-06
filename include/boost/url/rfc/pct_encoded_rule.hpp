@@ -118,6 +118,8 @@ private:
     Any character which is not in this set must be
     escaped, or else parsing returns an error.
 
+    @return A rule object.
+
     @par Specification
     @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-2.1">
         2.1. Percent-Encoding (rfc3986)</a>

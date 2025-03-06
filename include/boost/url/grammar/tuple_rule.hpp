@@ -111,7 +111,9 @@ public:
     @li <a href="https://datatracker.ietf.org/doc/html/rfc5234#section-3.1"
         >3.1.  Concatenation (rfc5234)</a>
 
+    @param r0 The first rule to match
     @param rn A list of one or more rules to match
+    @return The sequence rule
 
     @see
         @ref dec_octet_rule,
@@ -204,6 +206,7 @@ struct squelch_rule_t
     @endcode
 
     @param r The rule to squelch
+    @return The squelched rule
 
     @see
         @ref delim_rule,

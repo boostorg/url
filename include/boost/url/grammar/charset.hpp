@@ -247,6 +247,10 @@ struct charset_ref
     is no longer referenced. For best results,
     `ref` should only be used with compile-time
     constants.
+
+    @tparam CharSet The character set type
+    @param cs The character set to use
+    @return The character set as a reference type
 */
 template<BOOST_URL_CONSTRAINT(CharSet) CS>
 constexpr

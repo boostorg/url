@@ -148,6 +148,10 @@ ci_digest(
     The function is defined only for strings
     containing low-ASCII characters.
 
+    @param s0 The first string
+    @param s1 The second string
+    @return `true` if `s0` case-insensitively equals `s1`, otherwise `false`
+
     @par Example
     @code
     assert( ci_is_equal( "Boost", "boost" ) );
@@ -184,6 +188,10 @@ ci_is_equal(
     The function is defined only for strings
     containing low-ASCII characters.
 
+    @param s0 The first string
+    @param s1 The second string
+    @return `true` if `s0` case-insensitively equals `s1`, otherwise `false`
+
     @par Example
     @code
     assert( ci_is_equal( "Boost", "boost" ) );
@@ -214,6 +222,10 @@ ci_is_equal(
     lexicographical comparison.
     The function is defined only for strings
     containing low-ASCII characters.
+
+    @param s0 The first string
+    @param s1 The second string
+    @return `true` if `s0` is case-insensitively less than `s1`, otherwise `false`
 
     @par Example
     @code

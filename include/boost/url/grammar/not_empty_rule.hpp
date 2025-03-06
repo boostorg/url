@@ -62,6 +62,7 @@ private:
     @endcode
 
     @param r The rule to match
+    @return The adapted rule
 
     @see
         @ref parse,

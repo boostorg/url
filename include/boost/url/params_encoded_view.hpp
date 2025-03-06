@@ -110,6 +110,8 @@ public:
 
         @par Exception Safety
         Throws nothing
+
+        @param other The object to copy
     */
     params_encoded_view(
         params_encoded_view const& other) = default;
@@ -190,10 +192,13 @@ public:
 
         @par Exception Safety
         Throws nothing
+
+        @param other The object to assign
+        @return `*this`
     */
     params_encoded_view&
     operator=(
-        params_encoded_view const&) = default;
+        params_encoded_view const& other) = default;
 
     /** Conversion
 
@@ -223,6 +228,8 @@ public:
 
         @par Exception Safety
         Throws nothing
+
+        @return A new view with percent escapes decoded.
     */
     operator
     params_view() const noexcept;
