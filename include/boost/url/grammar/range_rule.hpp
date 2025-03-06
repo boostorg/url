@@ -220,6 +220,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return `*this`
     */
     range&
     operator=(range&&) noexcept;
@@ -236,19 +238,27 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return `*this`
     */
     range&
     operator=(range const&) noexcept;
 
     /** Return an iterator to the beginning
+
+        @return An iterator to the first element
     */
     iterator begin() const noexcept;
 
     /** Return an iterator to the end
+
+        @return An iterator to one past the last element
     */
     iterator end() const noexcept;
 
     /** Return true if the range is empty
+
+        @return `true` if the range is empty
     */
     bool
     empty() const noexcept
@@ -257,6 +267,8 @@ public:
     }
 
     /** Return the number of elements in the range
+
+        @return The number of elements
     */
     std::size_t
     size() const noexcept
@@ -265,6 +277,8 @@ public:
     }
 
     /** Return the matching part of the string
+
+        @return A string view representing the range
     */
     core::string_view
     string() const noexcept
@@ -368,6 +382,8 @@ private:
     @param M The maximum number of elements for
     the range to be valid. If omitted, this
     defaults to unlimited.
+
+    @return A rule that matches the range.
 
     @see
         @ref alpha_chars,
@@ -496,6 +512,8 @@ private:
     @param M The maximum number of elements for
     the range to be valid. If omitted, this
     defaults to unlimited.
+
+    @return A rule that matches the range.
 
     @see
         @ref alpha_chars,

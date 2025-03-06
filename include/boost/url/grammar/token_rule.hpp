@@ -70,6 +70,7 @@ private:
     @endcode
 
     @param cs The character set to use
+    @return The token rule
 
     @see
         @ref alpha_chars,

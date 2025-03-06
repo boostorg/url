@@ -57,6 +57,10 @@ private:
     is stored and returned in the variant. If
     no match occurs, an error is returned.
 
+    @param r0 The first rule to match
+    @param rn A list of one or more rules to match
+    @return The variant rule
+
     @par Value Type
     @code
     using value_type = variant< typename Rules::value_type... >;

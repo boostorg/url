@@ -120,7 +120,8 @@ public:
         @par Exception Safety
         Throws nothing.
 
-        @par other The string to copy.
+        @param other The string to copy.
+
     */
     constexpr
     pct_string_view(
@@ -247,7 +248,8 @@ public:
         @par Exception Safety
         Throws nothing.
 
-        @par other The string to copy.
+        @param other The string to copy.
+        @return A reference to this object.
     */
     pct_string_view& operator=(
         pct_string_view const& other) = default;
@@ -272,6 +274,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return The number of characters in the decoded string.
     */
     BOOST_CXX14_CONSTEXPR
     std::size_t
@@ -290,6 +294,8 @@ public:
 
         @see
             @ref decode_view.
+
+        @return A range of decoded characters.
     */
     decode_view
     operator*() const noexcept;
@@ -327,6 +333,8 @@ public:
         Otherwise, the function return type
         is the result type of the token.
 
+        @return The decoded string.
+
         @see
             @ref encoding_opts,
             @ref string_token::return_string.
@@ -352,7 +360,10 @@ public:
     }
 
 #ifndef BOOST_URL_DOCS
-    /// Arrow support
+    /** Arrow support
+
+        @return A pointer to this object.
+    */
     pct_string_view const*
     operator->() const noexcept
     {
@@ -364,6 +375,8 @@ public:
 
     // VFALCO No idea why this fails in msvc
     /** Swap
+
+        @param s The object to swap with
     */
     /*BOOST_CXX14_CONSTEXPR*/ void swap(
         pct_string_view& s ) noexcept
@@ -410,6 +423,7 @@ ref(pct_string_view& s) noexcept
     Throws nothing.
 
     @param s The string to validate.
+    @return On success, the valid percent-encoded string.
 */
 BOOST_URL_DECL
 system::result<pct_string_view>

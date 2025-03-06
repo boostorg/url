@@ -151,6 +151,7 @@ public:
         Calls to allocate may throw.
 
         @param other The segments to assign.
+        @return A reference to this object.
     */
     BOOST_URL_DECL
     segments_ref&
@@ -198,6 +199,7 @@ public:
         Calls to allocate may throw.
 
         @param init The list of segments to assign.
+        @return A reference to this object.
     */
     BOOST_URL_DECL
     segments_ref&
@@ -208,6 +210,8 @@ public:
 
         @see
             @ref segments_view.
+
+        @return A view of the segments.
     */
     BOOST_URL_DECL
     operator
@@ -233,6 +237,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return A reference to the url.
     */
     url_base&
     url() const noexcept

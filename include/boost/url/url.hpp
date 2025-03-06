@@ -267,6 +267,7 @@ public:
         Throws nothing.
 
         @param u The url to assign from.
+        @return A reference to this object.
     */
     url&
     operator=(url&& u) noexcept;
@@ -293,6 +294,7 @@ public:
         @throw std::length_error `u.size() > max_size()`.
 
         @param u The url to copy.
+        @return A reference to this object.
     */
     url&
     operator=(
@@ -322,6 +324,7 @@ public:
         Calls to allocate may throw.
 
         @param u The url to copy.
+        @return A reference to this object.
     */
     url&
     operator=(url const& u)

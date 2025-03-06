@@ -70,6 +70,7 @@ private:
     @endcode
 
     @param ch The character to match
+    @return A rule which matches the character.
 
     @see
         @ref parse,
@@ -146,6 +147,7 @@ private:
     @endcode
 
     @param cs The character set to use.
+    @return A rule which matches a single character from the set.
 
     @see
         @ref alpha_chars,

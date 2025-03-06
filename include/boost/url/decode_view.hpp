@@ -226,6 +226,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return `true` if the string is empty
     */
     bool
     empty() const noexcept
@@ -250,6 +252,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return The number of decoded characters
     */
     size_type
     size() const noexcept
@@ -269,6 +273,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return An iterator to the first decoded character
     */
     iterator
     begin() const noexcept;
@@ -285,6 +291,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return An iterator to one past the last decoded character
     */
     iterator
     end() const noexcept;
@@ -306,6 +314,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return The first decoded character
     */
     reference
     front() const noexcept;
@@ -327,6 +337,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return The last decoded character
     */
     reference
     back() const noexcept;
@@ -343,6 +355,9 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @param s The string to search for
+        @return `true` if the decoded string starts with `s`
     */
     BOOST_URL_DECL
     bool
@@ -360,6 +375,9 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @param s The string to search for
+        @return `true` if the decoded string ends with `s`
     */
     BOOST_URL_DECL
     bool
@@ -377,6 +395,9 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @param ch The character to search for
+        @return `true` if the decoded string starts with `ch`
     */
     BOOST_URL_DECL
     bool
@@ -394,6 +415,9 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @param ch The character to search for
+        @return `true` if the decoded string ends with `ch`
     */
     BOOST_URL_DECL
     bool
@@ -406,6 +430,9 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @param ch The character to search for
+        @return An iterator to the first decoded occurrence of `ch` or `end()`
     */
     BOOST_URL_DECL
     const_iterator
@@ -418,6 +445,9 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @param ch The character to search for
+        @return An iterator to the last occurrence of `ch` or `end()`
     */
     BOOST_URL_DECL
     const_iterator
@@ -439,6 +469,8 @@ public:
 
         @par Complexity
         Linear.
+
+        @param n The number of characters to remove
     */
     BOOST_URL_DECL
     void
@@ -460,13 +492,17 @@ public:
 
         @par Complexity
         Linear.
+
+        @param n The number of characters to remove
     */
     BOOST_URL_DECL
     void
     remove_suffix( size_type n );
 
     /** Return the decoding options
-    */
+
+        @return The decoding options used by this view
+     */
     encoding_opts
     options() const noexcept
     {
@@ -569,7 +605,12 @@ private:
 
 public:
 #ifndef BOOST_URL_HAS_CONCEPTS
-    /// Compare two decode views for equality
+    /** Compare two decode views for equality
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is equal to the decoded `rhs`
+     */
     template<class S0, class S1>
     BOOST_CXX14_CONSTEXPR friend auto operator==(
         S0 const& lhs, S1 const& rhs) noexcept ->
@@ -579,7 +620,12 @@ public:
         return decode_compare(lhs, rhs) == 0;
     }
 #else
-    /// Compare two decode views for equality
+    /** Compare two decode views for equality
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is equal to the decoded `rhs`
+     */
     BOOST_CXX14_CONSTEXPR
     friend
     bool
@@ -590,7 +636,12 @@ public:
         return decode_compare(lhs, rhs) == 0;
     }
 
-    /// Compare two decode views for equality
+    /** Compare two decode views for equality
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is equal to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -602,7 +653,12 @@ public:
         return decode_compare(lhs, rhs) == 0;
     }
 
-    /// Compare two decode views for equality
+    /** Compare two decode views for equality
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is equal to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -616,7 +672,12 @@ public:
 #endif
 
 #ifndef BOOST_URL_HAS_CONCEPTS
-    /// Compare two decode views for inequality
+    /** Compare two decode views for inequality
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is not equal to the decoded `rhs`
+     */
     template<class S0, class S1>
     BOOST_CXX14_CONSTEXPR friend auto operator!=(
         S0 const& lhs, S1 const& rhs) noexcept ->
@@ -626,7 +687,12 @@ public:
         return decode_compare(lhs, rhs) != 0;
     }
 #else
-    /// Compare two decode views for inequality
+    /** Compare two decode views for inequality
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is not equal to the decoded `rhs`
+     */
     BOOST_CXX14_CONSTEXPR
     friend
     bool
@@ -637,7 +703,12 @@ public:
         return decode_compare(lhs, rhs) != 0;
     }
 
-    /// Compare two decode views for inequality
+    /** Compare two decode views for inequality
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is not equal to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -649,7 +720,12 @@ public:
         return decode_compare(lhs, rhs) != 0;
     }
 
-    /// Compare two decode views for inequality
+    /** Compare two decode views for inequality
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is not equal to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -663,7 +739,12 @@ public:
 #endif
 
 #ifndef BOOST_URL_HAS_CONCEPTS
-    /// Compare two decode views for less than
+    /** Compare two decode views for less than
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is less than to the decoded `rhs`
+     */
     template<class S0, class S1>
     BOOST_CXX14_CONSTEXPR friend auto operator<(
         S0 const& lhs, S1 const& rhs) noexcept ->
@@ -673,7 +754,12 @@ public:
         return decode_compare(lhs, rhs) < 0;
     }
 #else
-    /// Compare two decode views for less than
+    /** Compare two decode views for less than
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is less than to the decoded `rhs`
+     */
     BOOST_CXX14_CONSTEXPR
     friend
     bool
@@ -684,7 +770,12 @@ public:
         return decode_compare(lhs, rhs) < 0;
     }
 
-    /// Compare two decode views for less than
+    /** Compare two decode views for less than
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is less than to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -696,7 +787,12 @@ public:
         return decode_compare(lhs, rhs) < 0;
     }
 
-    /// Compare two decode views for less than
+    /** Compare two decode views for less than
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is less than to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -710,7 +806,12 @@ public:
 #endif
 
 #ifndef BOOST_URL_HAS_CONCEPTS
-    /// Compare two decode views for less than or equal
+    /** Compare two decode views for less than or equal
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is less than or equal to the decoded `rhs`
+     */
     template<class S0, class S1>
     BOOST_CXX14_CONSTEXPR friend auto operator<=(
         S0 const& lhs, S1 const& rhs) noexcept ->
@@ -720,7 +821,12 @@ public:
         return decode_compare(lhs, rhs) <= 0;
     }
 #else
-    /// Compare two decode views for less than or equal
+    /** Compare two decode views for less than or equal
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is less than or equal to the decoded `rhs`
+     */
     BOOST_CXX14_CONSTEXPR
     friend
     bool
@@ -731,7 +837,12 @@ public:
         return decode_compare(lhs, rhs) <= 0;
     }
 
-    /// Compare two decode views for less than or equal
+    /** Compare two decode views for less than or equal
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is less than or equal to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -743,7 +854,12 @@ public:
         return decode_compare(lhs, rhs) <= 0;
     }
 
-    /// Compare two decode views for less than or equal
+    /** Compare two decode views for less than or equal
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is less than or equal to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -757,7 +873,12 @@ public:
 #endif
 
 #ifndef BOOST_URL_HAS_CONCEPTS
-    /// Compare two decode views for greater than
+    /** Compare two decode views for greater than
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is greater than to the decoded `rhs`
+     */
     template<class S0, class S1>
     BOOST_CXX14_CONSTEXPR friend auto operator>(
         S0 const& lhs, S1 const& rhs) noexcept ->
@@ -767,7 +888,12 @@ public:
         return decode_compare(lhs, rhs) > 0;
     }
 #else
-    /// Compare two decode views for greater than
+    /** Compare two decode views for greater than
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is greater than to the decoded `rhs`
+     */
     BOOST_CXX14_CONSTEXPR
     friend
     bool
@@ -778,7 +904,12 @@ public:
         return decode_compare(lhs, rhs) > 0;
     }
 
-    /// Compare two decode views for greater than
+    /** Compare two decode views for greater than
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is greater than to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -790,7 +921,12 @@ public:
         return decode_compare(lhs, rhs) > 0;
     }
 
-    /// Compare two decode views for greater than
+    /** Compare two decode views for greater than
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is greater than to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -804,7 +940,12 @@ public:
 #endif
 
 #ifndef BOOST_URL_HAS_CONCEPTS
-    /// Compare two decode views for greater than or equal
+    /** Compare two decode views for greater than or equal
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is greater than or equal to the decoded `rhs`
+     */
     template<class S0, class S1>
     BOOST_CXX14_CONSTEXPR friend auto operator>=(
         S0 const& lhs, S1 const& rhs) noexcept ->
@@ -814,7 +955,12 @@ public:
         return decode_compare(lhs, rhs) >= 0;
     }
 #else
-    /// Compare two decode views for greater than or equal
+    /** Compare two decode views for greater than or equal
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is greater than or equal to the decoded `rhs`
+     */
     BOOST_CXX14_CONSTEXPR
     friend
     bool
@@ -825,7 +971,12 @@ public:
         return decode_compare(lhs, rhs) >= 0;
     }
 
-    /// Compare two decode views for greater than or equal
+    /** Compare two decode views for greater than or equal
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is greater than or equal to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend
@@ -837,7 +988,12 @@ public:
         return decode_compare(lhs, rhs) >= 0;
     }
 
-    /// Compare two decode views for greater than or equal
+    /** Compare two decode views for greater than or equal
+
+        @param lhs The left-hand-side decode view to compare
+        @param rhs The right-hand-side decode view to compare
+        @return `true` if decoded `lhs` is greater than or equal to the decoded `rhs`
+     */
     template <std::convertible_to<core::string_view> S>
     BOOST_CXX14_CONSTEXPR
     friend

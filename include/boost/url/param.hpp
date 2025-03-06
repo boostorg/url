@@ -137,7 +137,7 @@ struct param
         @par Exception Safety
         Throws nothing.
 
-        @par other The object to construct from.
+        @param other The object to construct from.
     */
     param(param&& other) noexcept
         : key(std::move(other.key))
@@ -168,7 +168,8 @@ struct param
         @par Exception Safety
         Calls to allocate may throw.
 
-        @par other The object to construct from.
+        @param other The object to construct from.
+        @return A reference to this object.
     */
     param(param const& other) = default;
 
@@ -186,7 +187,9 @@ struct param
         @par Exception Safety
         Throws nothing.
 
-        @par other The object to assign from.
+
+        @param other The object to assign from.
+        @return A reference to this object.
     */
     param&
     operator=(param&& other) noexcept
@@ -219,10 +222,12 @@ struct param
         @par Exception Safety
         Calls to allocate may throw.
 
-        @par other The object to assign from.
+
+        @param other The object to assign from.
+        @return A reference to this object.
     */
     param& operator=(
-        param const&) = default;
+        param const& other) = default;
 
     //--------------------------------------------
 
@@ -272,7 +277,8 @@ struct param
         `std::nullptr`, @ref no_value_t, or
         `optional<core::string_view>`.
 
-        @param key, value The key and value to set.
+        @param key The key to set.
+        @param value The value to set.
     */
     template <class OptionalString>
     param(
@@ -299,6 +305,7 @@ struct param
         Calls to allocate may throw.
 
         @param other The parameter to copy.
+        @return A reference to this object.
     */
     param&
     operator=(param_view const& other);
@@ -320,6 +327,7 @@ struct param
         Calls to allocate may throw.
 
         @param other The parameter to copy.
+        @return A reference to this object.
     */
     param&
     operator=(param_pct_view const& other);
@@ -330,6 +338,8 @@ struct param
         object so that it can be used in pointer
         contexts.
 
+        @return A pointer to the object.
+
      */
     param const*
     operator->() const noexcept
@@ -337,7 +347,12 @@ struct param
         return this;
     }
 
-    /// Aggregate construction
+    /** Aggregate construction
+
+        @param key The key to set.
+        @param value The value to set.
+        @param has_value True if a value is present.
+     */
     param(
         core::string_view key,
         core::string_view value,
@@ -492,7 +507,8 @@ struct param_view
         `std::nullptr`, @ref no_value_t, or
         `optional<core::string_view>`.
 
-        @param key, value The key and value to set.
+        @param key The key to set.
+        @param value The value to set.
     */
     template <class OptionalString>
     param_view(
@@ -554,6 +570,8 @@ struct param_view
 
         @par Exception Safety
         Calls to allocate may throw.
+
+        @return A new query parameter.
     */
     explicit
     operator
@@ -568,6 +586,7 @@ struct param_view
         object so that it can be used in pointer
         contexts.
 
+        @return A pointer to the object.
      */
     param_view const*
     operator->() const noexcept
@@ -575,7 +594,12 @@ struct param_view
         return this;
     }
 
-    /// Aggregate construction
+    /** Aggregate construction
+
+        @param key_ The key to set.
+        @param value_ The value to set.
+        @param has_value_ True if a value is present.
+     */
     param_view(
         core::string_view key_,
         core::string_view value_,
@@ -728,7 +752,8 @@ struct param_pct_view
         @throw system_error
         `key` or `value` contains an invalid percent-encoding.
 
-        @param key, value The key and value to set.
+        @param key The key to set.
+        @param value The value to set.
     */
     param_pct_view(
         pct_string_view key,
@@ -778,7 +803,9 @@ struct param_pct_view
         `boost::optional<core::string_view>` or
         `std::optional<core::string_view>`.
 
-        @param key, value The key and value to set.
+        @param key The key to set.
+        @param value The optional value to set.
+        @return A param object
     */
     template <class OptionalString>
     param_pct_view(
@@ -844,6 +871,8 @@ struct param_pct_view
 
         @par Exception Safety
         Calls to allocate may throw.
+
+        @return A param object
     */
     explicit
     operator
@@ -863,6 +892,8 @@ struct param_pct_view
 
         @par Exception Safety
         Calls to allocate may throw.
+
+        @return A param_view object
     */
     operator
     param_view() const noexcept
@@ -877,6 +908,7 @@ struct param_pct_view
         object so that it can be used in pointer
         contexts.
 
+        @return A pointer to this object
      */
     param_pct_view const*
     operator->() const noexcept
@@ -884,7 +916,12 @@ struct param_pct_view
         return this;
     }
 
-    /// Aggregate construction
+    /** Aggregate construction
+
+        @param key The key
+        @param value The value
+        @param has_value True if a value is present
+     */
     param_pct_view(
         pct_string_view key,
         pct_string_view value,

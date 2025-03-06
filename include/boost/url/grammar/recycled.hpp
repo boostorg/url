@@ -362,6 +362,7 @@ public:
         Throws nothing.
 
         @param other The pointer to move from
+        @return `*this`
     */
     recycled_ptr&
     operator=(
@@ -389,6 +390,7 @@ public:
         Throws nothing.
 
         @param other The pointer to copy from
+        @return `*this`
     */
     recycled_ptr&
     operator=(
@@ -398,6 +400,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return `p_ == nullptr`
     */
     bool
     empty() const noexcept
@@ -414,6 +418,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return `!this->empty()`
     */
     explicit
     operator bool() const noexcept
@@ -425,6 +431,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return A reference to the recycle bin
     */
     recycled<T>&
     bin() const noexcept
@@ -438,6 +446,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return A pointer to the object
     */
     T* get() const noexcept
     {
@@ -450,6 +460,8 @@ public:
 
         @par Exception Safety
         Throws nothing.
+
+        @return A pointer to the object
     */
     T* operator->() const noexcept
     {
@@ -462,6 +474,8 @@ public:
         @code
         not this->empty()
         @endcode
+
+        @return A reference to the object
     */
     T& operator*() const noexcept
     {
@@ -479,6 +493,8 @@ public:
         @code
         not this->empty()
         @endcode
+
+        @return A reference to the object
     */
     T& acquire();
 
