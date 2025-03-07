@@ -164,8 +164,6 @@ jobs:
           cp -r "$workspace_root"/* "libs/$module"
           
           # Default parameters for CMake workflows
-          echo 'CMAKE_GENERATOR=${{ matrix.generator || '' }}' >> $GITHUB_ENV
-          echo 'CMAKE_GENERATOR_TOOLSET=${{ matrix.generator-toolset || '' }}' >> $GITHUB_ENV
           echo 'CMAKE_BUILD_TYPE=${{ matrix.build-type || '' }}' >> $GITHUB_ENV
           echo 'CC=${{ steps.setup-cpp.outputs.cc || matrix.cc || '' }}' >> $GITHUB_ENV
           echo 'CFLAGS=${{ (matrix.intsan && '-fsanitize=integer -fno-sanitize=unsigned-integer-overflow -fno-sanitize-recover=integer -fno-omit-frame-pointer') || (matrix.boundssan && '-fsanitize=bounds -fno-sanitize-recover=bounds -fno-omit-frame-pointer') || matrix.ccflags || '' }}' >> $GITHUB_ENV
@@ -200,6 +198,8 @@ jobs:
           source-dir: ../boost-root
           build-dir: build_cmake
           build-target: tests
+          generator: ${{ matrix.generator }}
+          generator-toolset: ${{ matrix.generator-toolset }}
           install: true
           install-prefix: .local
           cmake-version: '>=3.20'
@@ -219,6 +219,8 @@ jobs:
         with:
           source-dir: ../boost-root/libs/${{ steps.patch.outputs.module }}/test/cmake_test
           build-dir: build_cmake_test
+          generator: ${{ matrix.generator }}
+          generator-toolset: ${{ matrix.generator-toolset }}
           install: false
           cmake-version: '>=3.20'
           extra-args: |
@@ -235,6 +237,8 @@ jobs:
         with:
           source-dir: .
           build-dir: build_cmake_root
+          generator: ${{ matrix.generator }}
+          generator-toolset: ${{ matrix.generator-toolset }}
           build-target: tests
           run-tests: true
           install: false
