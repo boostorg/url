@@ -179,6 +179,13 @@ jobs:
           echo 'CMAKE_RUN_TESTS=true' >> $GITHUB_ENV
           echo 'CMAKE_PACKAGE=false' >> $GITHUB_ENV
           
+          # If windows, check if ml64.exe is available
+          if [ ${{ runner.os }} == "Windows" ]; then
+              if ! command -v ml64.exe &> /dev/null; then
+                  echo "ml64.exe not found in PATH."
+              fi
+          fi
+          
           # Set PATH to find Boost DLLs
           if [ ${{ matrix.shared }} == "true" ]; then
               echo "$GITHUB_WORKSPACE/.local/bin" >> $GITHUB_PATH
