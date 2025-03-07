@@ -163,11 +163,15 @@ jobs:
           mkdir "libs/$module"
           cp -r "$workspace_root"/* "libs/$module"
           
-          # Default parameters for CMake workflows
+          # Set default parameters for CMake workflows as env variables
+          if [ ${{ matrix.compiler }} != "clang-cl" ]; then
+              # We ignore clang-cl because in this case we're using the toolset "-T ClangCL",
+              # which defaults to the clang compiler that comes with Visual Studio.
+              echo 'CC=${{ steps.setup-cpp.outputs.cc || matrix.cc || '' }}' >> $GITHUB_ENV
+              echo 'CXX=${{ steps.setup-cpp.outputs.cxx || matrix.cxx || '' }}' >> $GITHUB_ENV
+          fi
           echo 'CMAKE_BUILD_TYPE=${{ matrix.build-type || '' }}' >> $GITHUB_ENV
-          echo 'CC=${{ steps.setup-cpp.outputs.cc || matrix.cc || '' }}' >> $GITHUB_ENV
           echo 'CFLAGS=${{ (matrix.intsan && '-fsanitize=integer -fno-sanitize=unsigned-integer-overflow -fno-sanitize-recover=integer -fno-omit-frame-pointer') || (matrix.boundssan && '-fsanitize=bounds -fno-sanitize-recover=bounds -fno-omit-frame-pointer') || matrix.ccflags || '' }}' >> $GITHUB_ENV
-          echo 'CXX=${{ steps.setup-cpp.outputs.cxx || matrix.cxx || '' }}' >> $GITHUB_ENV
           echo 'CXXFLAGS=${{ (matrix.intsan && '-fsanitize=integer -fno-sanitize=unsigned-integer-overflow -fno-sanitize-recover=integer -fno-omit-frame-pointer') || (matrix.boundssan && '-fsanitize=bounds -fno-sanitize-recover=bounds -fno-omit-frame-pointer') || matrix.cxxflags || '' }}' >> $GITHUB_ENV
           echo 'CXXSTD=${{ matrix.latest-cxxstd || '' }}' >> $GITHUB_ENV
           echo 'BUILD_SHARED_LIB=${{ matrix.shared || '' }}' >> $GITHUB_ENV
