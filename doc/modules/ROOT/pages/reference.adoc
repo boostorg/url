@@ -85,7 +85,8 @@ cpp:boost::urls::scheme[scheme]
 
 | **Functions**
 
-cpp:boost::urls::operator<<[operator<<]
+// AFREITAS: cpp extension could not handle "<<"
+// cpp:boost::urls::operator<<[operator<<]
 
 cpp:boost::urls::arg[arg]
 
