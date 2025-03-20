@@ -7,11 +7,8 @@ input:
 file-patterns:
   - '*.hpp'
 exclude:
-  - '../include/boost/url/detail'
   - '../include/boost/url/impl'
-  - '../include/boost/url/grammar/detail'
   - '../include/boost/url/grammar/impl'
-  - '../include/boost/url/rfc/detail'
   - '../include/boost/url/rfc/impl'
 
 # Filters
