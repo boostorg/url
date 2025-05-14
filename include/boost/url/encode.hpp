@@ -44,7 +44,7 @@ namespace urls {
 
     @param s The string to measure.
 
-    @param unreserved The set of characters
+    @param allowed The set of characters
     that is not percent-encoded.
 
     @param opt The options for encoding. If
@@ -64,7 +64,7 @@ template<BOOST_URL_CONSTRAINT(grammar::CharSet) CS>
 std::size_t
 encoded_size(
     core::string_view s,
-    CS const& unreserved,
+    CS const& allowed,
     encoding_opts opt = {}) noexcept;
 
 //------------------------------------------------
@@ -100,7 +100,7 @@ encoded_size(
 
     @param s The string to encode.
 
-    @param unreserved The set of characters
+    @param allowed The set of characters
     that is not percent-encoded.
 
     @param opt The options for encoding. If
@@ -122,7 +122,7 @@ encode(
     char* dest,
     std::size_t size,
     core::string_view s,
-    CS const& unreserved,
+    CS const& allowed,
     encoding_opts opt = {});
 
 #ifndef BOOST_URL_DOCS
@@ -133,7 +133,7 @@ encode_unsafe(
     char* dest,
     std::size_t size,
     core::string_view s,
-    CS const& unreserved,
+    CS const& allowed,
     encoding_opts opt);
 #endif
 
@@ -162,7 +162,7 @@ encode_unsafe(
 
     @param s The string to encode.
 
-    @param unreserved The set of characters
+    @param allowed The set of characters
     that is not percent-encoded.
 
     @param opt The options for encoding. If
@@ -186,7 +186,7 @@ template<
 BOOST_URL_STRTOK_RETURN
 encode(
     core::string_view s,
-    CS const& unreserved,
+    CS const& allowed,
     encoding_opts opt = {},
     StringToken&& token = {}) noexcept;
 

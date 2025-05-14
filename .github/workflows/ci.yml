@@ -57,8 +57,8 @@ jobs:
         id: cpp-matrix
         with:
           compilers: |
-            gcc >=4.8
-            clang >=3.8
+            gcc >=4.8 <15
+            clang >=3.8 <20
             msvc >=14.20
             apple-clang *
             mingw *

@@ -2918,9 +2918,27 @@ private:
         detail::any_params_iter&&) ->
             detail::params_iter_impl;
 
+    // Decode any unnecessary percent-escapes
+    // and ensures hexadecimals are uppercase.
+    // The encoding of ignored characters is
+    // preserved.
+    template
+        <class AllowedCharSet,
+         class IgnoredCharSet>
+    void
+    normalize_octets_impl(
+        int,
+        AllowedCharSet const& allowed,
+        IgnoredCharSet const& ignored,
+        op_t&) noexcept;
+
     template<class CharSet>
-    void normalize_octets_impl(int,
-        CharSet const& allowed, op_t&) noexcept;
+    void
+    normalize_octets_impl(
+        int,
+        CharSet const& allowed,
+        op_t&) noexcept;
+
     void decoded_to_lower_impl(int id) noexcept;
     void to_lower_impl(int id) noexcept;
 };
