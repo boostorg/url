@@ -125,8 +125,6 @@ encode(
     CS const& allowed,
     encoding_opts opt = {});
 
-#ifndef BOOST_URL_DOCS
-// VFALCO semi-private for now
 template<BOOST_URL_CONSTRAINT(grammar::CharSet) CS>
 std::size_t
 encode_unsafe(
@@ -135,7 +133,6 @@ encode_unsafe(
     core::string_view s,
     CS const& allowed,
     encoding_opts opt);
-#endif
 
 //------------------------------------------------
 
