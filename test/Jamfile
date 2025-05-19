@@ -21,7 +21,6 @@ project
     # Warnings in dependencies
     <toolset>gcc:<cxxflags>"-Wno-unused-but-set-variable"
     <toolset>gcc:<cxxflags>"-Wno-maybe-uninitialized"
-    <toolset>gcc-15:<cxxflags>"-Wno-deprecated-variadic-comma-omission"
     <toolset>gcc-15:<cxxflags>"-Wno-deprecated-declarations"
     <toolset>gcc,<target-os>windows:<cxxflags>"-Wno-error=array-bounds"
     <toolset>clang:<cxxflags>"-Wno-unused-but-set-variable"
@@ -30,7 +29,6 @@ project
     <toolset>clang-13:<cxxflags>"-Wno-unused-but-set-variable"
     <toolset>clang-14:<cxxflags>"-Wno-unused-but-set-variable"
     <toolset>clang-15:<cxxflags>"-Wno-unused-but-set-variable"
-    <toolset>clang-20:<cxxflags>"-Wno-deprecated-missing-comma-variadic-parameter"
 
     # Different typeinfos confuse ubsan
     <undefined-sanitizer>norecover:<link>static
