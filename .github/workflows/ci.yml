@@ -219,7 +219,7 @@ jobs:
             -D BOOST_INCLUDE_LIBRARIES=${{ steps.patch.outputs.module }}
             -D BOOST_URL_DISABLE_THREADS=${{ ( matrix.no-threads && 'ON' ) || 'OFF' }}
             -D BOOST_URL_BUILD_FUZZERS=${{ ( matrix.fuzz && format('ON -D BOOST_URL_FUZZER_CORPUS_PATH={0}/corpus.tar', steps.patch.outputs.workspace_root) ) || 'OFF' }}
-            -D BOOST_URL_WARNINGS_AS_ERRORS=${{ ( matrix.is-latest && 'ON' ) || 'OFF' }}
+            -D BOOST_URL_WARNINGS_AS_ERRORS=ON
           export-compile-commands: ${{ matrix.time-trace }}
           ref-source-dir: ../boost-root/libs/url
           trace-commands: true
@@ -257,7 +257,7 @@ jobs:
           extra-args: |
             -D BOOST_SRC_DIR="../boost-root"
             -D BOOST_URL_DISABLE_THREADS=${{ ( matrix.no-threads && 'ON' ) || 'OFF' }}
-            -D BOOST_URL_WARNINGS_AS_ERRORS=${{ ( matrix.is-latest && 'ON' ) || 'OFF' }}
+            -D BOOST_URL_WARNINGS_AS_ERRORS=ON
           ref-source-dir: .
           trace-commands: true
 
