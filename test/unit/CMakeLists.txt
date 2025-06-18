@@ -21,7 +21,7 @@ set(EXAMPLE_FILES ../../example/router/impl/matches.cpp ../../example/router/det
 
 # Test target
 add_executable(boost_url_unit_tests EXCLUDE_FROM_ALL ${BOOST_URL_TESTS_FILES} ${SUITE_FILES} ${EXAMPLE_FILES})
-target_include_directories(boost_url_unit_tests PRIVATE . ../../extra ../../example/router)
+target_include_directories(boost_url_unit_tests PRIVATE . ../../extra/test_suite ../../example/router)
 target_link_libraries(boost_url_unit_tests PUBLIC Boost::url)
 foreach (BOOST_URL_UNIT_TEST_LIBRARY ${BOOST_URL_UNIT_TEST_LIBRARIES})
     target_link_libraries(boost_url_unit_tests PUBLIC Boost::${BOOST_URL_UNIT_TEST_LIBRARY})
@@ -37,10 +37,9 @@ endif()
 
 # Folders
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BOOST_URL_TESTS_FILES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${SUITE_FILES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra/test_suite PREFIX "_extra" FILES ${SUITE_FILES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../example/router PREFIX "_router" FILES ${EXAMPLE_FILES})
 
 # CTest target
 add_test(NAME boost_url_unit_tests COMMAND boost_url_unit_tests)
 add_dependencies(tests boost_url_unit_tests)
-
