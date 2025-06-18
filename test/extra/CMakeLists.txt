@@ -9,16 +9,16 @@
 #
 
 # Files
-set(TEST_FILES Jamfile test_suite.cpp)
+set(TEST_FILES Jamfile test_test_suite.cpp)
 
 # Test target
 add_executable(boost_url_extra EXCLUDE_FROM_ALL ${TEST_FILES} ${SUITE_FILES})
-target_include_directories(boost_url_extra PRIVATE . ../../extra)
+target_include_directories(boost_url_extra PRIVATE . ../../extra/test_suite)
 target_link_libraries(boost_url_extra PRIVATE Boost::url)
 
 # Folders
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TEST_FILES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra PREFIX "_extra" FILES ${SUITE_FILES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../extra/test_suite PREFIX "_extra" FILES ${SUITE_FILES})
 
 # CTest Target
 add_test(NAME boost_url_extra COMMAND boost_url_extra)

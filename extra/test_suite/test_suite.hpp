@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -32,38 +33,112 @@ namespace test_suite {
 
 //------------------------------------------------
 
+/** Represents a type-erased test suite for unit testing.
+
+    This abstract base class defines the interface for a test suite,
+    allowing derived classes to implement specific test logic.
+
+    It provides methods to retrieve the name of the test suite
+    and to execute the test suite.
+
+    @note This class is intended to be used as a base class for
+          concrete test suite implementations.
+ */
 struct any_suite
 {
+    /** Virtual destructor for the `any_suite` class.
+
+        Ensures proper cleanup of derived classes.
+     */
     virtual ~any_suite() = 0;
+
+    /** Retrieves the name of the test suite.
+
+        A string literal representing the name of the test suite.
+     */
     virtual char const* name() const noexcept = 0;
+
+    /** Executes the test suite.
+
+        This method should be overridden by derived classes to
+        implement the specific test logic.
+     */
     virtual void run() const = 0;
 };
-
 //------------------------------------------------
 
+/** Represents a collection of type erased test suites for unit testing.
+
+    This abstract class provides an interface for managing a collection
+    of test suites.
+
+    It allows the insertion of test suites and provides
+    iterators to traverse the collection.
+
+    @note The `sort()` method is deprecated and should not be used in new code.
+ */
 struct suites
 {
     virtual ~suites() = default;
 
     using iterator = any_suite const* const*;
+
+    /** Inserts a test suite into the collection.
+
+        @param suite The test suite to insert.
+     */
     virtual void insert(any_suite const&) = 0;
+
+    /** Returns an iterator to the beginning of the collection.
+
+        @return An iterator pointing to the first test suite in the collection.
+     */
     virtual iterator begin() const noexcept = 0;
+
+    /** Returns an iterator to the end of the collection.
+
+        @return An iterator pointing past the last test suite in the collection.
+     */
     virtual iterator end() const noexcept = 0;
 
-    // DEPRECATED
+    /** Sorts the test suites in the collection.
+
+        This method is deprecated and should not be used.
+     */
     virtual void sort() = 0;
 
+    /** Provides access to the global instance of the `suites` collection.
+
+        A reference to the global `suites` instance.
+     */
     static suites& instance() noexcept;
 };
-
 //------------------------------------------------
 
+/** Represents a test suite for unit testing.
+
+    This class template defines a test suite `T` that can be registered
+    with the global list of test suites managed by `test_suite::suites`
+    via the `TEST_SUITE` macro.
+
+    It inherits from `any_suite` and provides the implementation for
+    the `name` and `run` methods.
+
+    @tparam T The class type that implements the test suite. This class
+              must have a `run()` method that contains the test logic.
+
+    @note The `T` class must be default-constructible.
+ */
 template<class T>
 class suite : public any_suite
 {
-    char const* name_;
+    char const* name_; ///< The name of the test suite.
 
 public:
+    /** Constructs a `suite` object and registers it.
+
+        @param name A string literal representing the name of the test suite.
+     */
     explicit
     suite(char const* name) noexcept
         : name_(name)
@@ -71,12 +146,21 @@ public:
         suites::instance().insert(*this);
     }
 
+    /** Returns the name of the test suite.
+
+        @return A string literal representing the name of the test suite.
+     */
     char const*
     name() const noexcept override
     {
         return name_;
     }
 
+    /** Executes the test suite.
+
+        This method creates an instance of the `T` class and calls
+        its `run()` method.
+     */
     void
     run() const override
     {
@@ -86,26 +170,290 @@ public:
 
 //------------------------------------------------
 
+/** Manages the execution and logging of test suites.
+
+    This abstract base class provides an interface for running test suites,
+    logging messages, and evaluating test conditions.
+
+    It maintains a stack of `any_runner` instances to allow nested
+    test runners.
+
+    @note This class is intended to be extended by concrete implementations
+          that define specific behavior for running tests and logging.
+ */
 class any_runner
 {
+    // Pointer to the previous `any_runner` instance in the stack.
     any_runner* prev_;
 
-    static any_runner*&
-    instance_impl() noexcept;
+    /** Retrieves the pointer to the current `any_runner` instance.
+
+        @return A reference to the pointer of the current `any_runner` instance.
+     */
+    static any_runner*& instance_impl() noexcept;
 
 public:
+    /** Retrieves the current `any_runner` instance.
+
+        @return A reference to the current `any_runner` instance.
+     */
     static any_runner& instance() noexcept;
 
+    /** Constructs an `any_runner` and pushes it onto the stack.
+     */
     any_runner() noexcept;
+
+    /** Destroys the `any_runner` and removes it from the stack.
+     */
     virtual ~any_runner();
 
+    /** Executes a test suite.
+
+        @param test The test suite to execute.
+     */
     virtual void run(any_suite const& test) = 0;
+
+    /** Logs a message.
+
+       @param msg The message to log.
+     */
     virtual void note(char const* msg) = 0;
+
+    /** Evaluates a test condition and logs the result.
+
+       @param cond The condition to evaluate.
+       @param expr The string representation of the condition.
+       @param func The name of the function where the test is evaluated.
+       @param file The name of the file where the test is evaluated.
+       @param line The line number where the test is evaluated.
+       @return `true` if the condition is true, otherwise `false`.
+     */
     virtual bool test(bool cond,
         char const* expr, char const* func,
         char const* file, int line) = 0;
+
+    /** Provides access to the log stream.
+
+       @return A reference to the log stream.
+     */
     virtual std::ostream& log() noexcept = 0;
 };
+
+//------------------------------------------------
+
+#ifndef _MSC_VER
+
+/** Alias for a debug stream.
+
+    This alias is used to define a `debug_stream` as a reference to a standard
+    output stream (`std::ostream&`). On non-Microsoft platforms, it simplifies
+    the implementation by directly using the standard output stream without
+    additional functionality.
+
+    @note On Microsoft platforms, `debug_stream` is implemented as a custom
+          class to redirect output to the Visual Studio debugger.
+ */
+using debug_stream = std::ostream&;
+
+#else
+
+namespace detail {
+
+class debug_streambuf
+    : public std::stringbuf
+{
+    std::ostream& os_;
+    bool dbg_;
+
+    void
+    write(char const* s);
+
+public:
+    explicit
+    debug_streambuf(
+        std::ostream& os);
+
+    ~debug_streambuf();
+
+    int sync() override;
+};
+
+} // detail
+
+//------------------------------------------------
+
+/** std::ostream with Visual Studio IDE redirection.
+
+    Instances of this stream wrap a specified
+    `ostream` (such as `cout` or `cerr`). If a
+    debugger is attached when the stream is
+    created, output will additionally copied
+    to the debugger's output window.
+*/
+class debug_stream : public std::ostream
+{
+    detail::debug_streambuf buf_;
+
+public:
+    /** Construct a stream.
+
+        @param os The output stream to wrap.
+    */
+    explicit
+    debug_stream(
+        std::ostream& os)
+        : std::ostream(&buf_)
+        , buf_(os)
+    {
+        if(os.flags() & std::ios::unitbuf)
+            std::unitbuf(*this);
+    }
+};
+
+#endif
+
+
+//------------------------------------------------
+
+/** Provide the command-line arguments to the test suite.
+
+    This function forwards the command-line arguments passed to the application
+    to the test suite. It allows the test suite to access command-line arguments
+    for filtering test suites or for other purposes.
+
+    @param argc The number of command-line arguments.
+    @param argv The array of command-line arguments.
+    @return `EXIT_SUCCESS` if the application was able to process the
+            command line successfully, otherwise `EXIT_FAILURE`.
+ */
+void
+set_command_line(
+    int argc,
+    char const* const* argv);
+
+/** Returns the number of command-line arguments.
+
+    This function returns the number of command-line arguments
+    that were passed to the application.
+
+    This information must be set using the `set_command_line()` function
+    before calling this function, otherwise it will throw an exception.
+
+ */
+int
+argc();
+
+/** Returns the command-line arguments.
+
+    This function returns a pointer to an array of C-style strings
+    representing the command-line arguments passed to the application.
+
+    This information must be set using the `set_command_line()` function
+    before calling this function, otherwise it will throw an exception.
+
+ */
+char const* const*
+argv();
+
+/** Return a command-line option
+
+    This function returns the value of a command-line option
+    if it exists, otherwise it returns `nullptr`.
+
+    A command-line option can be set with the `--name=value`
+    format or the `--name value` format. A short name can
+    also be specified with a single dash, like `-n=value`
+    or `-n value`.
+
+    @param short_name The name of the command-line option to search for.
+    @param name The name of the command-line option to search for.
+    @return The value of the command-line option or an empty string if not found.
+ */
+char const*
+get_command_line_option(
+    char const* short_name,
+    char const* name);
+
+/** Return a command-line option
+ */
+inline
+char const*
+get_command_line_option(char const* name)
+{
+    return get_command_line_option(nullptr, name);
+}
+
+/** Return a command-line option
+ */
+inline
+char const*
+get_command_line_short_option(char const* short_name)
+{
+    return get_command_line_option(short_name, nullptr);
+}
+
+/** Return a command-line flag
+
+    This function returns the value of a command-line flag
+    if it exists, otherwise it returns `false`.
+
+    A command-line flag can be set with the `--name` format
+    or the `-n` format.
+
+    @param name The name of the command-line flag to search for.
+    @return The value of the command-line flag or an empty string if not found.
+ */
+bool
+get_command_line_flag(
+    char const* short_name,
+    char const* name);
+
+/** Return a command-line flag
+ */
+inline
+bool
+get_command_line_flag(char const* name)
+{
+    return get_command_line_flag(nullptr, name);
+}
+
+/** Return a command-line flag
+ */
+inline
+bool
+get_command_line_short_flag(char const* short_name)
+{
+    return get_command_line_flag(short_name, nullptr);
+}
+
+/** Runs the test suites and logs the results.
+
+    This function executes the registered test suites, optionally filtered
+    by command-line arguments, and logs the results to the provided output stream.
+
+    - If no arguments are provided, all test suites are executed.
+    - If arguments are provided, only test suites whose names match the arguments are executed.
+    - The function also supports a `-h` or `--help` argument to display usage information.
+
+    @param out The output stream to log the results.
+    @param argc The number of command-line arguments.
+    @param argv The array of command-line arguments.
+    @return `EXIT_SUCCESS` if all tests pass, otherwise `EXIT_FAILURE`.
+ */
+int
+run(std::ostream& out,
+    int argc,
+    char const* const* argv);
+
+int
+run(std::ostream& out);
+
+int
+run(int argc,
+    char const* const* argv);
+
+int
+run();
 
 //------------------------------------------------
 
@@ -496,6 +844,35 @@ constexpr detail::log_type log{};
 # define BOOST_TEST_NO_THROW( expr ) ( [&]{ expr; return true; }() )
 #endif
 
+/** Defines a test suite for unit testing.
+
+    This macro creates a static instance of a `test_suite::suite` object,
+    which registers a test suite with the given type and name in the global
+    list of test suites.
+
+    The `run()` method of the specified type will be called when the test
+    suite is executed.
+
+    The test suite will automatically be added to the global list of
+    test suites managed by `test_suite::suites`.
+
+    @param type The class type that implements the test suite. This class must
+                have a `run()` method that contains the test logic.
+    @param name A string literal representing the name of the test suite.
+
+    @note The `type` class must be default-constructible.
+
+    @code
+    struct my_test {
+        void run() {
+            BOOST_TEST(1 + 1 == 2);
+        }
+    };
+
+    TEST_SUITE(my_test, "My Test Suite");
+    @endcode
+
+ */
 #define TEST_SUITE(type, name) \
     static ::test_suite::suite<type> type##_(name)
 
