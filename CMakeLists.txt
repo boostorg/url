@@ -175,6 +175,7 @@ if (BUILD_TESTING OR BOOST_URL_BUILD_TESTS)
     if (BOOST_URL_IS_ROOT)
         include(CTest)
     endif ()
+    add_subdirectory(extra/test_suite)
     add_subdirectory(test)
 endif ()
 

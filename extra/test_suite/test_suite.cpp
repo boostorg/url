@@ -18,6 +18,7 @@
 #include <iostream>
 #include <ostream>
 #include <vector>
+#include <stdexcept>
 
 #ifdef _MSC_VER
 #define WIN32_LEAN_AND_MEAN
@@ -324,6 +325,19 @@ class simple_runner : public any_runner
     summary all_;
     std::ostream& log_;
     std::vector<summary> v_;
+    bool log_time_at_exit_ = true;
+
+    void
+    log_time()
+    {
+        log_ <<
+            elapsed{clock_type::now() -
+                     all_.start } << ", " <<
+            v_.size() << " suites, " <<
+            all_.failed.load() << " failures, " <<
+            all_.total.load() << " total." <<
+            std::endl;
+    }
 
 public:
     explicit
@@ -338,13 +352,9 @@ public:
 
     virtual ~simple_runner()
     {
-        log_ <<
-            elapsed{clock_type::now() -
-                all_.start } << ", " <<
-            v_.size() << " suites, " <<
-            all_.failed.load() << " failures, " <<
-            all_.total.load() << " total." <<
-                std::endl;
+        if (!log_time_at_exit_)
+            return;
+        log_time();
     }
 
     // true if no failures
@@ -396,6 +406,14 @@ public:
     }
 
     bool test(bool, char const*, char const*, char const*, int) override;
+
+    bool
+    log_time_at_exit(bool log)
+    {
+        bool const prev = log_time_at_exit_;
+        log_time_at_exit_ = log;
+        return prev;
+    }
 };
 
 //------------------------------------------------
@@ -608,11 +626,11 @@ run(std::ostream& out)
     // regardless of other arguments
     if (get_command_line_flag("l", "list-tests"))
     {
-        out << "Available test suites:\n";
         for (any_suite const* e : suites::instance())
         {
-            out << "  " << e->name() << "\n";
+            out << e->name() << "\n";
         }
+        any_runner.log_time_at_exit(false);
         return EXIT_SUCCESS;
     }
 

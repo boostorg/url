@@ -220,6 +220,7 @@ jobs:
             -D BOOST_URL_DISABLE_THREADS=${{ ( matrix.no-threads && 'ON' ) || 'OFF' }}
             -D BOOST_URL_BUILD_FUZZERS=${{ ( matrix.fuzz && format('ON -D BOOST_URL_FUZZER_CORPUS_PATH={0}/corpus.tar', steps.patch.outputs.workspace_root) ) || 'OFF' }}
             -D BOOST_URL_WARNINGS_AS_ERRORS=ON
+            -D TEST_SUITE_SCRIPT_DEBUG=ON
           export-compile-commands: ${{ matrix.time-trace }}
           ref-source-dir: ../boost-root/libs/url
           trace-commands: true
