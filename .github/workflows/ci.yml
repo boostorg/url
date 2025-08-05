@@ -377,7 +377,7 @@ jobs:
         include:
           - { name: Windows, os: windows-latest }
           - { name: Ubuntu, os: ubuntu-latest }
-          - { name: MacOS, os: macos-latest }
+          - { name: MacOS, os: macos-15 }
     name: Antora Docs (${{ matrix.name }})
     runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)[matrix.os] }}
     defaults:
