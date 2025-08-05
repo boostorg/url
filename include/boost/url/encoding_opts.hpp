@@ -49,7 +49,7 @@ struct encoding_opts
         when decoding. To represent a plus sign,
         its encoded form ("%2B") is used.
 
-        The @ref encode and @ref encode_size functions
+        The @ref encode and @ref encoded_size functions
         will encode spaces as plus signs when
         this option is `true`, regardless of the
         allowed character set. They will also
