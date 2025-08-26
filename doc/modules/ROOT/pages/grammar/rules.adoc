@@ -28,7 +28,7 @@ auto parse( char const *& it, char const* end, Rule const& r)
     -> system::result< typename Rule::value_type >;
 ----
 
-To satisfy the __Rule__ concept, a cpp:class[] or cpp:struct[] must declare the nested type cpp:value_type[] indicating the type of value returned upon success, and a cpp:const[] member function cpp:parse[] with a prescribed signature.
+To satisfy the __Rule__ concept, a cpp:class[] or cpp:struct[] must declare the nested type `value_type` indicating the type of value returned upon success, and a cpp:const[] member function cpp:parse[] with a prescribed signature.
 In the following code we define a rule that matches a single comma:
 
 [source,cpp]

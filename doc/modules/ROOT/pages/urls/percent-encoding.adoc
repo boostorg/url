@@ -18,7 +18,7 @@ The cpp:encode[] can be used to percent-encode strings with the specified __Char
 include::example$unit/snippets.cpp[tag=snippet_encoding_1,indent=0]
 ----
 
-A few parameters, such as encoding spaces as plus (cpp:+[]), can be adjusted with cpp:encoding_opts[]:
+A few parameters, such as encoding spaces as plus (`+`), can be adjusted with cpp:encoding_opts[]:
 
 // snippet_encoding_2
 [source,cpp]

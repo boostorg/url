@@ -858,6 +858,26 @@ struct url_test
             BOOST_TEST(u.set_path_absolute(true));
             u.encoded_segments().push_back("y");
             });
+
+        // issue #921: path %2F round-trip
+        {
+            url u("https://example.com/a/b/c/d%2Fe%2Ff/g/h");
+            BOOST_TEST_CSTR_EQ(u.buffer(), "https://example.com/a/b/c/d%2Fe%2Ff/g/h");
+            BOOST_TEST(u.encoded_path() == "/a/b/c/d%2Fe%2Ff/g/h");
+            BOOST_TEST(u.path() == "/a/b/c/d/e/f/g/h");
+
+            // set_encoded_path with encoded value (should round-trip correctly)
+            u.set_encoded_path(u.encoded_path());
+            BOOST_TEST_CSTR_EQ(u.buffer(), "https://example.com/a/b/c/d%2Fe%2Ff/g/h");
+            BOOST_TEST(u.encoded_path() == "/a/b/c/d%2Fe%2Ff/g/h");
+            BOOST_TEST(u.path() == "/a/b/c/d/e/f/g/h");
+
+            // set_path with decoded value (impossible to round-trip)
+            u.set_path(u.path());
+            BOOST_TEST_CSTR_EQ(u.buffer(), "https://example.com/a/b/c/d/e/f/g/h");
+            BOOST_TEST(u.encoded_path() == "/a/b/c/d/e/f/g/h");
+            BOOST_TEST(u.path() == "/a/b/c/d/e/f/g/h");
+        }
     }
 
     //--------------------------------------------
