@@ -230,32 +230,32 @@ of something that is not a URL):
 |URL|Notes
 
 // Row 1, Column 1
-|cpp:pass:[https://www.boost.org/index.html][]
+|`pass:[https://www.boost.org/index.html]`
 // Row 1, Column 2
-|Hierarchical URL with cpp:https[] protocol. Resource in the HTTP protocol.
+|Hierarchical URL with `https` protocol. Resource in the HTTP protocol.
 
 // Row 2, Column 1
-|cpp:pass:[ftp://host.dom/etc/motd][]
+|`pass:[ftp://host.dom/etc/motd]`
 // Row 2, Column 2
-|Hierarchical URL with cpp:ftp[] scheme. Resource in the FTP protocol.
+|Hierarchical URL with `ftp` scheme. Resource in the FTP protocol.
 
 // Row 3, Column 1
-|cpp:urn:isbn:045145052[]
+|`urn:isbn:045145052`
 // Row 3, Column 2
-|Opaque URL with cpp:urn[] scheme. Identifies cpp:isbn[] resource.
+|Opaque URL with `urn` scheme. Identifies `isbn` resource.
 
 // Row 4, Column 1
-|cpp:mailto:person@example.com[]
+|`mailto:person@example.com`
 // Row 4, Column 2
-|Opaque URL with cpp:mailto[] scheme. Identifies e-mail address.
+|Opaque URL with `mailto` scheme. Identifies e-mail address.
 
 // Row 5, Column 1
-|cpp:index.html[]
+|`index.html`
 // Row 5, Column 2
 |URL reference. Missing scheme and authority.
 
 // Row 6, Column 1
-|cpp:www.boost.org[]
+|`www.boost.org`
 // Row 6, Column 2
 |A Protocol-Relative Link (PRL). **Not**.
 

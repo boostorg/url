@@ -1713,8 +1713,8 @@ public:
 
         @note
         The library may adjust the final result
-        to ensure that no other parts of the url
-        is semantically affected.
+        to ensure that no other parts of the URL
+        are semantically affected.
 
         @note
         This function does not encode '/' chars, which
