@@ -1580,6 +1580,8 @@ resolve(
         if(ref.has_fragment())
             set_encoded_fragment(
                 ref.encoded_fragment());
+        else
+            remove_fragment();
         return {};
     }
     if(ref.is_path_absolute())

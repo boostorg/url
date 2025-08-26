@@ -1047,6 +1047,15 @@ struct url_test
                 BOOST_TEST_CSTR_EQ(u, "https:path2");
             }
         }
+
+        // issue #920
+        {
+            url u("https://www.example.org/path/index.html?a%20b=5%206&x%20y=34#frag");
+            url ref("?asdf%20qwer=1%202%20");
+            BOOST_TEST(u.resolve(ref));
+            BOOST_TEST_CSTR_EQ(u.buffer(), "https://www.example.org/path/index.html?asdf%20qwer=1%202%20");
+            BOOST_TEST(!u.has_fragment());
+        }
     }
 
     //--------------------------------------------
