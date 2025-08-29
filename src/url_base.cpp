@@ -810,24 +810,97 @@ url_base::
 set_host_ipv6(
     ipv6_address const& addr)
 {
-    op_t op(*this);
-    char buf[2 +
-        urls::ipv6_address::max_str_len];
-    auto s = addr.to_buffer(
-        buf + 1, sizeof(buf) - 2);
-    buf[0] = '[';
-    buf[s.size() + 1] = ']';
-    auto const n = s.size() + 2;
+    set_host_ipv6_and_encoded_zone_id(addr, encoded_zone_id());
+    return *this;
+}
+
+url_base&
+url_base::
+set_zone_id(core::string_view s)
+{
+    set_host_ipv6_and_zone_id(host_ipv6_address(), s);
+    return *this;
+}
+
+url_base&
+url_base::
+set_encoded_zone_id(pct_string_view s)
+{
+    set_host_ipv6_and_encoded_zone_id(host_ipv6_address(), s);
+    return *this;
+}
+
+void
+url_base::
+set_host_ipv6_and_zone_id(
+    ipv6_address const& addr,
+    core::string_view zone_id)
+{
+    op_t op(*this, &zone_id);
+    char ipv6_str_buf[urls::ipv6_address::max_str_len];
+    auto ipv6_str = addr.to_buffer(ipv6_str_buf, sizeof(ipv6_str_buf));
+    bool const has_zone_id = !zone_id.empty();
+    encoding_opts opt;
+    auto const ipn = ipv6_str.size();
+    auto const zn = encoded_size(zone_id, unreserved_chars, opt);
+    auto const n = ipn + 2 + has_zone_id * (3 + zn);
     auto dest = set_host_impl(n, op);
-    std::memcpy(dest, buf, n);
-    impl_.decoded_[id_host] = n;
+    *dest++ = '[';
+    std::memcpy(dest, ipv6_str.data(), ipn);
+    dest += ipn;
+    if (has_zone_id)
+    {
+        *dest++ = '%';
+        *dest++ = '2';
+        *dest++ = '5';
+        encode(dest, zn, zone_id, unreserved_chars, opt);
+        dest += zn;
+    }
+    *dest++ = ']';
+    // ipn + |"["| + |"]"| + (has_zone_id ? |"%"| + zn : 0)
+    impl_.decoded_[id_host] = ipn + 2 + has_zone_id * (1 + zone_id.size());
     impl_.host_type_ = urls::host_type::ipv6;
     auto bytes = addr.to_bytes();
     std::memcpy(
         impl_.ip_addr_,
         bytes.data(),
         bytes.size());
-    return *this;
+}
+
+void
+url_base::
+set_host_ipv6_and_encoded_zone_id(
+    ipv6_address const& addr,
+    pct_string_view zone_id)
+{
+    op_t op(*this, &detail::ref(zone_id));
+    char ipv6_str_buf[urls::ipv6_address::max_str_len];
+    auto ipv6_str = addr.to_buffer(ipv6_str_buf, sizeof(ipv6_str_buf));
+    bool const has_zone_id = !zone_id.empty();
+    auto const ipn = ipv6_str.size();
+    auto const zn = detail::re_encoded_size_unsafe(zone_id, unreserved_chars);
+    auto const n = ipn + 2 + has_zone_id * (3 + zn);
+    auto dest = set_host_impl(n, op);
+    *dest++ = '[';
+    std::memcpy(dest, ipv6_str.data(), ipn);
+    dest += ipn;
+    std::size_t dzn = 0;
+    if (has_zone_id)
+    {
+        *dest++ = '%';
+        *dest++ = '2';
+        *dest++ = '5';
+        dzn = detail::re_encode_unsafe(dest, dest + zn, zone_id, unreserved_chars);
+    }
+    *dest++ = ']';
+    // ipn + |"["| + |"]"| + (has_zone_id ? |"%"| + zn : 0)
+    impl_.decoded_[id_host] = ipn + 2 + has_zone_id * (1 + dzn);
+    impl_.host_type_ = urls::host_type::ipv6;
+    auto bytes = addr.to_bytes();
+    std::memcpy(
+        impl_.ip_addr_,
+        bytes.data(),
+        bytes.size());
 }
 
 url_base&
