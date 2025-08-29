@@ -27,6 +27,7 @@
 #include <boost/url/grammar/ci_string.hpp>
 #include <boost/url/rfc/authority_rule.hpp>
 #include <boost/url/rfc/query_rule.hpp>
+#include <boost/url/rfc/ipv6_address_rule.hpp>
 #include "rfc/detail/charsets.hpp"
 #include "rfc/detail/host_rule.hpp"
 #include "rfc/detail/ipvfuture_rule.hpp"
@@ -602,18 +603,40 @@ set_host(
         s.back() == ']')
     {
         // IP-literal
+        if (s[1] != 'v')
         {
             // IPv6-address
-            auto rv = parse_ipv6_address(
-                s.substr(1, s.size() - 2));
+            auto innersv = s.substr(1, s.size() - 2);
+            auto innerit = innersv.begin();
+            auto endit = innersv.end();
+            auto rv = grammar::parse(
+                innerit,
+                endit,
+                ipv6_address_rule);
             if(rv)
-                return set_host_ipv6(*rv);
+            {
+                if (innerit == endit)
+                {
+                    set_host_ipv6_and_encoded_zone_id(*rv, {});
+                    return *this;
+                }
+                // IPv6addrz: https://datatracker.ietf.org/doc/html/rfc6874
+                auto chars_left = endit - innerit;
+                if (chars_left >= 2 &&
+                    *innerit++ == '%')
+                {
+                    core::string_view zone_id_str = {&*innerit, std::size_t(chars_left - 1)};
+                    set_host_ipv6_and_zone_id(*rv, zone_id_str);
+                    return *this;
+                }
+            }
         }
+        else
         {
             // IPvFuture
             auto rv = grammar::parse(
                 s.substr(1, s.size() - 2),
-                    detail::ipvfuture_rule);
+                detail::ipvfuture_rule);
             if(rv)
                 return set_host_ipvfuture(rv->str);
         }
@@ -655,13 +678,40 @@ set_encoded_host(
         s.back() == ']')
     {
         // IP-literal
+        if (s[1] != 'v')
         {
             // IPv6-address
-            auto rv = parse_ipv6_address(
-                s.substr(1, s.size() - 2));
+            auto innersv = s.substr(1, s.size() - 2);
+            auto innerit = innersv.begin();
+            auto endit = innersv.end();
+            auto rv = grammar::parse(
+                innerit,
+                endit,
+                ipv6_address_rule);
             if(rv)
-                return set_host_ipv6(*rv);
+            {
+                if (innerit == endit)
+                {
+                    set_host_ipv6_and_encoded_zone_id(*rv, {});
+                    return *this;
+                }
+                // IPv6addrz: https://datatracker.ietf.org/doc/html/rfc6874
+                auto chars_left = endit - innerit;
+                if (chars_left >= 3 &&
+                    *innerit++ == '%' &&
+                    *innerit++ == '2' &&
+                    *innerit++ == '5')
+                {
+                    auto const nz = std::size_t(chars_left - 3);
+                    core::string_view zone_id_str = {&*innerit, std::size_t(chars_left - 3)};
+                    std::size_t dnz = detail::decode_bytes_unsafe(zone_id_str);
+                    pct_string_view zone_id_pct = make_pct_string_view_unsafe(innerit, nz, dnz);
+                    set_host_ipv6_and_encoded_zone_id(*rv, zone_id_pct);
+                    return *this;
+                }
+            }
         }
+        else
         {
             // IPvFuture
             auto rv = grammar::parse(
@@ -702,25 +752,49 @@ url_base::
 set_host_address(
     core::string_view s)
 {
+    if (!s.empty())
     {
-        // IPv6-address
-        auto rv = parse_ipv6_address(s);
-        if(rv)
-            return set_host_ipv6(*rv);
-    }
-    {
+        // IP-literal
+        if (s[0] != 'v')
+        {
+            // IPv6-address
+            auto innerit = s.begin();
+            auto endit = s.end();
+            auto rv = grammar::parse(
+                innerit,
+                endit,
+                ipv6_address_rule);
+            if(rv)
+            {
+                if (innerit == endit)
+                {
+                    set_host_ipv6_and_encoded_zone_id(*rv, {});
+                    return *this;
+                }
+                // IPv6addrz: https://datatracker.ietf.org/doc/html/rfc6874
+                auto chars_left = endit - innerit;
+                if (chars_left >= 2 &&
+                    *innerit++ == '%')
+                {
+                    core::string_view zone_id_str = {&*innerit, std::size_t(chars_left - 1)};
+                    set_host_ipv6_and_zone_id(*rv, zone_id_str);
+                    return *this;
+                }
+            }
+        }
+
         // IPvFuture
-        auto rv = grammar::parse(
-            s, detail::ipvfuture_rule);
+        auto rv = grammar::parse(s, detail::ipvfuture_rule);
         if(rv)
             return set_host_ipvfuture(rv->str);
-    }
-    if(s.size() >= 7) // "0.0.0.0"
-    {
-        // IPv4-address
-        auto rv = parse_ipv4_address(s);
-        if(rv)
-            return set_host_ipv4(*rv);
+
+        if(s.size() >= 7) // "0.0.0.0"
+        {
+            // IPv4-address
+            auto rv2 = parse_ipv4_address(s);
+            if(rv2)
+                return set_host_ipv4(*rv2);
+        }
     }
 
     // reg-name
@@ -746,25 +820,57 @@ url_base::
 set_encoded_host_address(
     pct_string_view s)
 {
+    if( !s.empty() )
     {
-        // IPv6-address
-        auto rv = parse_ipv6_address(s);
-        if(rv)
-            return set_host_ipv6(*rv);
-    }
-    {
-        // IPvFuture
-        auto rv = grammar::parse(
-            s, detail::ipvfuture_rule);
-        if(rv)
-            return set_host_ipvfuture(rv->str);
-    }
-    if(s.size() >= 7) // "0.0.0.0"
-    {
-        // IPv4-address
-        auto rv = parse_ipv4_address(s);
-        if(rv)
-            return set_host_ipv4(*rv);
+        // IP-literal
+        if (s[0] != 'v')
+        {
+            // IPv6-address
+            auto innerit = s.begin();
+            auto endit = s.end();
+            auto rv = grammar::parse(
+                innerit,
+                endit,
+                ipv6_address_rule);
+            if(rv)
+            {
+                if (innerit == endit)
+                {
+                    set_host_ipv6_and_encoded_zone_id(*rv, {});
+                    return *this;
+                }
+                // IPv6addrz: https://datatracker.ietf.org/doc/html/rfc6874
+                auto chars_left = endit - innerit;
+                if (chars_left >= 3 &&
+                    *innerit++ == '%' &&
+                    *innerit++ == '2' &&
+                    *innerit++ == '5')
+                {
+                    auto const nz = std::size_t(chars_left - 3);
+                    core::string_view zone_id_str = {&*innerit, std::size_t(chars_left - 3)};
+                    std::size_t dnz = detail::decode_bytes_unsafe(zone_id_str);
+                    pct_string_view zone_id_pct = make_pct_string_view_unsafe(innerit, nz, dnz);
+                    set_host_ipv6_and_encoded_zone_id(*rv, zone_id_pct);
+                    return *this;
+                }
+            }
+
+            if(s.size() >= 7) // "0.0.0.0"
+            {
+                // IPv4-address
+                auto rv2 = parse_ipv4_address(s);
+                if(rv2)
+                   return set_host_ipv4(*rv2);
+            }
+        }
+        else
+        {
+            // IPvFuture
+            auto rv = grammar::parse(
+                s, detail::ipvfuture_rule);
+            if(rv)
+                return set_host_ipvfuture(rv->str);
+        }
     }
 
     // reg-name

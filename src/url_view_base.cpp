@@ -386,7 +386,7 @@ host_ipv6_address() const noexcept
     ipv6_address::bytes_type b{{}};
     std::memcpy(
         &b[0], &pi_->ip_addr_[0], b.size());
-    return urls::ipv6_address(b);
+    return {b};
 }
 
 core::string_view
