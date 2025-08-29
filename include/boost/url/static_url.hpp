@@ -384,6 +384,10 @@ public:
     static_url& set_host_ipv4(ipv4_address const& addr) { url_base::set_host_ipv4(addr); return *this; }
     /// @copydoc url_base::set_host_ipv6
     static_url& set_host_ipv6(ipv6_address const& addr) { url_base::set_host_ipv6(addr); return *this; }
+    /// @copydoc url_base::set_zone_id
+    static_url& set_zone_id(core::string_view s) { url_base::set_zone_id(s); return *this; }
+    /// @copydoc url_base::set_encoded_zone_id
+    static_url& set_encoded_zone_id(pct_string_view const& s) { url_base::set_encoded_zone_id(s); return *this; }
     /// @copydoc url_base::set_host_ipvfuture
     static_url& set_host_ipvfuture(core::string_view s) { url_base::set_host_ipvfuture(s); return *this; }
     /// @copydoc url_base::set_host_name
