@@ -347,7 +347,8 @@ encoded_host_address() const noexcept
     {
         BOOST_ASSERT(
             pi_->decoded_[id_host] ==
-                s.size());
+                s.size() ||
+            !this->encoded_zone_id().empty());
         BOOST_ASSERT(s.size() >= 2);
         BOOST_ASSERT(s.front() == '[');
         BOOST_ASSERT(s.back() == ']');
