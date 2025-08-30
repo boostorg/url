@@ -64,7 +64,7 @@ behaviors or special requirements.
 [heading Scheme]
 
 The scheme is represented as a case-insensitive string, along with
-an enumeration constant which acts as a numeric indentifier when the
+an enumeration constant which acts as a numeric identifier when the
 string matches one of the well-known schemes: http, https, ws, wss,
 file, and ftp. Characters in the scheme are never escaped; only
 letters and numbers are allowed, and the first character must be
@@ -573,7 +573,7 @@ These members are used to inspect and modify the host:
     [link url.ref.boost__urls__host_type `host_type::ipvfuture`]
     respectively. Otherwise, the host type is
     [link url.ref.boost__urls__host_type `host_type::name`], the
-    string may contain percent escapes, and and
+    string may contain percent escapes, and
     any reserved characters are percent-escaped automatically.
     ]
 ][
