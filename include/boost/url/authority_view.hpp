@@ -121,12 +121,12 @@ public:
 
         This function attempts to construct
         an authority from the string `s`,
-        which must be a valid ['authority] or
+        which must be a valid authority or
         else an exception is thrown. Upon
         successful construction, the view
         refers to the characters in the
         buffer pointed to by `s`.
-        Ownership is not transferred; The
+        Ownership is not transferred; the
         caller is responsible for ensuring
         that the lifetime of the buffer
         extends until the view is destroyed.
