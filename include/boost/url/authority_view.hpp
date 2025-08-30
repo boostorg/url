@@ -51,8 +51,8 @@ namespace urls {
     @par Example 2
     The parsing function @ref parse_authority returns
     a `boost::system::result` containing either a valid
-    @ref authority_view upon succcess, otherwise it
-    contain an error. The error can be converted to
+    @ref authority_view upon success, otherwise it
+    contains an error. The error can be converted to
     an exception by the caller if desired:
     @code
     system::result< authority_view > rv = parse_authority( "user:pass@www.example.com:8080" );
