@@ -16,7 +16,7 @@ was successful, or an __error_code__ if the match failed.
 Rules are not invoked directly. Instead they are passed as
 values to a __parse__ function, along with the input character
 buffer to process. The first overload requires that the entire
-input string match, otherwise else an error occurs. The second
+input string match, otherwise an error occurs. The second
 overload advances the input buffer pointer to the first unconsumed
 character upon success, allowing a stream of data to be
 parsed sequentially:
@@ -59,7 +59,7 @@ which matches exactly one character from a character set.
 
 [heading Error Handling]
 
-When a rule fails to match, or if the rule detects a
+When a rule fails to match, or if the rule detects an
 unrecoverable problem with the input, it returns a
 result assigned from an __error_code__ indicating
 the failure. When using overloads of __parse__ which
@@ -71,7 +71,7 @@ changed to point to the first unconsumed character
 in the input, or to the `end` pointer if all input
 was consumed.
 
-It is the responsibilty of library and user-defined
+It is the responsibility of library and user-defined
 implementations of ['compound rules] (explained later)
 to rewind their internal pointer if a parsing operation
 was unsuccessful, and they wish to attempt parsing the
