@@ -17,7 +17,7 @@ to go beyond what the library offers:
 * Create new custom containers for other schemes
 * Incorporate the parsing of URLs in an enclosing grammar
 * Parse __rfc3986__ elements in non-URL contexts
-  (__authority_view__ is an example of this).
+  (__authority_view__ is an example of this)
 * Define new ABNF rules used to parse non-URL strings
 
 To enable these use-cases, the library provides a suite of general
