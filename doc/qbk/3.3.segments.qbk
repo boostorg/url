@@ -131,7 +131,7 @@ the invariants described above for various interesting cases:
 ]]
 
 This implies that two paths may map to the same sequence of
-segments . In the paths `"usr"` and `"./usr"`, the `"./"`
+segments. In the paths `"usr"` and `"./usr"`, the `"./"`
 is a prefix that might be necessary to maintain the
 invariant that instances of __url_view_base__ always
 refer to valid URLs. Thus, both paths map to `{ "usr" }`.
