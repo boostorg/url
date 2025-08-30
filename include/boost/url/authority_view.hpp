@@ -1033,7 +1033,7 @@ public:
         If the host type is @ref host_type::name,
         this function returns the name as
         a string.
-        Otherwise, if the host type is not an
+        Otherwise, if the host type is not a
         name, it returns an empty string.
         Any percent-escapes in the string are
         decoded first.
@@ -1300,7 +1300,7 @@ public:
     int
     compare(authority_view const& other) const noexcept;
 
-    /** Return the result of comparing two authorities
+    /** Return the result of comparing two authorities.
         The authorities are compared component
         by component as if they were first
         normalized.
@@ -1324,7 +1324,7 @@ public:
         return a0.compare(a1) == 0;
     }
 
-    /** Return the result of comparing two authorities
+    /** Return the result of comparing two authorities.
         The authorities are compared component
         by component as if they were first
         normalized.
@@ -1348,7 +1348,7 @@ public:
         return ! (a0 == a1);
     }
 
-    /** Return the result of comparing two authorities
+    /** Return the result of comparing two authorities.
         The authorities are compared component
         by component as if they were first
         normalized.
@@ -1372,7 +1372,7 @@ public:
         return a0.compare(a1) < 0;
     }
 
-    /** Return the result of comparing two authorities
+    /** Return the result of comparing two authorities.
         The authorities are compared component
         by component as if they were first
         normalized.
@@ -1396,7 +1396,7 @@ public:
         return a0.compare(a1) <= 0;
     }
 
-    /** Return the result of comparing two authorities
+    /** Return the result of comparing two authorities.
         The authorities are compared component
         by component as if they were first
         normalized.
@@ -1420,7 +1420,7 @@ public:
         return a0.compare(a1) > 0;
     }
 
-    /** Return the result of comparing two authorities
+    /** Return the result of comparing two authorities.
         The authorities are compared component
         by component as if they were first
         normalized.
