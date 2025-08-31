@@ -257,7 +257,7 @@ of something that is not a URL):
 // Row 6, Column 1
 |`www.boost.org`
 // Row 6, Column 2
-|A Protocol-Relative Link (PRL). **Not**.
+|A Protocol-Relative Link (PRL). **Not a URL**.
 
 |===
 
