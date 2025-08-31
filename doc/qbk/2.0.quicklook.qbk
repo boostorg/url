@@ -183,7 +183,7 @@ to persist a decoded string:
 ]]]
 
 __decode_view__ and its decoding functions are designed to
-perform no memory allocations unless the algorithm where it's being
+perform no memory allocations unless the algorithm where its being
 used needs the result to be in another container. The design also
 permits recycling objects to reuse their memory, and at least
 minimize the number of allocations by deferring them until the
@@ -279,7 +279,7 @@ elements of composed elements while avoiding memory allocations entirely:
 
 [h3 Modifying]
 
-The library provides the containers __url__ and __static_url__ supporting
+The library provides the containers __url__ and __static_url__ which supporting
 modification of the URL contents. A __url__ or __static_url__ must be constructed
 from an existing __url_view__.
 
