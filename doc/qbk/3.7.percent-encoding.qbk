@@ -37,7 +37,7 @@ In other scenarios, strings can also be directly encoded into buffers:
 
 [heading Validating]
 
-The class __pct_string_view__ represents a reference to a percent-encoded string:
+The class __pct_string_view__ represents a reference percent-encoded strings:
 
 [snippet_encoding_6]
 
@@ -79,13 +79,13 @@ ensured to be validated:
 
 In the example above,
 [link url.ref.boost__urls__url_base.set_encoded_path `set_encoded_path`]
-does not revalidate any information from
+does not to revalidate any information from
 [link url.ref.boost__urls__url_base.encoded_path `encoded_path`]
 because these references are passed as __pct_string_view__.
 
 [heading Decode]
 
-The class __pct_string_view__ represents a reference to a percent-encoded string.
+The class __pct_string_view__ represents a reference percent-encoded strings.
 __decode_view__ is analogous to __pct_string_view__, with the main difference
 that the underlying buffer always dereferences to decoded characters.
 
@@ -93,12 +93,12 @@ that the underlying buffer always dereferences to decoded characters.
 
 A __decode_view__ can also be created from a __pct_string_view__ with the
 [link url.ref.boost__urls__pct_string_view.operator__star_ `operator*`].
-This also gives us an opportunity to validate external strings:
+The also gives us an opportunity to validate external strings:
 
 [snippet_encoding_12]
 
-This is particularly useful when the decoded string needs to be accessed
-for comparisons with no necessity to explicitly decode the
+This is particularly useful when the decoded string need to be accessed
+for comparisons with no necessity to explicitly decoding the
 string into a buffer:
 
 [snippet_encoding_13]
