@@ -243,7 +243,7 @@ public:
 
     /** Return true if the address is a multicast address
 
-        @return `true` if the address is a multicast address,
+        @return `true` if the address is a multicast address
     */
     BOOST_URL_DECL
     bool
