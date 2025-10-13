@@ -2656,6 +2656,65 @@ public:
         Applies Syntax-based normalization to
         all components of the URL.
 
+        This function performs the following normalizations
+        to each URL component:
+
+        @par Scheme Normalization
+        Converts the scheme to lowercase.
+        @code
+        HTTP://www.example.com → http://www.example.com
+        @endcode
+
+        @par Authority Normalization
+        Normalizes the authority by:
+        @li Converting percent-encoding triplets to uppercase
+        @li Decoding percent-encoded octets of unreserved characters
+        @li Converting the host to lowercase
+
+        @code
+        http://user%2Aname@EXAMPLE.COM → http://user%2Aname@example.com
+        http://user%7Ename@example.com → http://user~name@example.com
+        @endcode
+
+        @par Path Normalization
+        Normalizes the path by:
+        @li Converting percent-encoding triplets to uppercase
+        @li Decoding percent-encoded octets of unreserved characters
+        @li Removing dot segments ("." and "..")
+
+        @code
+        http://example.com/a/b/../c → http://example.com/a/c
+        http://example.com/%7Euser   → http://example.com/~user
+        http://example.com/a%2fb     → http://example.com/a%2Fb
+        @endcode
+
+        @par Query Normalization
+        Normalizes the query by:
+        @li Converting percent-encoding triplets to uppercase
+        @li Decoding percent-encoded octets of unreserved characters
+
+        @code
+        http://example.com/?key=%7Evalue → http://example.com/?key=~value
+        http://example.com/?key=%2avalue → http://example.com/?key=%2Avalue
+        @endcode
+
+        @par Fragment Normalization
+        Normalizes the fragment by:
+        @li Converting percent-encoding triplets to uppercase
+        @li Decoding percent-encoded octets of unreserved characters
+
+        @code
+        http://example.com/#%7Esection → http://example.com/#~section
+        http://example.com/#%2asection → http://example.com/#%2Asection
+        @endcode
+
+        @par Unreserved Characters
+        The following characters are considered unreserved
+        and will be decoded if percent-encoded:
+        @code
+        A-Z a-z 0-9 - . _ ~
+        @endcode
+
         @return `*this`
 
         @par Exception Safety
