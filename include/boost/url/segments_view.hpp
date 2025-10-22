@@ -165,6 +165,53 @@ public:
     segments_view(
         core::string_view s);
 
+    /** Constructor
+
+        This function creates a new @ref segments_view
+        from a pair of iterators referring to
+        elements of another segments view. The
+        resulting view references the same
+        underlying character buffer as the
+        original.
+
+        The caller is responsible for ensuring
+        that the lifetime of the original buffer
+        extends until the constructed view is no
+        longer referenced.
+
+        @par Example
+        @code
+        segments_view ps( "/path/to/file.txt" );
+
+        segments_view sub(
+            std::next(ps.begin()),
+            ps.end());
+
+        // sub represents "to/file.txt"
+        @endcode
+
+        @par Preconditions
+        The iterators must be valid and belong to
+        the same @ref segments_view.
+
+        @par Postconditions
+        `sub.buffer()` references characters in the
+        original `ps.buffer()`.
+
+        @par Complexity
+        Linear in `sub.buffer()`
+
+        @par Exception Safety
+        Throws nothing.
+
+        @param first The beginning iterator.
+        @param last The ending iterator.
+    */
+    BOOST_URL_DECL
+    segments_view(
+        iterator first,
+        iterator last) noexcept;
+
     /** Assignment
 
         After assignment, both views
