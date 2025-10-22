@@ -59,7 +59,6 @@ set(BOOST_URL_DEPENDENCIES
         Boost::core
         Boost::mp11
         Boost::optional
-        Boost::static_assert
         Boost::system
         Boost::throw_exception
         Boost::type_traits
