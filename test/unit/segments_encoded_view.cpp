@@ -95,6 +95,23 @@ struct segments_const_encoded_view_test
             BOOST_TEST_THROWS(segments_encoded_view("FA%"), system::system_error);
         }
 
+        // segments_encoded_view(iterator, iterator)
+        {
+            segments_encoded_view ps = parse_path("/a/b/c").value();
+            auto first = std::next(ps.begin());
+            auto last  = ps.end();
+            segments_encoded_view sub(first, last);
+
+            BOOST_TEST_EQ(sub.size(), 2u);
+            BOOST_TEST(!sub.is_absolute());
+            BOOST_TEST_EQ(sub.buffer(), "b/c");
+
+            auto it = sub.begin();
+            BOOST_TEST_EQ(*it++, "b");
+            BOOST_TEST_EQ(*it++, "c");
+            BOOST_TEST(it == sub.end());
+        }
+
         // operator=(segments_encoded_view)
         {
             segments_encoded_view ps0("/path/to/file.txt");
