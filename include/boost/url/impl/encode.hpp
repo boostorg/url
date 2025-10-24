@@ -12,7 +12,7 @@
 
 #include "boost/url/grammar/token_rule.hpp"
 #include <boost/assert.hpp>
-#include <boost/core/static_assert.hpp>
+#include <boost/core/detail/static_assert.hpp>
 #include <boost/url/detail/encode.hpp>
 #include <boost/url/detail/except.hpp>
 #include <boost/url/encoding_opts.hpp>

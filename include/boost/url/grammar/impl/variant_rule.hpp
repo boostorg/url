@@ -12,7 +12,7 @@
 
 #include <boost/url/grammar/error.hpp>
 #include <boost/url/grammar/parse.hpp>
-#include <boost/core/static_assert.hpp>
+#include <boost/core/detail/static_assert.hpp>
 #include <cstdint>
 #include <type_traits>
 

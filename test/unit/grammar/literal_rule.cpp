@@ -11,7 +11,7 @@
 #include <boost/url/grammar/literal_rule.hpp>
 
 #include <boost/url/grammar/parse.hpp>
-#include <boost/core/static_assert.hpp>
+#include <boost/core/detail/static_assert.hpp>
 
 #include "test_rule.hpp"
 

@@ -15,7 +15,7 @@
 #include <boost/url/grammar/recycled.hpp>
 #include <boost/core/empty_value.hpp>
 #include <boost/assert.hpp>
-#include <boost/core/static_assert.hpp>
+#include <boost/core/detail/static_assert.hpp>
 #include <exception>
 #include <iterator>
 #include <new>

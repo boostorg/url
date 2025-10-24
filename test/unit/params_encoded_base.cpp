@@ -12,7 +12,7 @@
 
 #include <boost/url/url_view.hpp>
 #include <boost/core/ignore_unused.hpp>
-#include <boost/core/static_assert.hpp>
+#include <boost/core/detail/static_assert.hpp>
 
 #include "test_suite.hpp"
 

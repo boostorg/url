@@ -11,7 +11,7 @@
 #include <boost/url/param.hpp>
 
 #include <boost/core/ignore_unused.hpp>
-#include <boost/core/static_assert.hpp>
+#include <boost/core/detail/static_assert.hpp>
 #include <boost/optional.hpp>
 
 #include "test_suite.hpp"

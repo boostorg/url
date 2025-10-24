@@ -11,7 +11,7 @@
 #define BOOST_URL_DETAIL_ANY_SEGMENTS_ITER_HPP
 
 #include <boost/url/pct_string_view.hpp>
-#include <boost/core/static_assert.hpp>
+#include <boost/core/detail/static_assert.hpp>
 #include <cstddef>
 #include <iterator>
 #include <type_traits>

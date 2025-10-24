@@ -14,7 +14,7 @@
 #include <boost/url/parse_query.hpp>
 #include <boost/url/url_view.hpp>
 #include <boost/core/ignore_unused.hpp>
-#include <boost/core/static_assert.hpp>
+#include <boost/core/detail/static_assert.hpp>
 #include <type_traits>
 
 #include "test_suite.hpp"

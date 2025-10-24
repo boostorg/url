@@ -15,7 +15,7 @@
 #include <boost/url/error_types.hpp>
 #include <boost/url/grammar/type_traits.hpp>
 #include <boost/core/empty_value.hpp>
-#include <boost/core/static_assert.hpp>
+#include <boost/core/detail/static_assert.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {

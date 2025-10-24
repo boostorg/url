@@ -12,7 +12,7 @@
 
 #include <boost/url/param.hpp>
 #include <boost/url/pct_string_view.hpp>
-#include <boost/core/static_assert.hpp>
+#include <boost/core/detail/static_assert.hpp>
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
