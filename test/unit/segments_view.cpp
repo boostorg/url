@@ -19,6 +19,7 @@
 #include "test_suite.hpp"
 
 #include <sstream>
+#include <string>
 
 #ifdef assert
 #undef assert
@@ -143,7 +144,7 @@ struct segments_view_test
             BOOST_TEST_EQ(sub.buffer().data(), ps.buffer().data());
         }
 
-        // drop first segment: start at index 1 (no leading slash)
+        // drop first segment: start at index 1 (retain separator)
         {
             segments_view ps = parse_path("/a/b/c").value();
             auto first = std::next(ps.begin());
@@ -151,8 +152,8 @@ struct segments_view_test
             segments_view sub(first, last);
 
             BOOST_TEST_EQ(sub.size(), 2u);
-            BOOST_TEST(!sub.is_absolute());
-            BOOST_TEST_EQ(sub.buffer(), "b/c");
+            BOOST_TEST(sub.is_absolute());
+            BOOST_TEST_EQ(sub.buffer(), "/b/c");
 
             auto it = sub.begin();
             BOOST_TEST_EQ(*it++, "b");
@@ -179,7 +180,7 @@ struct segments_view_test
         }
 
         // single segment in the middle:
-        // ["b", past "b") -> "b"
+        // ["b", past "b") -> "/b"
         {
             segments_view ps = parse_path("/a/b/c").value();
             auto b = std::next(ps.begin());
@@ -187,13 +188,13 @@ struct segments_view_test
             segments_view sub(b, e);
 
             BOOST_TEST_EQ(sub.size(), 1u);
-            BOOST_TEST(!sub.is_absolute());
-            BOOST_TEST_EQ(sub.buffer(), "b");
+            BOOST_TEST(sub.is_absolute());
+            BOOST_TEST_EQ(sub.buffer(), "/b");
             BOOST_TEST_EQ(*sub.begin(), "b");
         }
 
         // relative path:
-        // no leading slash preserved in any slice
+        // subranges not starting at begin become absolute
         {
             segments_view ps = parse_path("a/b/c").value();
 
@@ -209,12 +210,28 @@ struct segments_view_test
             BOOST_TEST(!sub2.is_absolute());
             BOOST_TEST_EQ(sub2.buffer(), "a/b");
 
-            // middle one ["b", past "b") -> "b"
+            // middle one ["b", past "b") -> "/b"
             auto b = std::next(ps.begin());
             segments_view sub3(b, std::next(b));
             BOOST_TEST_EQ(sub3.size(), 1u);
-            BOOST_TEST(!sub3.is_absolute());
-            BOOST_TEST_EQ(sub3.buffer(), "b");
+            BOOST_TEST(sub3.is_absolute());
+            BOOST_TEST_EQ(sub3.buffer(), "/b");
+
+            // suffix [next(begin), end) -> "/b/c"
+            segments_view sub4(std::next(ps.begin()), ps.end());
+            BOOST_TEST_EQ(sub4.size(), 2u);
+            BOOST_TEST(sub4.is_absolute());
+            BOOST_TEST_EQ(sub4.buffer(), "/b/c");
+
+            // concatenating adjoining subviews recreates original text
+            segments_view first_seg(ps.begin(), std::next(ps.begin()));
+            std::string reconstructed(
+                first_seg.buffer().data(),
+                first_seg.buffer().size());
+            reconstructed.append(
+                sub4.buffer().data(),
+                sub4.buffer().size());
+            BOOST_TEST_EQ(reconstructed, ps.buffer());
         }
 
         // empty subrange [it, it):
@@ -336,7 +353,7 @@ struct segments_view_test
         }
 
         // middle slice using last.pos path:
-        // ["b", prev(end)) on "/a/b/c" -> "b"
+        // ["b", prev(end)) on "/a/b/c" -> "/b"
         {
             segments_view ps = parse_path("/a/b/c").value();
             auto b = std::next(ps.begin());
@@ -344,8 +361,8 @@ struct segments_view_test
             segments_view sub(b, last);
 
             BOOST_TEST_EQ(sub.size(), 1u);
-            BOOST_TEST(!sub.is_absolute());
-            BOOST_TEST_EQ(sub.buffer(), "b");
+            BOOST_TEST(sub.is_absolute());
+            BOOST_TEST_EQ(sub.buffer(), "/b");
             BOOST_TEST_EQ(*sub.begin(), "b");
         }
     }

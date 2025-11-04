@@ -174,6 +174,19 @@ public:
         underlying character buffer as the
         original.
 
+        The constructed view preserves the
+        original absolute flag when `first`
+        selects the first segment and otherwise
+        produces an absolute subview: if the
+        source path is relative and `first ==
+        ps.begin()` the new view is relative,
+        and in every other case the subview is
+        absolute with the separator immediately
+        preceding `*first` retained at the front.
+        This ensures the underlying text can be
+        reconstructed by concatenating the buffers
+        of adjacent subviews.
+
         The caller is responsible for ensuring
         that the lifetime of the original buffer
         extends until the constructed view is no
@@ -187,7 +200,14 @@ public:
             std::next(ps.begin()),
             ps.end());
 
-        // sub represents "to/file.txt"
+        segments_view first_half(
+            ps.begin(),
+            std::next(ps.begin()));
+
+        // sub represents "/to/file.txt"
+        std::string combined(first_half.buffer());
+        combined.append(sub.buffer());
+        BOOST_ASSERT(combined == ps.buffer());
         @endcode
 
         @par Preconditions

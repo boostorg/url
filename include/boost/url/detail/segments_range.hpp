@@ -103,8 +103,9 @@ make_subref_from_impls(
     }
     else
     {
-        // skip slash before segment i0
-        off0 = first.pos + 1;
+        // include the separator preceding segment i0
+        off0 = first.pos;
+        include_leading_slash = true;
     }
 
     // End offset

@@ -19,6 +19,7 @@
 #include "test_suite.hpp"
 
 #include <sstream>
+#include <string>
 
 #ifdef assert
 #undef assert
@@ -103,13 +104,34 @@ struct segments_const_encoded_view_test
             segments_encoded_view sub(first, last);
 
             BOOST_TEST_EQ(sub.size(), 2u);
-            BOOST_TEST(!sub.is_absolute());
-            BOOST_TEST_EQ(sub.buffer(), "b/c");
+            BOOST_TEST(sub.is_absolute());
+            BOOST_TEST_EQ(sub.buffer(), "/b/c");
 
             auto it = sub.begin();
             BOOST_TEST_EQ(*it++, "b");
             BOOST_TEST_EQ(*it++, "c");
             BOOST_TEST(it == sub.end());
+        }
+
+        // relative source: mid slices become absolute
+        {
+            segments_encoded_view ps = parse_path("a/b/c").value();
+
+            segments_encoded_view head(ps.begin(), std::next(ps.begin()));
+            BOOST_TEST(!head.is_absolute());
+            BOOST_TEST_EQ(head.buffer(), "a");
+
+            segments_encoded_view tail(std::next(ps.begin()), ps.end());
+            BOOST_TEST(tail.is_absolute());
+            BOOST_TEST_EQ(tail.buffer(), "/b/c");
+
+            std::string rebuilt(
+                head.buffer().data(),
+                head.buffer().size());
+            rebuilt.append(
+                tail.buffer().data(),
+                tail.buffer().size());
+            BOOST_TEST_EQ(rebuilt, ps.buffer());
         }
 
         // operator=(segments_encoded_view)
