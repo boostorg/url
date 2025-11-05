@@ -225,7 +225,7 @@ public:
         original `ps.buffer()`.
 
         @par Complexity
-        Linear in `sub.buffer()`
+        Constant
 
         @par Exception Safety
         Throws nothing.

@@ -86,14 +86,12 @@ make_subref_from_impls(
     // General case: non-empty range
     // Start offset
     std::size_t off0;
-    bool include_leading_slash = false;
     if (i0 == 0)
     {
         if (absolute)
         {
             // include leading '/'
             off0 = 0;
-            include_leading_slash = true;
         }
         else
         {
@@ -105,7 +103,6 @@ make_subref_from_impls(
     {
         // include the separator preceding segment i0
         off0 = first.pos;
-        include_leading_slash = true;
     }
 
     // End offset
@@ -123,26 +120,11 @@ make_subref_from_impls(
     BOOST_ASSERT(off1 >= off0);
     core::string_view const sub(ref.data() + off0, off1 - off0);
 
-    // Decoded-length:
-    // sum per-segment decoded lengths + internal '/' + the leading '/'.
-    std::size_t dn_sum = 0;
-    {
-        // copy to iterate
-        segments_iter_impl cur = first;
-        for (std::size_t k = 0; k < nseg; ++k)
-        {
-            // per-segment decoded length
-            dn_sum += cur.dn;
-            cur.increment();
-        }
-        // internal '/'s
-        dn_sum += (nseg - 1);
-        // leading '/'
-        if (include_leading_slash)
-        {
-            ++dn_sum;
-        }
-    }
+    // decoded sizes reuse iterator bookkeeping instead of rescanning
+    std::size_t start_dn = (i0 == 0) ? 0 : first.decoded_prefix_size();
+    std::size_t const end_dn = last.decoded_prefix_size(); // already excludes segment at `last`
+    BOOST_ASSERT(end_dn >= start_dn);
+    std::size_t const dn_sum = end_dn - start_dn;
 
     return {sub, dn_sum, nseg};
 }

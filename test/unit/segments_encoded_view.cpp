@@ -132,6 +132,10 @@ struct segments_const_encoded_view_test
                 tail.buffer().data(),
                 tail.buffer().size());
             BOOST_TEST_EQ(rebuilt, ps.buffer());
+            BOOST_TEST_EQ(
+                head.buffer().decoded_size() +
+                    tail.buffer().decoded_size(),
+                ps.buffer().decoded_size());
         }
 
         // operator=(segments_encoded_view)

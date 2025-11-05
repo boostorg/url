@@ -232,6 +232,10 @@ struct segments_view_test
                 sub4.buffer().data(),
                 sub4.buffer().size());
             BOOST_TEST_EQ(reconstructed, ps.buffer());
+            BOOST_TEST_EQ(
+                first_seg.buffer().decoded_size() +
+                    sub4.buffer().decoded_size(),
+                ps.buffer().decoded_size());
         }
 
         // empty subrange [it, it):
