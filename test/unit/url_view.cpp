@@ -57,9 +57,19 @@ public:
         }
 
 #if defined(__clang__) && defined(__has_warning)
-# if __has_warning("-Wself-assign-overloaded")
+# if __has_warning("-Wself-assign-overloaded") || __has_warning("-Wself-move")
 #  pragma clang diagnostic push
-#  pragma clang diagnostic ignored "-Wself-assign-overloaded"
+#  if __has_warning("-Wself-assign-overloaded")
+#   pragma clang diagnostic ignored "-Wself-assign-overloaded"
+#  endif
+#  if __has_warning("-Wself-move")
+#   pragma clang diagnostic ignored "-Wself-move"
+#  endif
+# endif
+#elif defined(__GNUC__) && !defined(__clang__)
+# if __GNUC__ >= 13
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wself-move"
 # endif
 #endif
         // operator=(url_view const&)
@@ -70,8 +80,12 @@ public:
         }
 
 #if defined(__clang__) && defined(__has_warning)
-# if __has_warning("-Wself-assign-overloaded")
+# if __has_warning("-Wself-assign-overloaded") || __has_warning("-Wself-move")
 #  pragma clang diagnostic pop
+# endif
+#elif defined(__GNUC__) && !defined(__clang__)
+# if __GNUC__ >= 13
+#  pragma GCC diagnostic pop
 # endif
 #endif
 
