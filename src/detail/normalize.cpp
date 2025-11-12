@@ -11,7 +11,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/decode_view.hpp>
-#include "decode.hpp"
+#include <boost/url/detail/decode.hpp>
 #include <boost/url/segments_encoded_view.hpp>
 #include <boost/url/grammar/ci_string.hpp>
 #include <boost/url/grammar/lut_chars.hpp>
@@ -960,5 +960,4 @@ segments_compare(
 } // detail
 } // urls
 } // boost
-
 

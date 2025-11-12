@@ -18,7 +18,7 @@
 #include <boost/url/url_view.hpp>
 #include <boost/url/detail/any_params_iter.hpp>
 #include <boost/url/detail/any_segments_iter.hpp>
-#include "detail/decode.hpp"
+#include <boost/url/detail/decode.hpp>
 #include <boost/url/detail/encode.hpp>
 #include <boost/url/detail/except.hpp>
 #include "detail/normalize.hpp"
@@ -3013,4 +3013,3 @@ to_lower_impl(int id) noexcept
 
 } // urls
 } // boost
-
