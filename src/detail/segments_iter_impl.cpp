@@ -11,7 +11,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include "path.hpp"
-#include "decode.hpp"
+#include <boost/url/detail/decode.hpp>
 #include <boost/url/detail/segments_iter_impl.hpp>
 #include "boost/url/rfc/detail/path_rules.hpp"
 #include <boost/assert.hpp>

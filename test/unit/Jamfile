@@ -24,6 +24,7 @@ local SOURCES =
     authority_view.cpp
     error.cpp
     error_types.cpp
+    decode.cpp
     encode.cpp
     encoding_opts.cpp
     decode_view.cpp
