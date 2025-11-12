@@ -1783,6 +1783,40 @@ encoding()
 }
 
 void
+decoding_helpers()
+{
+    {
+        //[snippet_decoding_helpers_1
+        boost::core::string_view encoded = "name%3Dboost+url";
+        encoding_opts opt;
+        opt.space_as_plus = true;
+
+        std::size_t const needed = decoded_size(encoded).value();
+        std::string buffer;
+        buffer.resize(needed);
+        std::size_t const written = decode(&buffer[0], buffer.size(), encoded, opt).value();
+        buffer.resize(written);
+
+        assert(buffer == "name=boost url");
+        //]
+    }
+
+    {
+        //[snippet_decoding_helpers_2
+        encoding_opts opt;
+        opt.space_as_plus = true;
+
+        std::string plain = decode(boost::core::string_view("city%3DSan+Jose"), opt).value();
+        assert(plain == "city=San Jose");
+
+        std::string scratch = "prefix:";
+        decode(boost::core::string_view("value%2F42"), {}, string_token::append_to(scratch)).value();
+        assert(scratch == "prefix:value/42");
+        //]
+    }
+}
+
+void
 readme_snippets()
 {
     // Parse a URL. This allocates no memory. The view
@@ -1845,6 +1879,7 @@ public:
         normalizing();
         decode_with_token();
         encoding();
+        decoding_helpers();
         ignore_unused(&readme_snippets);
 
         BOOST_TEST_PASS();
