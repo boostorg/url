@@ -24,21 +24,14 @@ class url_base;
 class params_encoded_view;
 #endif
 
-/** A view representing query parameters in a URL
+/** Mutable encoded query parameter proxy
 
-    Objects of this type are used to interpret
-    the query parameters as a bidirectional view
-    of key value pairs.
-
-    The view does not retain ownership of the
-    elements and instead references the original
-    url. The caller is responsible for ensuring
-    that the lifetime of the referenced url
-    extends until it is no longer referenced.
-
-    The view is modifiable; calling non-const
-    members causes changes to the referenced
-    url.
+    This container exposes the percent-encoded
+    query parameters of a @ref url_base as a
+    bidirectional range while allowing mutation
+    of the underlying URL. It references the
+    URL’s buffer directly, so the url must stay
+    alive for the lifetime of the proxy.
 
     @par Example
     @code
@@ -69,6 +62,17 @@ class params_encoded_view;
     @li @ref replace, @ref set : Modified
         params and all params
         after (including `end()`).
+
+    @par Reads vs. writes
+    Even though this type can be used to mutate
+    the referenced URL, this is still a proxy
+    and every observer function inherited
+    from @ref params_encoded_base (for example
+    @ref contains, @ref find, and @ref get_or)
+    behaves like the corresponding function on
+    @ref params_encoded_view: it inspects the
+    current encoded query and does not perform
+    any modifications.
 */
 class BOOST_URL_DECL params_encoded_ref
     : public params_encoded_base

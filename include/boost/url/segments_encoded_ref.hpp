@@ -24,22 +24,13 @@ class url_base;
 class segments_encoded_view;
 #endif
 
-/** A view representing path segments in a URL
+/** Mutable encoded path segment proxy
 
-    Objects of this type are used to interpret
-    the path as a bidirectional view of segments,
-    where each segment is a string which may
-    contain percent-escapes.
-
-    The view does not retain ownership of the
-    elements and instead references the original
-    character buffer. The caller is responsible
-    for ensuring that the lifetime of the buffer
-    extends until it is no longer referenced.
-
-    The view is modifiable; calling non-const
-    members causes changes to the referenced
-    url.
+    Exposes the percent-encoded segments of a
+    @ref url_base as a bidirectional range that
+    can modify the underlying URL. The proxy uses
+    the URL’s storage directly, so the url must
+    outlive any references.
 
     @par Example
     @code

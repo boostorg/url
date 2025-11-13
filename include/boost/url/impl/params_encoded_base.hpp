@@ -131,6 +131,27 @@ contains(
 }
 
 inline
+pct_string_view
+params_encoded_base::
+get_or(
+    pct_string_view key,
+    pct_string_view value,
+    ignore_case_param ic) const noexcept
+{
+    auto it = find_impl(
+        begin().it_, key, ic);
+    detail::params_iter_impl end_(ref_, 0);
+    if(it.equal(end_))
+        return value;
+
+    param_pct_view const p = it.dereference();
+    if(! p.has_value)
+        return pct_string_view();
+
+    return p.value;
+}
+
+inline
 auto
 params_encoded_base::
 find(

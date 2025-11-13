@@ -17,17 +17,14 @@
 namespace boost {
 namespace urls {
 
-/** A view representing query parameters in a URL
+/** Non-owning decoded query parameter view
 
-    Objects of this type are used to interpret
-    the query parameters as a bidirectional view
-    of key/value pairs.
-
-    The view does not retain ownership of the
-    elements and instead references the original
-    character buffer. The caller is responsible
-    for ensuring that the lifetime of the buffer
-    extends until it is no longer referenced.
+    This read-only range interprets the query
+    string of a URL as bidirectional key/value
+    pairs with percent-decoding applied on
+    access. It merely references the original
+    character buffer; callers must keep that
+    buffer alive while the view is used.
 
     @par Example
     @code
@@ -36,9 +33,8 @@ namespace urls {
     params_view p = u.params();
     @endcode
 
-    Percent escapes in strings returned when
-    dereferencing iterators are automatically
-    decoded.
+    Strings retrieved from the iterators are
+    automatically percent-decoded.
 
     @par Iterator Invalidation
     Changes to the underlying character buffer

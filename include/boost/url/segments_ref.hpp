@@ -24,22 +24,14 @@ class url_base;
 class segments_view;
 #endif
 
-/** A view representing path segments in a URL
+/** Mutable decoded path segment proxy
 
-    Objects of this type are used to interpret
-    the path as a bidirectional view of segments,
-    where each segment is a string with percent
-    escapes automatically decoded.
-
-    The view does not retain ownership of the
-    elements and instead references the original
-    character buffer. The caller is responsible
-    for ensuring that the lifetime of the buffer
-    extends until it is no longer referenced.
-
-    The view is modifiable; calling non-const
-    members causes changes to the referenced
-    url.
+    Presents the decoded path segments of a
+    @ref url_base as a bidirectional range whose
+    modifiers update the underlying URL. The proxy
+    references the URL’s storage directly, so the
+    owning URL must remain alive while the proxy
+    is used.
 
     @par Example
     @code
