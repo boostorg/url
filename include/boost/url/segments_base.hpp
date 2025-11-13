@@ -20,13 +20,14 @@
 namespace boost {
 namespace urls {
 
-/** Common functionality for containers
+/** Decoded path segment helper base
 
-    This base class is used by the library
-    to provide common member functions for
-    containers. This cannot be instantiated
-    directly; Instead, use one of the
-    containers or functions:
+    Provides the shared decoded path-segment
+    algorithms (iteration, lookup, comparison)
+    used by @ref segments_view and
+    @ref segments_ref. This base cannot be
+    instantiated directly; instead, use one of
+    the concrete containers below.
 
     @par Containers
     @li @ref segments_ref

@@ -29,11 +29,12 @@ namespace urls {
 #   pragma warning(disable: 4251)
 #endif
 
-/** Common functionality for query parameter containers
+/** Decoded query parameter helper base
 
-    The library uses this base class
-    to provide common member functions for
-    containers of query parameters.
+    This base centralizes the read-only,
+    percent-decoded query parameter algorithms
+    (iteration, lookup, counting) that are
+    shared by @ref params_view and @ref params_ref.
 
     This class should not be instantiated
     directly; Instead, use one of the
@@ -318,6 +319,45 @@ public:
     count(
         core::string_view key,
         ignore_case_param ic = {}) const noexcept;
+
+    /** Return the value for a key or a fallback
+
+        This convenience function searches for the
+        first parameter matching `key` and returns
+        its decoded value. If no parameter with the
+        specified key exists, the provided fallback
+        `value` is returned instead. When the key is
+        found but the parameter has no value, an
+        empty string is returned.
+
+        @par Example
+        @code
+        url_view u( "/path?first=John&last=Doe" );
+        assert( u.params().get_or( "first", "n/a" ) == "John" );
+        assert( u.params().get_or( "missing", "n/a" ) == "n/a" );
+        @endcode
+
+        @par Complexity
+        Linear in `this->buffer().size()`.
+
+        @par Exception Safety
+        Calls to allocate may throw.
+
+        @param key The key to match.
+        @param value The fallback string returned
+        when no matching key exists. If this
+        parameter is omitted, an empty string is
+        used.
+        @param ic Optional case-insensitive compare
+        indicator.
+
+        @return The decoded value or the fallback.
+    */
+    std::string
+    get_or(
+        core::string_view key,
+        core::string_view value = {},
+        ignore_case_param ic = {}) const;
 
     /** Find a matching key
 

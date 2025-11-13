@@ -14,6 +14,7 @@
 #include <boost/url/params_base.hpp>
 #include <boost/url/grammar/ci_string.hpp>
 #include <ostream>
+#include <string>
 
 namespace boost {
 namespace urls {
@@ -203,6 +204,27 @@ count(
     return n;
 }
 
+std::string
+params_base::
+get_or(
+    core::string_view key,
+    core::string_view value,
+    ignore_case_param ic) const
+{
+    auto it = find_impl(
+        begin().it_, key, ic);
+    detail::params_iter_impl end_(ref_, 0);
+    if(it.equal(end_))
+        return std::string(value);
+
+    param_pct_view const p = it.dereference();
+    if(! p.has_value)
+        return std::string();
+
+    auto opt = opt_;
+    return p.value.decode(opt);
+}
+
 //------------------------------------------------
 //
 // (implementation)
@@ -282,4 +304,3 @@ operator<<(
 
 } // urls
 } // boost
-
