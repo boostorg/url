@@ -22,17 +22,13 @@
 namespace boost {
 namespace urls {
 
-/** A view representing path segments in a URL
+/** Non-owning encoded path segment view
 
-    Objects of this type are used to interpret
-    the path as a bidirectional view of segment
-    strings.
-
-    The view does not retain ownership of the
-    elements and instead references the original
-    character buffer. The caller is responsible
-    for ensuring that the lifetime of the buffer
-    extends until it is no longer referenced.
+    Exposes the raw percent-encoded segments of
+    a URL path as a read-only bidirectional range.
+    The view references the original buffer, so
+    callers must keep that storage alive while
+    iterating.
 
     @par Example
     @code
@@ -43,11 +39,9 @@ namespace urls {
     assert( ps.buffer().data() == u.buffer().data() );
     @endcode
 
-    Strings produced when elements are returned
-    have type @ref param_pct_view and represent
-    encoded strings. Strings passed to member
-    functions may contain percent escapes, and
-    throw exceptions on invalid inputs.
+    Elements are returned as encoded strings,
+    preserving escape sequences for callers that
+    need the exact byte representation.
 
     @par Iterator Invalidation
     Changes to the underlying character buffer

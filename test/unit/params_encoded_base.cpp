@@ -283,6 +283,30 @@ struct params_encoded_base_test
             BOOST_TEST(p.contains("F", ignore_case));
             BOOST_TEST(! p.contains("G", ignore_case));
         }
+
+        // get_or()
+        {
+            url_view u(
+                "?first=John&empty=&novalue&encoded=John%20Doe");
+            params_encoded_view p = u.encoded_params();
+
+            BOOST_TEST_EQ(p.get_or("first", "n%2Fa"), "John");
+            BOOST_TEST_EQ(p.get_or("encoded", "n%2Fa"), "John%20Doe");
+            BOOST_TEST_EQ(p.get_or("missing", "n%2Fa"), "n%2Fa");
+            BOOST_TEST_EQ(p.get_or("novalue", "fallback"), "");
+            BOOST_TEST_EQ(p.get_or("empty", "fallback"), "");
+            BOOST_TEST_EQ(
+                p.get_or("FIRST", "n%2Fa", ignore_case), "John");
+        }
+
+        // javadoc
+        {
+            url_view u("/path?first=John&last=Doe");
+            BOOST_TEST_EQ(
+                u.encoded_params().get_or(
+                    "missing", "n%2Fa"),
+                "n%2Fa");
+        }
     }
 
     void

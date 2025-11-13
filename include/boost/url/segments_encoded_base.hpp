@@ -20,13 +20,13 @@
 namespace boost {
 namespace urls {
 
-/** Common functionality for containers
+/** Percent-encoded path segment helper base
 
-    This base class is used by the library
-    to provide common member functions for
-    containers. This cannot be instantiated
-    directly; Instead, use one of the
-    containers or functions:
+    Implements the shared encoded-segment
+    algorithms reused by @ref segments_encoded_view
+    and @ref segments_encoded_ref. It is not
+    intended to be instantiated directly; use
+    one of those concrete containers instead.
 
     @par Containers
     @li @ref segments_ref
