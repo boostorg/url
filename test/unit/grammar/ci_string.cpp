@@ -88,6 +88,9 @@ public:
 
         BOOST_TEST(ci_equal{}("abc", "ABC"));
         BOOST_TEST(! ci_equal{}("xz", "abc"));
+
+        // slow case
+        BOOST_TEST(ci_is_equal("/x", "/X"));
     }
 
     void

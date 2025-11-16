@@ -40,14 +40,14 @@ ci_is_equal(
             goto slow;
     }
     return true;
-slow:
     do
     {
+        a = *p1++;
+        b = *p2++;
+    slow:
         if( to_lower(a) !=
             to_lower(b))
             return false;
-        a = *p1++;
-        b = *p2++;
     }
     while(n--);
     return true;
