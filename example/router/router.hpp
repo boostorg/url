@@ -54,6 +54,11 @@ public:
     /// Constructor
     router() = default;
 
+    router(router const&) = delete;
+    router& operator=(router const&) = delete;
+    router(router&&) noexcept = default;
+    router& operator=(router&&) noexcept = default;
+
     /** Route the specified URL path to a resource
 
         @param path A url path with dynamic segments
@@ -88,4 +93,3 @@ private:
 #include "impl/router.hpp"
 
 #endif
-
