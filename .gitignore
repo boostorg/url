@@ -6,3 +6,10 @@ temp
 # Because of CMake and VS2017
 Win32
 x64
+
+cmake-build-*/
+cmake-build/
+AGENTS.md
+.roadmap/
+.idea/
+doc/modules/reference/
