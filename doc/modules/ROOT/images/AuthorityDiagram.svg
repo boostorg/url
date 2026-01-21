@@ -99,6 +99,12 @@
     <g id="id1" class="Slide" clip-path="url(#presentation_clip_path)">
      <g class="Page">
       <g class="com.sun.star.drawing.CustomShape">
+       <g id="id_background">
+        <rect class="BoundingBox" stroke="none" fill="none" x="0" y="0" width="11684" height="2540"/>
+        <path fill="rgb(240,240,240)" stroke="none" d="M 5842,2540 L 0,2540 0,0 11684,0 11684,2540 5842,2540 Z"/>
+       </g>
+      </g>
+      <g class="com.sun.star.drawing.CustomShape">
        <g id="id3">
         <rect class="BoundingBox" stroke="none" fill="none" x="5152" y="1091" width="4724" height="731"/>
         <path fill="rgb(204,255,0)" stroke="none" d="M 7514,1821 L 5152,1821 5152,1091 9875,1091 9875,1821 7514,1821 Z"/>

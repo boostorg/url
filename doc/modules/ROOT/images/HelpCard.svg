@@ -268,7 +268,7 @@
       <g class="com.sun.star.drawing.CustomShape">
        <g id="id3">
         <rect class="BoundingBox" stroke="none" fill="none" x="0" y="0" width="21591" height="27941"/>
-        <path fill="rgb(255,255,255)" stroke="none" d="M 10795,27940 L 0,27940 0,0 21590,0 21590,27940 10795,27940 Z"/>
+        <path fill="rgb(240,240,240)" stroke="none" d="M 10795,27940 L 0,27940 0,0 21590,0 21590,27940 10795,27940 Z"/>
        </g>
       </g>
       <g class="TextShape">
