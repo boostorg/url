@@ -94,4 +94,75 @@
     </Expand>
   </Type>
 
+  <Type Name="boost::urls::segments_base" Inheritable="true">
+    <DisplayString>{ref_.data_,[ref_.size_]s}</DisplayString>
+    <Expand>
+      <Item Name="[buffer]">ref_.data_,[ref_.size_]s</Item>
+      <Item Name="[size]">ref_.nseg_</Item>
+      <Item Name="[absolute]">ref_.data_[0] == '/'</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="boost::urls::segments_encoded_base" Inheritable="true">
+    <DisplayString>{ref_.data_,[ref_.size_]s}</DisplayString>
+    <Expand>
+      <Item Name="[buffer]">ref_.data_,[ref_.size_]s</Item>
+      <Item Name="[size]">ref_.nseg_</Item>
+      <Item Name="[absolute]">ref_.data_[0] == '/'</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="boost::urls::segments_view">
+    <DisplayString>{ref_.data_,[ref_.size_]s}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(boost::urls::segments_base*)this</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="boost::urls::segments_encoded_view">
+    <DisplayString>{ref_.data_,[ref_.size_]s}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(boost::urls::segments_encoded_base*)this</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="boost::urls::segments_ref">
+    <DisplayString>{ref_.data_,[ref_.size_]s}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(boost::urls::segments_base*)this</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="boost::urls::segments_encoded_ref">
+    <DisplayString>{ref_.data_,[ref_.size_]s}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(boost::urls::segments_encoded_base*)this</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="boost::urls::detail::segments_iter_impl">
+    <DisplayString>[{index}] = {s_}</DisplayString>
+    <Expand>
+      <Item Name="[segment]">s_</Item>
+      <Item Name="[index]">index</Item>
+      <Item Name="[pos]">pos</Item>
+      <Item Name="[next]">next</Item>
+      <Item Name="[decoded_length]">dn</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="boost::urls::segments_base::iterator">
+    <DisplayString>{it_}</DisplayString>
+    <Expand>
+      <ExpandedItem>it_</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="boost::urls::segments_encoded_base::iterator">
+    <DisplayString>{it_}</DisplayString>
+    <Expand>
+      <ExpandedItem>it_</ExpandedItem>
+    </Expand>
+  </Type>
+
 </AutoVisualizer>
