@@ -31,7 +31,8 @@ parse(
         BOOST_URL_RETURN_EC(
             error::need_more);
     }
-    it = (find_if_not)(it, end, cs_);
+    auto const& cs = this->get();
+    it = grammar::find_if_not(it, end, cs);
     if(it != it0)
         return core::string_view(it0, it - it0);
     BOOST_URL_RETURN_EC(
