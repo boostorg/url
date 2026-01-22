@@ -14,6 +14,8 @@
 #include <boost/url/grammar/charset.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/core/detail/string_view.hpp>
+#include <boost/core/empty_value.hpp>
+#include <type_traits>
 
 namespace boost {
 namespace urls {
@@ -22,6 +24,7 @@ namespace grammar {
 namespace implementation_defined {
 template<class CharSet>
 struct token_rule_t
+    : private empty_value<CharSet>
 {
     using value_type = core::string_view;
 
@@ -39,12 +42,21 @@ struct token_rule_t
     constexpr
     token_rule_t(
         CharSet const& cs) noexcept
-        : cs_(cs)
+        : empty_value<CharSet>(
+            empty_init, cs)
     {
     }
 
-private:
-    CharSet const cs_;
+    template<class CS = CharSet>
+    constexpr
+    token_rule_t(
+        typename std::enable_if<
+            std::is_default_constructible<CS>::value,
+            int>::type = 0) noexcept
+        : empty_value<CharSet>(
+            empty_init)
+    {
+    }
 };
 }
 
@@ -84,6 +96,48 @@ token_rule(
         implementation_defined::token_rule_t<CS>
 {
     return {cs};
+}
+
+/** Match a non-empty string of characters from a default-constructible set
+
+    This overload is only available when CharSet is
+    default constructible.
+
+    If there is no more input, the error code
+    @ref error::need_more is returned.
+
+    @par Value Type
+    @code
+    using value_type = core::string_view;
+    @endcode
+
+    @par Example
+    Rules are used with the function @ref parse.
+    @code
+    system::result< core::string_view > rv = parse( "abcdef", token_rule<alpha_chars_t>() );
+    @endcode
+
+    @par BNF
+    @code
+    token     = 1*( ch )
+    @endcode
+
+    @tparam CharSet The character set type to use
+    @return The token rule
+
+    @see
+        @ref alpha_chars,
+        @ref parse.
+*/
+template<BOOST_URL_CONSTRAINT(CharSet) CharSet>
+constexpr
+auto
+token_rule() noexcept ->
+    typename std::enable_if<
+        std::is_default_constructible<CharSet>::value,
+        implementation_defined::token_rule_t<CharSet>>::type
+{
+    return implementation_defined::token_rule_t<CharSet>();
 }
 
 } // grammar
