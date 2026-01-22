@@ -464,4 +464,7 @@ to_sv(pct_string_view const& s) noexcept
 } // urls
 } // boost
 
+// Ensure decode_view is complete for operator*()
+#include <boost/url/decode_view.hpp>
+
 #endif

@@ -134,10 +134,36 @@ struct pct_string_view_test
     }
 
     void
+    testOperatorStar()
+    {
+        // Basic usage
+        {
+            pct_string_view psv("Program%20Files");
+            decode_view dv = *psv;
+            BOOST_TEST(dv == "Program Files");
+        }
+
+        // Empty string
+        {
+            pct_string_view psv("");
+            decode_view dv = *psv;
+            BOOST_TEST(dv.empty());
+        }
+
+        // No encoding
+        {
+            pct_string_view psv("simple");
+            decode_view dv = *psv;
+            BOOST_TEST(dv == "simple");
+        }
+    }
+
+    void
     run()
     {
         testSpecial();
         testRelation();
+        testOperatorStar();
     }
 };
 
