@@ -794,4 +794,20 @@ private:
 //
 // #include <boost/url/impl/segments_encoded_ref.hpp>
 
+//------------------------------------------------
+//
+// std::ranges::enable_borrowed_range
+//
+//------------------------------------------------
+
+#ifdef BOOST_URL_HAS_CONCEPTS
+#include <ranges>
+namespace std::ranges {
+    template<>
+    inline constexpr bool
+        enable_borrowed_range<
+            boost::urls::segments_encoded_ref> = true;
+} // std::ranges
+#endif
+
 #endif

@@ -467,4 +467,14 @@ to_sv(pct_string_view const& s) noexcept
 // Ensure decode_view is complete for operator*()
 #include <boost/url/decode_view.hpp>
 
+#ifdef BOOST_URL_HAS_CONCEPTS
+#include <ranges>
+namespace std::ranges {
+    template<>
+    inline constexpr bool
+        enable_borrowed_range<
+            boost::urls::pct_string_view> = true;
+} // std::ranges
+#endif
+
 #endif
