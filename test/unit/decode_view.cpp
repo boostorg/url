@@ -354,6 +354,25 @@ struct decode_view_test
     }
 
     void
+    testBorrowedRange()
+    {
+#ifdef BOOST_URL_HAS_CONCEPTS
+        // decode_view is a borrowed range
+        BOOST_CORE_STATIC_ASSERT(
+            std::ranges::borrowed_range<decode_view>);
+
+        // iterators remain valid after the view is destroyed
+        decode_view::iterator it;
+        {
+            decode_view dv("hello%20world");
+            it = dv.begin();
+        }
+        // iterator is still valid (points to external buffer)
+        BOOST_TEST_EQ(*it, 'h');
+#endif
+    }
+
+    void
     run()
     {
         testDecodeView();
@@ -365,6 +384,7 @@ struct decode_view_test
         testCompare();
         testStream();
         testPR127Cases();
+        testBorrowedRange();
     }
 };
 

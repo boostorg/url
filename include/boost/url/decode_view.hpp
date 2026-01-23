@@ -1074,4 +1074,20 @@ make_decode_view(
 
 #include <boost/url/impl/decode_view.hpp>
 
+//------------------------------------------------
+//
+// std::ranges::enable_borrowed_range
+//
+//------------------------------------------------
+
+#ifdef BOOST_URL_HAS_CONCEPTS
+#include <ranges>
+namespace std::ranges {
+    template<>
+    inline constexpr bool
+        enable_borrowed_range<
+            boost::urls::decode_view> = true;
+} // std::ranges
+#endif
+
 #endif
