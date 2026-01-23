@@ -28,9 +28,6 @@ namespace urls {
     @tparam T type of resource associated with
     each path template
 
-    @tparam N maximum number of replacement fields
-    in a path template
-
     @par Exception Safety
 
     @li Functions marked `noexcept` provide the
