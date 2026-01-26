@@ -98,6 +98,11 @@ using format_arg = detail::format_arg;
     assert(format("{}", "Hello world!").buffer() == "Hello%20world%21");
     @endcode
 
+    @note
+    The formatting machinery relies on language and library
+    features that are broken on GCC 4.8 and GCC 5.x, so this
+    function is not supported on those compilers.
+
     @par Preconditions
     All replacement fields must be valid and the
     resulting URL should be valid after arguments

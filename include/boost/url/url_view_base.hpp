@@ -1928,11 +1928,12 @@ public:
         Any percent-escapes in the string are
         decoded first.
         <br>
-        When plus signs appear in the query
-        portion of the url, they are converted
-        to spaces automatically upon decoding.
-        This behavior can be changed by setting
-        decode options.
+
+        Literal plus signs remain unchanged by
+        default to match RFC 3986. To treat '+'
+        as a space, supply decoding options with
+        `space_as_plus = true` when calling this
+        function.
 
         @par Example
         @code
