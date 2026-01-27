@@ -371,14 +371,26 @@ set_userinfo(
         // find ':' in plain string
         auto const pos2 =
             s.find_first_of(':');
-        impl_.decoded_[id_user] =
-            pos2 - 1;
-        impl_.decoded_[id_pass] =
-            s.size() - pos2;
+        if(pos2 != core::string_view::npos)
+        {
+            // pos2 is the ':' index in plain input (user[:pass])
+            // decoded user is [0, pos2), decoded pass is (pos2, end].
+            impl_.decoded_[id_user] =
+                detail::to_size_type(pos2);
+            impl_.decoded_[id_pass] =
+                detail::to_size_type(s.size() - pos2 - 1);
+        }
+        else
+        {
+            impl_.decoded_[id_user] =
+                detail::to_size_type(s.size());
+            impl_.decoded_[id_pass] = 0;
+        }
     }
     else
     {
-        impl_.decoded_[id_user] = s.size();
+        impl_.decoded_[id_user] =
+            detail::to_size_type(s.size());
         impl_.decoded_[id_pass] = 0;
     }
     return *this;
@@ -406,18 +418,18 @@ set_encoded_userinfo(
         auto dest =
             set_userinfo_impl(n0 + n1 + 1, op);
         impl_.decoded_[id_user] =
-            detail::re_encode_unsafe(
+            detail::to_size_type(detail::re_encode_unsafe(
                 dest,
                 dest + n0,
                 s0,
-                detail::user_chars);
+                detail::user_chars));
         *dest++ = ':';
         impl_.decoded_[id_pass] =
-            detail::re_encode_unsafe(
+            detail::to_size_type(detail::re_encode_unsafe(
                 dest,
                 dest + n1,
                 s1,
-                detail::password_chars);
+                detail::password_chars));
         impl_.split(id_user, 2 + n0);
     }
     else
@@ -428,11 +440,11 @@ set_encoded_userinfo(
                 s, detail::user_chars);
         auto dest = set_userinfo_impl(n, op);
         impl_.decoded_[id_user] =
-            detail::re_encode_unsafe(
+            detail::to_size_type(detail::re_encode_unsafe(
                 dest,
                 dest + n,
                 s,
-                detail::user_chars);
+                detail::user_chars));
         impl_.split(id_user, 2 + n);
         impl_.decoded_[id_pass] = 0;
     }
@@ -472,7 +484,8 @@ set_user(core::string_view s)
         s,
         detail::user_chars,
         opt);
-    impl_.decoded_[id_user] = s.size();
+    impl_.decoded_[id_user] =
+        detail::to_size_type(s.size());
     return *this;
 }
 
@@ -487,11 +500,11 @@ set_encoded_user(
             s, detail::user_chars);
     auto dest = set_user_impl(n, op);
     impl_.decoded_[id_user] =
-        detail::re_encode_unsafe(
+        detail::to_size_type(detail::re_encode_unsafe(
             dest,
             dest + n,
             s,
-            detail::user_chars);
+            detail::user_chars));
     BOOST_ASSERT(
         impl_.decoded_[id_user] ==
             s.decoded_size());
@@ -515,7 +528,8 @@ set_password(core::string_view s)
         s,
         detail::password_chars,
         opt);
-    impl_.decoded_[id_pass] = s.size();
+    impl_.decoded_[id_pass] =
+        detail::to_size_type(s.size());
     return *this;
 }
 
@@ -531,11 +545,11 @@ set_encoded_password(
             detail::password_chars);
     auto dest = set_password_impl(n, op);
     impl_.decoded_[id_pass] =
-        detail::re_encode_unsafe(
+        detail::to_size_type(detail::re_encode_unsafe(
             dest,
             dest + n,
             s,
-            detail::password_chars);
+            detail::password_chars));
     BOOST_ASSERT(
         impl_.decoded_[id_pass] ==
             s.decoded_size());
@@ -661,7 +675,8 @@ set_host(
         s,
         detail::host_chars,
         opt);
-    impl_.decoded_[id_host] = s.size();
+    impl_.decoded_[id_host] =
+        detail::to_size_type(s.size());
     impl_.host_type_ =
         urls::host_type::name;
     return *this;
@@ -735,11 +750,11 @@ set_encoded_host(
         s, detail::host_chars);
     auto dest = set_host_impl(n, op);
     impl_.decoded_[id_host] =
-        detail::re_encode_unsafe(
+        detail::to_size_type(detail::re_encode_unsafe(
             dest,
             impl_.get(id_path).data(),
             s,
-            detail::host_chars);
+            detail::host_chars));
     BOOST_ASSERT(impl_.decoded_[id_host] ==
         s.decoded_size());
     impl_.host_type_ =
@@ -809,7 +824,8 @@ set_host_address(
         s,
         detail::host_chars,
         opt);
-    impl_.decoded_[id_host] = s.size();
+    impl_.decoded_[id_host] =
+        detail::to_size_type(s.size());
     impl_.host_type_ =
         urls::host_type::name;
     return *this;
@@ -879,11 +895,11 @@ set_encoded_host_address(
         s, detail::host_chars);
     auto dest = set_host_impl(n, op);
     impl_.decoded_[id_host] =
-        detail::re_encode_unsafe(
+        detail::to_size_type(detail::re_encode_unsafe(
             dest,
             impl_.get(id_path).data(),
             s,
-            detail::host_chars);
+            detail::host_chars));
     BOOST_ASSERT(impl_.decoded_[id_host] ==
         s.decoded_size());
     impl_.host_type_ =
@@ -901,7 +917,8 @@ set_host_ipv4(
     auto s = addr.to_buffer(buf, sizeof(buf));
     auto dest = set_host_impl(s.size(), op);
     std::memcpy(dest, s.data(), s.size());
-    impl_.decoded_[id_host] = impl_.len(id_host);
+    impl_.decoded_[id_host] =
+        detail::to_size_type(impl_.len(id_host));
     impl_.host_type_ = urls::host_type::ipv4;
     auto bytes = addr.to_bytes();
     std::memcpy(
@@ -964,7 +981,8 @@ set_host_ipv6_and_zone_id(
     }
     *dest++ = ']';
     // ipn + |"["| + |"]"| + (has_zone_id ? |"%"| + zn : 0)
-    impl_.decoded_[id_host] = ipn + 2 + has_zone_id * (1 + zone_id.size());
+    impl_.decoded_[id_host] = detail::to_size_type(
+        ipn + 2 + has_zone_id * (1 + zone_id.size()));
     impl_.host_type_ = urls::host_type::ipv6;
     auto bytes = addr.to_bytes();
     std::memcpy(
@@ -1000,7 +1018,8 @@ set_host_ipv6_and_encoded_zone_id(
     }
     *dest++ = ']';
     // ipn + |"["| + |"]"| + (has_zone_id ? |"%"| + zn : 0)
-    impl_.decoded_[id_host] = ipn + 2 + has_zone_id * (1 + dzn);
+    impl_.decoded_[id_host] = detail::to_size_type(
+        ipn + 2 + has_zone_id * (1 + dzn));
     impl_.host_type_ = urls::host_type::ipv6;
     auto bytes = addr.to_bytes();
     std::memcpy(
@@ -1026,7 +1045,8 @@ set_host_ipvfuture(
     *dest = ']';
     impl_.host_type_ =
         urls::host_type::ipvfuture;
-    impl_.decoded_[id_host] = s.size() + 2;
+    impl_.decoded_[id_host] =
+        detail::to_size_type(s.size() + 2);
     return *this;
 }
 
@@ -1059,7 +1079,8 @@ set_host_name(
         opt);
     impl_.host_type_ =
         urls::host_type::name;
-    impl_.decoded_[id_host] = s.size();
+    impl_.decoded_[id_host] =
+        detail::to_size_type(s.size());
     return *this;
 }
 
@@ -1084,11 +1105,11 @@ set_encoded_host_name(
         s, allowed);
     auto dest = set_host_impl(n, op);
     impl_.decoded_[id_host] =
-        detail::re_encode_unsafe(
+        detail::to_size_type(detail::re_encode_unsafe(
             dest,
             dest + n,
             s,
-            allowed);
+            allowed));
     BOOST_ASSERT(
         impl_.decoded_[id_host] ==
             s.decoded_size());
@@ -1332,7 +1353,8 @@ set_path(
         s.substr(first_seg.size()),
         detail::path_chars,
         opt);
-    impl_.decoded_[id_path] += s.size();
+    impl_.decoded_[id_path] +=
+        detail::to_size_type(s.size());
     BOOST_ASSERT(!dest || dest == impl_.get(id_query).data());
     BOOST_ASSERT(
         impl_.decoded_[id_path] ==
@@ -1353,8 +1375,9 @@ set_path(
         if (s.starts_with("/./"))
             s = s.substr(2);
         // count segments as number of '/'s + 1
-        impl_.nseg_ = std::count(
-            s.begin() + 1, s.end(), '/') + 1;
+        impl_.nseg_ = detail::to_size_type(
+            std::count(
+                s.begin() + 1, s.end(), '/') + 1);
     }
     else
     {
@@ -1435,17 +1458,17 @@ set_encoded_path(
         impl_.decoded_[id_path] += 2;
     }
     impl_.decoded_[id_path] +=
-        detail::re_encode_unsafe(
+        detail::to_size_type(detail::re_encode_unsafe(
             dest,
             impl_.get(id_query).data(),
             first_seg,
-            detail::segment_chars - ':');
+            detail::segment_chars - ':'));
     impl_.decoded_[id_path] +=
-        detail::re_encode_unsafe(
+        detail::to_size_type(detail::re_encode_unsafe(
             dest,
             impl_.get(id_query).data(),
             s.substr(first_seg.size()),
-            detail::path_chars);
+            detail::path_chars));
     BOOST_ASSERT(dest == impl_.get(id_query).data());
     BOOST_ASSERT(
         impl_.decoded_[id_path] ==
@@ -1466,8 +1489,9 @@ set_encoded_path(
         if (s.starts_with("/./"))
             s = s.substr(2);
         // count segments as number of '/'s + 1
-        impl_.nseg_ = std::count(
-            s.begin() + 1, s.end(), '/') + 1;
+        impl_.nseg_ = detail::to_size_type(
+            std::count(
+                s.begin() + 1, s.end(), '/') + 1);
     }
     else
     {
@@ -1554,15 +1578,16 @@ set_encoded_query(
 
     // encode
     impl_.decoded_[id_query] =
-        detail::re_encode_unsafe(
+        detail::to_size_type(detail::re_encode_unsafe(
             dest,
             dest + n,
             s,
-            detail::query_chars);
+            detail::query_chars));
     BOOST_ASSERT(
         impl_.decoded_[id_query] ==
             s.decoded_size());
-    impl_.nparam_ = nparam;
+    impl_.nparam_ =
+        detail::to_size_type(nparam);
     return *this;
 }
 
@@ -1654,7 +1679,8 @@ set_fragment(core::string_view s)
         s,
         detail::fragment_chars,
         opt);
-    impl_.decoded_[id_frag] = s.size();
+    impl_.decoded_[id_frag] =
+        detail::to_size_type(s.size());
     return *this;
 }
 
@@ -1672,11 +1698,11 @@ set_encoded_fragment(
         id_frag, n + 1, op);
     *dest++ = '#';
     impl_.decoded_[id_frag] =
-        detail::re_encode_unsafe(
+        detail::to_size_type(detail::re_encode_unsafe(
             dest,
             dest + n,
             s,
-            detail::fragment_chars);
+            detail::fragment_chars));
     BOOST_ASSERT(
         impl_.decoded_[id_frag] ==
             s.decoded_size());
@@ -2065,12 +2091,14 @@ normalize_path()
         if (p == "/")
             impl_.nseg_ = 0;
         else if (!p.empty())
-            impl_.nseg_ = std::count(
-                p.begin() + 1, p.end(), '/') + 1;
+            impl_.nseg_ = detail::to_size_type(
+                std::count(
+                    p.begin() + 1, p.end(), '/') + 1);
         else
             impl_.nseg_ = 0;
         impl_.decoded_[id_path] =
-            detail::decode_bytes_unsafe(impl_.get(id_path));
+            detail::to_size_type(detail::decode_bytes_unsafe(
+                impl_.get(id_path)));
     }
     return *this;
 }
@@ -2777,8 +2805,14 @@ edit_segments(
             impl_.len(id_path) + nchar - nremove);
         BOOST_ASSERT(size() == new_size);
         end = dest + nchar;
-        impl_.nseg_ = impl_.nseg_ + nseg - (
-            it1.index - it0.index) - cp_src_prefix;
+        auto const nseg1 =
+            static_cast<std::ptrdiff_t>(impl_.nseg_) +
+            static_cast<std::ptrdiff_t>(nseg) -
+            static_cast<std::ptrdiff_t>(it1.index) +
+            static_cast<std::ptrdiff_t>(it0.index) -
+            static_cast<std::ptrdiff_t>(cp_src_prefix);
+        BOOST_ASSERT(nseg1 >= 0);
+        impl_.nseg_ = detail::to_size_type(nseg1);
         if(s_)
             s_[size()] = '\0';
     }
@@ -2827,7 +2861,12 @@ edit_segments(
     auto const dn =
         detail::decode_bytes_unsafe(
             core::string_view(dest0, dest - dest0));
-    impl_.decoded_[id_path] += dn - dn0;
+    if(dn >= dn0)
+        impl_.decoded_[id_path] +=
+            detail::to_size_type(dn - dn0);
+    else
+        impl_.decoded_[id_path] -=
+            detail::to_size_type(dn0 - dn);
 
     return detail::segments_iter_impl(
         impl_, pos0, it0.index);
@@ -2862,12 +2901,16 @@ edit_params(
 
     // calc decoded size of old range,
     // minus one if '?' or '&' prefixed
-    auto const dn0 =
-        detail::decode_bytes_unsafe(
-            core::string_view(
-                impl_.cs_ + pos0,
-                pos1 - pos0)) - (
-                    impl_.len(id_query) > 0);
+    auto dn0 =
+        static_cast<std::ptrdiff_t>(
+            detail::decode_bytes_unsafe(
+                core::string_view(
+                    impl_.cs_ + pos0,
+                    pos1 - pos0)));
+    if(impl_.len(id_query) > 0)
+        dn0 -= 1;
+    if(dn0 < 0)
+        dn0 = 0;
 
 //------------------------------------------------
 //
@@ -2908,8 +2951,11 @@ edit_params(
             detail::throw_length_error();
         }
         auto const nparam1 =
-            impl_.nparam_ + nparam - (
-                it1.index - it0.index);
+            static_cast<std::ptrdiff_t>(impl_.nparam_) +
+            static_cast<std::ptrdiff_t>(nparam) -
+            static_cast<std::ptrdiff_t>(it1.index) +
+            static_cast<std::ptrdiff_t>(it0.index);
+        BOOST_ASSERT(nparam1 >= 0);
         reserve_impl(size() + nchar - nremove, op);
         dest = s_ + pos0;
         end = dest + nchar;
@@ -2927,7 +2973,8 @@ edit_params(
             id_query,
             impl_.len(id_query) +
                 nchar - nremove);
-        impl_.nparam_ = nparam1;
+        impl_.nparam_ =
+            detail::to_size_type(nparam1);
         if(nparam1 > 0)
         {
             // needed when we erase
@@ -2963,12 +3010,21 @@ edit_params(
 
     // calc decoded size of new range,
     // minus one if '?' or '&' prefixed
-    auto const dn =
-        detail::decode_bytes_unsafe(
-            core::string_view(dest0, dest - dest0)) - (
-                impl_.len(id_query) > 0);
+    auto dn =
+        static_cast<std::ptrdiff_t>(
+            detail::decode_bytes_unsafe(
+                core::string_view(dest0, dest - dest0)));
+    if(impl_.len(id_query) > 0)
+        dn -= 1;
+    if(dn < 0)
+        dn = 0;
 
-    impl_.decoded_[id_query] += (dn - dn0);
+    if(dn >= dn0)
+        impl_.decoded_[id_query] +=
+            detail::to_size_type(dn - dn0);
+    else
+        impl_.decoded_[id_query] -=
+            detail::to_size_type(dn0 - dn);
 
     return detail::params_iter_impl(
         impl_,
