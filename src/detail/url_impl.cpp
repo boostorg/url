@@ -52,13 +52,15 @@ apply_userinfo(
     // userinfo
     set_size(id_user, user.size());
     decoded_[id_user] =
-        user.decoded_size();
+        detail::to_size_type(
+            user.decoded_size());
     if(pass)
     {
         set_size(id_pass,
             pass->size() + 2);
         decoded_[id_pass] =
-            pass->decoded_size();
+            detail::to_size_type(
+                pass->decoded_size());
     }
     else
     {
@@ -82,7 +84,8 @@ apply_host(
     host_type_ = ht;
     set_size(id_host, s.size());
     decoded_[id_host] =
-        s.decoded_size();
+        detail::to_size_type(
+            s.decoded_size());
     std::memcpy(
         ip_addr_,
         addr,
@@ -137,8 +140,11 @@ apply_path(
     std::size_t nseg) noexcept
 {
     set_size(id_path, s.size());
-    decoded_[id_path] = s.decoded_size();
-    nseg_ = detail::path_segments(s, nseg);
+    decoded_[id_path] =
+        detail::to_size_type(
+            s.decoded_size());
+    nseg_ = detail::to_size_type(
+        detail::path_segments(s, nseg));
 }
 
 void
@@ -147,9 +153,11 @@ apply_query(
     pct_string_view s,
     std::size_t n) noexcept
 {
-    nparam_ = n;
+    nparam_ = detail::to_size_type(n);
     set_size(id_query, 1 + s.size());
-    decoded_[id_query] = s.decoded_size();
+    decoded_[id_query] =
+        detail::to_size_type(
+            s.decoded_size());
 }
 
 void
@@ -158,7 +166,9 @@ apply_frag(
     pct_string_view s) noexcept
 {
     set_size(id_frag, s.size() + 1);
-    decoded_[id_frag] = s.decoded_size();
+    decoded_[id_frag] =
+        detail::to_size_type(
+            s.decoded_size());
 }
 
 // return length of [first, last)
@@ -255,10 +265,19 @@ set_size(
     int id,
     std::size_t n) noexcept
 {
-    auto d = n - len(id);
+    auto const cur = len(id);
+    if(n >= cur)
+    {
+        auto const d = n - cur;
+        for(auto i = id + 1;
+            i <= id_end; ++i)
+            offset_[i] += detail::to_size_type(d);
+        return;
+    }
+    auto const d = cur - n;
     for(auto i = id + 1;
         i <= id_end; ++i)
-        offset_[i] += d;
+        offset_[i] -= detail::to_size_type(d);
 }
 
 // trim id to size n,
@@ -271,7 +290,8 @@ split(
 {
     BOOST_ASSERT(id < id_end - 1);
     //BOOST_ASSERT(n <= len(id));
-    offset_[id + 1] = offset(id) + n;
+    offset_[id + 1] = detail::to_size_type(
+        offset(id) + n);
 }
 
 // add n to [first, last]
@@ -284,7 +304,7 @@ adjust_right(
 {
     for(int i = first;
             i <= last; ++i)
-        offset_[i] += n;
+        offset_[i] += detail::to_size_type(n);
 }
 
 // remove n from [first, last]
@@ -297,7 +317,7 @@ adjust_left(
 {
     for(int i = first;
             i <= last; ++i)
-        offset_[i] -= n;
+        offset_[i] -= detail::to_size_type(n);
 }
 
 // set [first, last) offset
@@ -310,7 +330,7 @@ collapse(
 {
     for(int i = first + 1;
             i < last; ++i)
-        offset_[i] = n;
+        offset_[i] = detail::to_size_type(n);
 }
 
 

@@ -106,9 +106,9 @@
 
 // Limit tests
 #ifndef BOOST_URL_MAX_SIZE
-// we leave room for a null,
-// and still fit in size_t
-#define BOOST_URL_MAX_SIZE ((std::size_t(-1))-1)
+// leave room for a null terminator and
+// fit within url_impl's 32-bit offsets
+#define BOOST_URL_MAX_SIZE ((std::size_t)UINT32_MAX - 1)
 #endif
 
 // noinline attribute

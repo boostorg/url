@@ -16,6 +16,7 @@
 #include <boost/core/detail/string_view.hpp>
 #include <boost/url/detail/parts_base.hpp>
 #include <boost/assert.hpp>
+#include <cstddef>
 #include <cstdint>
 
 namespace boost {
@@ -36,6 +37,12 @@ constexpr char const* const empty_c_str_ = "";
 // to by cs_.
 struct BOOST_URL_DECL url_impl : parts_base
 {
+    using size_type = std::uint32_t;
+
+    static_assert(
+        BOOST_URL_MAX_SIZE <= UINT32_MAX,
+        "BOOST_URL_MAX_SIZE exceeds 32-bit url_impl capacity");
+
     static
     constexpr
     std::size_t const zero_ = 0;
@@ -43,10 +50,10 @@ struct BOOST_URL_DECL url_impl : parts_base
     // never nullptr
     char const* cs_ = empty_c_str_;
 
-    std::size_t offset_[id_end + 1] = {};
-    std::size_t decoded_[id_end] = {};
-    std::size_t nseg_ = 0;
-    std::size_t nparam_ = 0;
+    size_type offset_[id_end + 1] = {};
+    size_type decoded_[id_end] = {};
+    size_type nseg_ = 0;
+    size_type nparam_ = 0;
     unsigned char ip_addr_[16] = {};
     // VFALCO don't we need a bool?
     std::uint16_t port_number_ = 0;
@@ -94,6 +101,25 @@ struct BOOST_URL_DECL url_impl : parts_base
     void apply_query(pct_string_view, std::size_t) noexcept;
     void apply_frag(pct_string_view) noexcept;
 };
+
+// url_impl stores 32-bit sizes; centralize narrowing with checks.
+inline
+url_impl::size_type
+to_size_type(std::size_t n) noexcept
+{
+    BOOST_ASSERT(n <= BOOST_URL_MAX_SIZE);
+    BOOST_ASSERT(n <= UINT32_MAX);
+    return static_cast<url_impl::size_type>(n);
+}
+
+inline
+url_impl::size_type
+to_size_type(std::ptrdiff_t n) noexcept
+{
+    BOOST_ASSERT(n >= 0);
+    return to_size_type(
+        static_cast<std::size_t>(n));
+}
 
 //------------------------------------------------
 
