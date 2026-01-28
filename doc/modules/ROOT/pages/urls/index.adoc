@@ -183,6 +183,20 @@ examples:
 
 |===
 
+[NOTE]
+====
+Some package managers (pip, npm) and tools use compound schemes like `git+https://` or `svn+ssh://` where a plus sign separates a protocol from a transport mechanism.
+Boost.URL treats these as single scheme strings per RFC 3986 (which allows plus signs).
+To extract the transport suffix, use a helper like `scheme_ex`:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=code_compound_scheme_1,indent=0]
+----
+
+This is an informal convention, not a URL standard. See https://github.com/whatwg/url/issues/230[WHATWG discussion,window=blank_].
+====
+
 
 In some cases the scheme is implied by the surrounding context and
 therefore omitted. Here is a complete HTTP/1.1 GET request for the
