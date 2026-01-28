@@ -819,6 +819,52 @@ parsing_scheme()
     }
 }
 
+// tag::code_compound_scheme_1[]
+// Helper function to extract transport scheme from compound schemes
+boost::core::string_view
+scheme_ex(boost::core::string_view s)
+{
+    // Find the last '+' in the scheme
+    // Examples: "git+https" -> "https", "svn+ssh" -> "ssh"
+    auto pos = s.rfind('+');
+    if (pos != boost::core::string_view::npos)
+        return s.substr(pos + 1);
+    return {};
+}
+// end::code_compound_scheme_1[]
+
+void
+parsing_compound_scheme()
+{
+
+    // Parse a URL with a compound scheme
+    url_view u("git+https://github.com/user/repo.git");
+
+    // The library treats the entire string as a single scheme per RFC 3986
+    assert(u.scheme() == "git+https");
+
+    // Extract just the transport protocol suffix
+    boost::core::string_view transport = scheme_ex(u.scheme());
+    assert(transport == "https");
+
+    // Test with other compound schemes
+    url_view u2("svn+ssh://example.com/repo");
+    assert(u2.scheme() == "svn+ssh");
+    assert(scheme_ex(u2.scheme()) == "ssh");
+
+    // Regular schemes without '+' return empty
+    url_view u3("https://example.com");
+    assert(u3.scheme() == "https");
+    assert(scheme_ex(u3.scheme()).empty());
+
+    // Multiple '+' characters: rfind returns the last one
+    url_view u4("npm+http+custom://example.com");
+    assert(u4.scheme() == "npm+http+custom");
+    assert(scheme_ex(u4.scheme()) == "custom");
+
+    boost::ignore_unused(u, u2, u3, u4, transport);
+}
+
 void
 parsing_authority()
 {
@@ -2546,6 +2592,7 @@ public:
         parsing_components();
         formatting_components();
         run_silent(&parsing_scheme);
+        parsing_compound_scheme();
         run_silent(&parsing_authority);
         run_silent(&parsing_path);
         run_silent(&parsing_query);
