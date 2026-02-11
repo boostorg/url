@@ -52,7 +52,7 @@ namespace urls {
         @ref segments_encoded_ref,
         @ref segments_ref.
 */
-class segments_encoded_view
+class BOOST_SYMBOL_VISIBLE segments_encoded_view
     : public segments_encoded_base
 {
     friend class url_view_base;
@@ -83,7 +83,7 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    segments_encoded_view() = default;
+    segments_encoded_view() noexcept;
 
     /** Constructor
 
@@ -157,7 +157,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3.  Path</a>
     */
-    BOOST_URL_DECL
     segments_encoded_view(
         core::string_view s);
 
@@ -227,7 +226,6 @@ public:
         @param first The beginning iterator.
         @param last The ending iterator.
     */
-    BOOST_URL_DECL
     segments_encoded_view(
         iterator first,
         iterator last) noexcept;
@@ -292,7 +290,6 @@ public:
 
         @return A view of the segments.
     */
-    BOOST_URL_DECL
     operator
     segments_view() const noexcept;
 
@@ -304,8 +301,18 @@ public:
     parse_path(core::string_view s) noexcept;
 };
 
+// Forward-declare for inline constructors below.
+// Full declaration in parse_path.hpp; definition in
+// src/parse_path.cpp.
+BOOST_URL_DECL
+system::result<segments_encoded_view>
+parse_path(core::string_view s) noexcept;
+
 } // urls
 } // boost
+
+#include <boost/url/impl/segments_view.hpp>
+#include <boost/url/impl/segments_encoded_view.hpp>
 
 //------------------------------------------------
 //

@@ -83,7 +83,7 @@ class params_view;
     current contents of the referenced URL
     without modifying it.
 */
-class BOOST_URL_DECL params_ref
+class BOOST_SYMBOL_VISIBLE params_ref
     : public params_base
 {
     friend class url_base;

@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2022 Vinnie Falco (vinnie dot falco at gmail dot com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -48,6 +49,7 @@ struct parse_sequence
     R const& rn;
     V vn;
 
+    BOOST_URL_CXX14_CONSTEXPR
     explicit
     parse_sequence(
         R const& rn_) noexcept
@@ -57,6 +59,7 @@ struct parse_sequence
     {
     }
 
+    BOOST_URL_CXX14_CONSTEXPR
     void
     apply(
         char const*&,
@@ -69,6 +72,7 @@ struct parse_sequence
     template<
         std::size_t Ir,
         std::size_t Iv>
+    BOOST_URL_CXX14_CONSTEXPR
     void
     apply(
         char const*& it,
@@ -93,6 +97,7 @@ struct parse_sequence
     template<
         std::size_t Ir,
         std::size_t Iv>
+    BOOST_URL_CXX14_CONSTEXPR
     void
     apply(
         char const*& it,
@@ -117,6 +122,7 @@ struct parse_sequence
     template<
         std::size_t Ir = 0,
         std::size_t Iv = 0>
+    BOOST_URL_CXX14_CONSTEXPR
     typename std::enable_if<
         Ir < 1 + sizeof...(Rn)>::type
     apply(
@@ -132,6 +138,7 @@ struct parse_sequence
     struct deref
     {
         template<class R>
+        BOOST_URL_CXX14_CONSTEXPR
         auto
         operator()(R const& r) const ->
             decltype(*r)
@@ -140,6 +147,7 @@ struct parse_sequence
         }
     };
 
+    BOOST_URL_CXX14_CONSTEXPR
     auto
     make_result() noexcept ->
         system::result<typename implementation_defined::tuple_rule_t<
@@ -176,6 +184,7 @@ struct parse_sequence<false, R0, Rn...>
     R const& rn;
     V v;
 
+    BOOST_URL_CXX14_CONSTEXPR
     explicit
     parse_sequence(
         R const& rn_) noexcept
@@ -184,6 +193,7 @@ struct parse_sequence<false, R0, Rn...>
     {
     }
 
+    BOOST_URL_CXX14_CONSTEXPR
     void
     apply(
         char const*&,
@@ -196,7 +206,7 @@ struct parse_sequence<false, R0, Rn...>
     template<
         std::size_t Ir,
         std::size_t Iv>
-    BOOST_URL_NO_INLINE
+    BOOST_URL_CXX14_CONSTEXPR
     void
     apply(
         char const*& it,
@@ -221,6 +231,7 @@ struct parse_sequence<false, R0, Rn...>
     template<
         std::size_t Ir,
         std::size_t Iv>
+    BOOST_URL_CXX14_CONSTEXPR
     void
     apply(
         char const*& it,
@@ -241,6 +252,7 @@ struct parse_sequence<false, R0, Rn...>
     template<
         std::size_t Ir = 0,
         std::size_t Iv = 0>
+    BOOST_URL_CXX14_CONSTEXPR
     typename std::enable_if<
         Ir < 1 + sizeof...(Rn)>::type
     apply(
@@ -253,6 +265,7 @@ struct parse_sequence<false, R0, Rn...>
         apply(it, end, ir, iv, is_void<Ir>{});
     }
 
+    BOOST_URL_CXX14_CONSTEXPR
     V
     make_result() noexcept
     {
@@ -265,6 +278,7 @@ struct parse_sequence<false, R0, Rn...>
 template<
     class R0,
     class... Rn>
+BOOST_URL_CXX14_CONSTEXPR
 auto
 implementation_defined::tuple_rule_t<R0, Rn...>::
 parse(

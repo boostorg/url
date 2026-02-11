@@ -49,7 +49,7 @@ namespace implementation_defined {
     Changes to the underlying character buffer
     can invalidate iterators which reference it.
 */
-class BOOST_URL_DECL params_encoded_view
+class BOOST_SYMBOL_VISIBLE params_encoded_view
     : public params_encoded_base
 {
     friend class url_view_base;
@@ -230,14 +230,24 @@ public:
 
     //--------------------------------------------
 
-    friend
     BOOST_URL_DECL
+    friend
     system::result<params_encoded_view>
     parse_query(core::string_view s) noexcept;
 };
 
+// Forward-declare for inline constructors below.
+// Full declaration in parse_query.hpp; definition in
+// src/parse_query.cpp.
+BOOST_URL_DECL
+system::result<params_encoded_view>
+parse_query(core::string_view s) noexcept;
+
 } // urls
 } // boost
+
+#include <boost/url/impl/params_view.hpp>
+#include <boost/url/impl/params_encoded_view.hpp>
 
 //------------------------------------------------
 //

@@ -684,6 +684,38 @@ parsing_urls()
         // end::snippet_parsing_url_3[]
         BOOST_TEST(v.buffer() == "/path/to/file.txt#anchor");
     }
+
+#if defined(BOOST_URL_HAS_CXX20_CONSTEXPR)
+    {
+        // tag::snippet_constexpr_parsing_1[]
+        // Parse and validate a URL at compile time (C++20).
+        // value() on an error produces a compile error,
+        // so invalid URLs are caught at build time.
+        constexpr url_view api_base =
+            parse_uri("https://api.example.com/v2").value();
+
+        // A malformed literal would fail to compile:
+        // constexpr url_view bad =
+        //     parse_uri("ht tp://bad url").value();
+        // end::snippet_constexpr_parsing_1[]
+        BOOST_TEST(api_base.scheme() == "https");
+    }
+    {
+        // tag::snippet_constexpr_parsing_2[]
+        // Pre-parsed URL constants have zero runtime cost.
+        // Parsing happens entirely at compile time.
+        constexpr url_view default_endpoint =
+            parse_uri("https://api.example.com:8443/v1").value();
+        constexpr url_view fallback_endpoint =
+            parse_uri("http://localhost:9090/debug").value();
+
+        // Components are available at runtime with no parsing overhead
+        assert(default_endpoint.port_number() == 8443);
+        assert(fallback_endpoint.scheme() == "http");
+        // end::snippet_constexpr_parsing_2[]
+        BOOST_TEST(default_endpoint.port_number() == 8443);
+    }
+#endif
 }
 
 void

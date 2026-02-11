@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -35,7 +36,7 @@ constexpr char const* const empty_c_str_ = "";
 // It stores the offsets and properties of
 // a URL string stored elsewhere and pointed
 // to by cs_.
-struct BOOST_URL_DECL url_impl : parts_base
+struct BOOST_SYMBOL_VISIBLE url_impl : parts_base
 {
     using size_type = std::uint32_t;
 
@@ -64,46 +65,40 @@ struct BOOST_URL_DECL url_impl : parts_base
 
     from from_ = from::string;
 
+    BOOST_URL_CXX14_CONSTEXPR
     url_impl(
         from b) noexcept
         : from_(b)
     {
     }
 
-    // in url_view.ipp
-    url_view construct() const noexcept;
+    BOOST_URL_CXX20_CONSTEXPR std::size_t len(int, int) const noexcept;
+    BOOST_URL_CXX20_CONSTEXPR std::size_t len(int) const noexcept;
+    BOOST_URL_CXX20_CONSTEXPR std::size_t offset(int) const noexcept;
+    BOOST_URL_CXX20_CONSTEXPR core::string_view get(int) const noexcept;
+    BOOST_URL_CXX20_CONSTEXPR core::string_view get(int, int) const noexcept;
+    BOOST_URL_CXX20_CONSTEXPR pct_string_view pct_get(int) const noexcept;
+    BOOST_URL_CXX20_CONSTEXPR pct_string_view pct_get(int, int) const noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void set_size(int, std::size_t) noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void split(int, std::size_t) noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void adjust_right(int first, int last, std::size_t n) noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void adjust_left(int first, int last, std::size_t n) noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void collapse(int, int, std::size_t) noexcept;
 
-    // in authority_view.ipp
-    authority_view
-    construct_authority() const noexcept;
-
-    std::size_t len(int, int) const noexcept;
-    std::size_t len(int) const noexcept;
-    std::size_t offset(int) const noexcept;
-    core::string_view get(int) const noexcept;
-    core::string_view get(int, int) const noexcept;
-    pct_string_view pct_get(int) const noexcept;
-    pct_string_view pct_get(int, int) const noexcept;
-    void set_size(int, std::size_t) noexcept;
-    void split(int, std::size_t) noexcept;
-    void adjust_right(int first, int last, std::size_t n) noexcept;
-    void adjust_left(int first, int last, std::size_t n) noexcept;
-    void collapse(int, int, std::size_t) noexcept;
-
-    void apply_scheme(core::string_view) noexcept;
-    void apply_userinfo(pct_string_view const&,
+    BOOST_URL_CXX20_CONSTEXPR void apply_scheme(core::string_view) noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void apply_userinfo(pct_string_view const&,
         pct_string_view const*) noexcept;
-    void apply_host(host_type, pct_string_view,
+    BOOST_URL_CXX20_CONSTEXPR void apply_host(host_type, pct_string_view,
         unsigned char const*) noexcept;
-    void apply_port(core::string_view, unsigned short) noexcept;
-    void apply_authority(authority_view const&) noexcept;
-    void apply_path(pct_string_view, std::size_t) noexcept;
-    void apply_query(pct_string_view, std::size_t) noexcept;
-    void apply_frag(pct_string_view) noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void apply_port(core::string_view, unsigned short) noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void apply_authority(url_impl const&) noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void apply_path(pct_string_view, std::size_t) noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void apply_query(pct_string_view, std::size_t) noexcept;
+    BOOST_URL_CXX20_CONSTEXPR void apply_frag(pct_string_view) noexcept;
 };
 
 // url_impl stores 32-bit sizes; centralize narrowing with checks.
-inline
+BOOST_URL_CXX14_CONSTEXPR_OR_INLINE
 url_impl::size_type
 to_size_type(std::size_t n) noexcept
 {
@@ -112,7 +107,7 @@ to_size_type(std::size_t n) noexcept
     return static_cast<url_impl::size_type>(n);
 }
 
-inline
+BOOST_URL_CXX14_CONSTEXPR_OR_INLINE
 url_impl::size_type
 to_size_type(std::ptrdiff_t n) noexcept
 {
@@ -125,7 +120,11 @@ to_size_type(std::ptrdiff_t n) noexcept
 
 // this allows a path to come from a
 // url_impl or a separate core::string_view
-class path_ref
+//
+// Header-only and BOOST_SYMBOL_VISIBLE since all
+// members are inline. Containing classes must also be
+// BOOST_SYMBOL_VISIBLE to avoid C4251 on MSVC.
+class BOOST_SYMBOL_VISIBLE path_ref
     : private parts_base
 {
     url_impl const* impl_ = nullptr;
@@ -135,7 +134,7 @@ class path_ref
     std::size_t dn_ = 0;
 
 public:
-    path_ref() = default;
+    path_ref() noexcept = default;
     path_ref(url_impl const& impl) noexcept;
     path_ref(core::string_view,
         std::size_t, std::size_t) noexcept;
@@ -172,7 +171,7 @@ public:
 // This class represents a query string, which
 // can originate from either an url_impl object
 // or an independent core::string_view.
-class BOOST_URL_DECL query_ref
+class BOOST_SYMBOL_VISIBLE query_ref
     : private parts_base
 {
     url_impl const* impl_ = nullptr;
@@ -221,5 +220,7 @@ public:
 
 } // urls
 } // boost
+
+#include <boost/url/detail/impl/url_impl.hpp>
 
 #endif

@@ -58,8 +58,7 @@ struct pattern;
         @li @ref parse_uri
         @li @ref parse_uri_reference
 */
-class BOOST_URL_DECL
-    url_base
+class BOOST_SYMBOL_VISIBLE url_base
     : public url_view_base
 {
     char* s_ = nullptr;
@@ -128,7 +127,7 @@ public:
     char const*
     c_str() const noexcept
     {
-        return pi_->cs_;
+        return impl().cs_;
     }
 
     /** Return the number of characters that can be stored without reallocating
@@ -3165,6 +3164,7 @@ resolve(
 } // boost
 
 // These are here because of circular references
+#include <boost/url/impl/url_base.hpp>
 #include <boost/url/impl/params_ref.hpp>
 #include <boost/url/impl/params_encoded_ref.hpp>
 #include <boost/url/impl/segments_ref.hpp>

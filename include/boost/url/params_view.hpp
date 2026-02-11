@@ -40,7 +40,7 @@ namespace urls {
     Changes to the underlying character buffer
     can invalidate iterators which reference it.
 */
-class params_view
+class BOOST_SYMBOL_VISIBLE params_view
     : public params_base
 {
     friend class url_view_base;
@@ -183,7 +183,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4.  Query</a>
     */
-    BOOST_URL_DECL
     params_view(
         core::string_view s);
 
@@ -250,7 +249,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.4"
             >3.4.  Query</a>
     */
-    BOOST_URL_DECL
     params_view(
         core::string_view s,
         encoding_opts opt);
