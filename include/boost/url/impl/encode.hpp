@@ -10,7 +10,7 @@
 #ifndef BOOST_URL_IMPL_ENCODE_HPP
 #define BOOST_URL_IMPL_ENCODE_HPP
 
-#include "boost/url/grammar/token_rule.hpp"
+#include <boost/url/grammar/token_rule.hpp>
 #include <boost/assert.hpp>
 #include <boost/core/detail/static_assert.hpp>
 #include <boost/url/detail/encode.hpp>

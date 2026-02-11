@@ -246,3 +246,26 @@ include::example$unit/snippets.cpp[tag=snippet_parsing_url_1b,indent=0]
 Check the reference for cpp:result[] for a synopsis of the type.
 
 
+== Constexpr Parsing
+
+In {cpp}20 and later, all parse functions are `constexpr`.
+This means URLs can be parsed and validated at compile time, which is useful when one side of a comparison is a fixed string that should be pre-parsed and checked for correctness.
+
+For instance, a `constexpr` cpp:url_view[] parsed from a valid string literal is fully resolved at compile time.
+If the literal is malformed, `value()` attempts to throw, which is not permitted during constant evaluation, so the program fails to compile:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_constexpr_parsing_1,indent=0]
+----
+
+Pre-parsed `constexpr` URL views can also serve as zero-cost constants.
+All parsing is done at compile time; at runtime the components are accessed with no parsing overhead:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_constexpr_parsing_2,indent=0]
+----
+
+Because cpp:url_view[] does not own its character buffer, `constexpr` URL views always reference string literals.
+

@@ -74,7 +74,7 @@ class params_encoded_view;
     current encoded query and does not perform
     any modifications.
 */
-class BOOST_URL_DECL params_encoded_ref
+class BOOST_SYMBOL_VISIBLE params_encoded_ref
     : public params_encoded_base
 {
     friend class url_base;

@@ -424,6 +424,7 @@ struct range_rule_t<R>
     using value_type =
         range<typename R::value_type>;
 
+    BOOST_URL_CXX20_CONSTEXPR
     system::result<value_type>
     parse(
         char const*& it,
@@ -543,6 +544,7 @@ struct range_rule_t
     using value_type =
         range<typename R0::value_type>;
 
+    BOOST_URL_CXX20_CONSTEXPR
     system::result<value_type>
     parse(
         char const*& it,

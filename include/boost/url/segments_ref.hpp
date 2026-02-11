@@ -74,7 +74,7 @@ class segments_view;
         @ref segments_encoded_view,
         @ref segments_view.
 */
-class segments_ref
+class BOOST_SYMBOL_VISIBLE segments_ref
     : public segments_base
 {
     url_base* u_ = nullptr;
@@ -145,12 +145,10 @@ public:
         @param other The segments to assign.
         @return A reference to this object.
     */
-    BOOST_URL_DECL
     segments_ref&
     operator=(segments_ref const& other);
 
     /// @copydoc segments_ref::operator=(segments_ref const&)
-    BOOST_URL_DECL
     segments_ref&
     operator=(segments_view const& other);
 
@@ -193,7 +191,6 @@ public:
         @param init The list of segments to assign.
         @return A reference to this object.
     */
-    BOOST_URL_DECL
     segments_ref&
     operator=(std::initializer_list<
         core::string_view> init);
@@ -205,7 +202,6 @@ public:
 
         @return A view of the segments.
     */
-    BOOST_URL_DECL
     operator
     segments_view() const noexcept;
 
@@ -301,7 +297,6 @@ public:
 
         @param init The list of segments to assign.
     */
-    BOOST_URL_DECL
     void
     assign(std::initializer_list<
         core::string_view> init);
@@ -370,7 +365,6 @@ public:
 
         @param s The segment to insert.
     */
-    BOOST_URL_DECL
     iterator
     insert(
         iterator before,
@@ -418,7 +412,6 @@ public:
 
         @param init The list of segments to insert.
     */
-    BOOST_URL_DECL
     iterator
     insert(
         iterator before,
@@ -516,7 +509,6 @@ public:
         @param first The beginning of the range to remove.
         @param last The end of the range to remove.
     */
-    BOOST_URL_DECL
     iterator
     erase(
         iterator first,
@@ -548,7 +540,6 @@ public:
 
         @param s The string to assign.
     */
-    BOOST_URL_DECL
     iterator
     replace(
         iterator pos,
@@ -579,7 +570,6 @@ public:
 
         @param s The string to assign.
     */
-    BOOST_URL_DECL
     iterator
     replace(
         iterator from,
@@ -620,7 +610,6 @@ public:
 
         @param init The list of segments to assign.
     */
-    BOOST_URL_DECL
     iterator
     replace(
         iterator from,

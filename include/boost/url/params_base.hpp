@@ -22,13 +22,6 @@
 namespace boost {
 namespace urls {
 
-#ifdef BOOST_MSVC
-#   pragma warning(push)
-    // "struct 'boost::urls::encoding_opts' needs to have dll-interface to be used by clients of class 'boost::urls::params_base'"
-    // but encoding_opts should not be BOOST_URL_DECL and params_base should be BOOST_URL_DECL.
-#   pragma warning(disable: 4251)
-#endif
-
 /** Decoded query parameter helper base
 
     This base centralizes the read-only,
@@ -46,7 +39,7 @@ namespace urls {
     @li @ref params_encoded_ref
     @li @ref params_encoded_view
 */
-class BOOST_URL_DECL params_base
+class BOOST_SYMBOL_VISIBLE params_base
 {
     friend class url_view_base;
     friend class params_ref;
@@ -570,7 +563,6 @@ private:
     @param qp The parameters to write
     @return A reference to the output stream, for chaining
 */
-BOOST_URL_DECL
 std::ostream&
 operator<<(
     std::ostream& os,
@@ -580,9 +572,5 @@ operator<<(
 } // boost
 
 #include <boost/url/impl/params_base.hpp>
-
-#ifdef BOOST_MSVC
-#   pragma warning(pop)
-#endif
 
 #endif

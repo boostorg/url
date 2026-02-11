@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -741,6 +742,7 @@ range(
 //------------------------------------------------
 
 template<class R>
+BOOST_URL_CXX20_CONSTEXPR
 auto
 implementation_defined::range_rule_t<R>::
 parse(
@@ -765,7 +767,7 @@ parse(
         if(n < N_)
         {
             // too few
-            BOOST_URL_RETURN_EC(
+            BOOST_URL_CONSTEXPR_RETURN_EC(
                 error::mismatch);
         }
         // good
@@ -791,14 +793,14 @@ parse(
         if(n >= M_)
         {
             // too many
-            BOOST_URL_RETURN_EC(
+            BOOST_URL_CONSTEXPR_RETURN_EC(
                 error::mismatch);
         }
     }
     if(n < N_)
     {
         // too few
-        BOOST_URL_RETURN_EC(
+        BOOST_URL_CONSTEXPR_RETURN_EC(
             error::mismatch);
     }
     // good
@@ -810,6 +812,7 @@ parse(
 //------------------------------------------------
 
 template<class R0, class R1>
+BOOST_URL_CXX20_CONSTEXPR
 auto
 implementation_defined::range_rule_t<R0, R1>::
 parse(
@@ -833,7 +836,7 @@ parse(
         }
         if(n < N_)
         {
-            BOOST_URL_RETURN_EC(
+            BOOST_URL_CONSTEXPR_RETURN_EC(
                 error::mismatch);
         }
         return range<T>(
@@ -858,14 +861,14 @@ parse(
         if(n >= M_)
         {
             // too many
-            BOOST_URL_RETURN_EC(
+            BOOST_URL_CONSTEXPR_RETURN_EC(
                 error::mismatch);
         }
     }
     if(n < N_)
     {
         // too few
-        BOOST_URL_RETURN_EC(
+        BOOST_URL_CONSTEXPR_RETURN_EC(
             error::mismatch);
     }
     // good

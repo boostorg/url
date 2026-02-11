@@ -47,7 +47,7 @@ namespace urls {
         @ref segments_encoded_ref,
         @ref segments_ref.
 */
-class segments_view
+class BOOST_SYMBOL_VISIBLE segments_view
     : public segments_base
 {
     friend class url_view_base;
@@ -79,7 +79,7 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    segments_view() = default;
+    segments_view() noexcept;
 
     /** Constructor
 
@@ -156,7 +156,6 @@ public:
         @li <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3"
             >3.3.  Path</a>
     */
-    BOOST_URL_DECL
     segments_view(
         core::string_view s);
 
@@ -222,7 +221,6 @@ public:
         @param first The beginning iterator.
         @param last The ending iterator.
     */
-    BOOST_URL_DECL
     segments_view(
         iterator first,
         iterator last) noexcept;

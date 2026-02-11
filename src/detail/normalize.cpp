@@ -18,7 +18,7 @@
 #include <boost/assert.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <cstring>
-#include "normalize.hpp"
+#include <boost/url/detail/normalize.hpp>
 
 namespace boost {
 namespace urls {

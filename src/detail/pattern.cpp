@@ -15,11 +15,11 @@
 #include <boost/url/grammar/alpha_chars.hpp>
 #include <boost/url/grammar/optional_rule.hpp>
 #include <boost/url/grammar/token_rule.hpp>
-#include "../rfc/detail/charsets.hpp"
-#include "../rfc/detail/host_rule.hpp"
-#include "boost/url/rfc/detail/path_rules.hpp"
-#include "../rfc/detail/port_rule.hpp"
-#include "../rfc/detail/scheme_rule.hpp"
+#include <boost/url/rfc/detail/charsets.hpp>
+#include <boost/url/rfc/detail/host_rule.hpp>
+#include <boost/url/rfc/detail/path_rules.hpp>
+#include <boost/url/rfc/detail/port_rule.hpp>
+#include <boost/url/rfc/detail/scheme_rule.hpp>
 
 namespace boost {
 namespace urls {
@@ -630,6 +630,7 @@ struct host_template_rule_t
         // the rule might fail to match the
         // closing "]"
         BOOST_ASSERT(rv);
+        (void)rv;
         return core::string_view{it0, it};
     }
 };

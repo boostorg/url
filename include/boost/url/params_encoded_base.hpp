@@ -37,7 +37,7 @@ namespace urls {
     @li @ref params_encoded_ref
     @li @ref params_encoded_view
 */
-class BOOST_URL_DECL params_encoded_base
+class BOOST_SYMBOL_VISIBLE params_encoded_base
 {
     friend class url_view_base;
     friend class params_encoded_ref;
@@ -594,7 +594,6 @@ private:
     @param qp The params to write
     @return A reference to the output stream, for chaining
 */
-BOOST_URL_DECL
 std::ostream&
 operator<<(
     std::ostream& os,

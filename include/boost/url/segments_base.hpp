@@ -35,7 +35,7 @@ namespace urls {
     @li @ref segments_encoded_ref
     @li @ref segments_encoded_view
 */
-class segments_base
+class BOOST_SYMBOL_VISIBLE segments_base
 {
     detail::path_ref ref_;
 
@@ -152,7 +152,6 @@ public:
 
         @return A string containing the path.
     */
-    BOOST_URL_DECL
     pct_string_view
     buffer() const noexcept;
 
@@ -174,7 +173,6 @@ public:
 
         @return `true` if the path is absolute, otherwise `false`.
     */
-    BOOST_URL_DECL
     bool
     is_absolute() const noexcept;
 
@@ -193,7 +191,6 @@ public:
 
         @return `true` if there are no segments, otherwise `false`.
     */
-    BOOST_URL_DECL
     bool
     empty() const noexcept;
 
@@ -212,7 +209,6 @@ public:
 
         @return The number of segments.
     */
-    BOOST_URL_DECL
     std::size_t
     size() const noexcept;
 
@@ -294,7 +290,6 @@ public:
 
         @return An iterator to the first segment.
     */
-    BOOST_URL_DECL
     iterator
     begin() const noexcept;
 
@@ -308,7 +303,6 @@ public:
 
         @return An iterator to one past the last segment.
     */
-    BOOST_URL_DECL
     iterator
     end() const noexcept;
 };
@@ -332,7 +326,6 @@ public:
     @param ps The segments to write.
     @return A reference to the output stream.
 */
-BOOST_URL_DECL
 std::ostream&
 operator<<(
     std::ostream& os,
