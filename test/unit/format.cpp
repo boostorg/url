@@ -864,6 +864,60 @@ struct format_test
                 "https://joe.gigantic-server.com:80/v2/index.html");
         }
 
+        // Documentation examples (format.hpp @par Example)
+        {
+            // format() variadic — full URL with scheme, host, port, path
+            BOOST_TEST_CSTR_EQ(
+                urls::format("{}://{}:{}/rfc/{}",
+                    "https", "www.ietf.org", 80, "rfc2396.txt"
+                    ).buffer(),
+                "https://www.ietf.org:80/rfc/rfc2396.txt");
+            // format() variadic — automatic percent-encoding
+            BOOST_TEST_CSTR_EQ(
+                urls::format("https://example.com/~{}",
+                    "John Doe"
+                    ).buffer(),
+                "https://example.com/~John%20Doe");
+            // arg() — named argument
+            BOOST_TEST_CSTR_EQ(
+                urls::format("https://example.com/~{username}",
+                    arg("username", "mark")
+                    ).buffer(),
+                "https://example.com/~mark");
+        }
+        {
+            // format_to() variadic
+            static_url<50> u;
+            urls::format_to(u, "{}://{}:{}/rfc/{}",
+                "https", "www.ietf.org", 80, "rfc2396.txt");
+            BOOST_TEST_CSTR_EQ(u.buffer(),
+                "https://www.ietf.org:80/rfc/rfc2396.txt");
+        }
+        {
+            // format() initializer_list — named arguments
+            BOOST_TEST_CSTR_EQ(
+                urls::format(
+                    "{scheme}://{host}:{port}/{dir}/{file}",
+                    {{"scheme", "https"}, {"port", 80},
+                     {"host", "example.com"},
+                     {"dir", "path/to"},
+                     {"file", "file.txt"}}
+                    ).buffer(),
+                "https://example.com:80/path/to/file.txt");
+        }
+        {
+            // format_to() initializer_list — named arguments
+            url u;
+            urls::format_to(u,
+                "{scheme}://{host}:{port}/{dir}/{file}",
+                {{"scheme", "https"}, {"port", 80},
+                 {"host", "example.com"},
+                 {"dir", "path/to"},
+                 {"file", "file.txt"}});
+            BOOST_TEST_CSTR_EQ(u.buffer(),
+                "https://example.com:80/path/to/file.txt");
+        }
+
     }
 
     void
