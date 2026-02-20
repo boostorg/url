@@ -925,6 +925,35 @@ public:
     {
         BOOST_TEST_NO_THROW(url_view(
             "javascript:alert(1)"));
+
+        // issue #926
+        {
+            url_view u(
+                "rtmp://push-rtmp-hs-f5.douyincdn.com"
+                "/thirdgame"
+                "?stream-117965406598857482"
+                "?arch_hrchy=w1"
+                "&exp_hrchy=w1"
+                "&expire=1758426355"
+                "&sign=7dbc2a8011a0faf01a5a22420b981d0c");
+            BOOST_TEST(u.has_scheme());
+            BOOST_TEST_EQ(u.scheme(), "rtmp");
+            BOOST_TEST(u.has_authority());
+            BOOST_TEST_EQ(u.host(), "push-rtmp-hs-f5.douyincdn.com");
+            BOOST_TEST_EQ(u.path(), "/thirdgame");
+            BOOST_TEST_EQ(u.encoded_path(), "/thirdgame");
+            auto segs = u.encoded_segments();
+            BOOST_TEST_EQ(segs.size(), 1u);
+            BOOST_TEST_EQ(*segs.begin(), "thirdgame");
+            BOOST_TEST(u.has_query());
+            BOOST_TEST_EQ(u.encoded_query(),
+                "stream-117965406598857482"
+                "?arch_hrchy=w1"
+                "&exp_hrchy=w1"
+                "&expire=1758426355"
+                "&sign=7dbc2a8011a0faf01a5a22420b981d0c");
+            BOOST_TEST(! u.has_fragment());
+        }
     }
 
     void
