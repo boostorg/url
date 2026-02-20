@@ -460,7 +460,7 @@ public:
 
         @par Preconditions
         @code
-        not this->empty()
+        n <= this->size()
         @endcode
 
         @par Complexity
@@ -477,13 +477,13 @@ public:
         @par Example
         @code
         decode_view d( "Program%20Files" );
-        d.remove_prefix( 6 );
+        d.remove_suffix( 6 );
         assert( d == "Program" );
         @endcode
 
         @par Preconditions
         @code
-        not this->empty()
+        n <= this->size()
         @endcode
 
         @par Complexity
