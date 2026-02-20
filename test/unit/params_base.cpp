@@ -366,6 +366,13 @@ struct params_base_test
         check( "?first=John&last=Doe", { { "first", "John" }, { "last", "Doe" } } );
         check( "?key=value&", { { "key", "value" }, {} } );
         check( "?&key=value", { {}, { "key", "value" } } );
+        check( "?a=b=c",         { { "a", "b=c" } } );
+        check( "?k=v=w&x=y",     { { "k", "v=w" }, { "x", "y" } } );
+        check( "?x=y&k=v=w",     { { "x", "y" }, { "k", "v=w" } } );
+        check( "?a=b=c=d",       { { "a", "b=c=d" } } );
+        check( "?===",           { { "", "==" } } );
+        check( "?a==b",          { { "a", "=b" } } );
+        check( "?a=1&b=2=3&c=4", { { "a", "1" }, { "b", "2=3" }, { "c", "4" } } );
     }
 
     void
