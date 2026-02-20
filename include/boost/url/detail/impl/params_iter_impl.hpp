@@ -203,8 +203,8 @@ decrement() noexcept
         {
             // value
             nv = p1 - p; // with '='
-            dv += dk;
-            dk = 0;
+            dv += dk - 1;
+            dk = 1;
         }
         else if(*p == '%')
         {
