@@ -213,13 +213,6 @@
 #define BOOST_URL_MAX_SIZE ((std::size_t)UINT32_MAX - 1)
 #endif
 
-// noinline attribute
-#ifdef BOOST_GCC
-#define BOOST_URL_NO_INLINE [[gnu::noinline]]
-#else
-#define BOOST_URL_NO_INLINE
-#endif
-
 // libstdcxx copy-on-write strings
 #ifndef BOOST_URL_COW_STRINGS
 #if defined(BOOST_LIBSTDCXX_VERSION) && (BOOST_LIBSTDCXX_VERSION < 60000 || (defined(_GLIBCXX_USE_CXX11_ABI) && _GLIBCXX_USE_CXX11_ABI == 0))
