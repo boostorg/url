@@ -160,6 +160,12 @@ struct parse_sequence
     }
 };
 
+// See error_types.hpp for details (#979)
+#if defined(BOOST_GCC) && BOOST_GCC >= 70000
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
 // returns a value_type
 template<class R0, class... Rn>
 struct parse_sequence<false, R0, Rn...>
@@ -218,7 +224,7 @@ struct parse_sequence<false, R0, Rn...>
         system::result<void> rv =
             grammar::parse(
                 it, end, get<Ir>(rn));
-        if( !rv )
+        if( rv.has_error() )
         {
             v = rv.error();
             return;
@@ -272,6 +278,10 @@ struct parse_sequence<false, R0, Rn...>
         return v;
     }
 };
+
+#if defined(BOOST_GCC) && BOOST_GCC >= 70000
+#pragma GCC diagnostic pop
+#endif
 
 } // detail
 
