@@ -244,7 +244,7 @@ public:
         @return The first segment.
     */
     std::string
-    front() const noexcept;
+    front() const;
 
     /** Return the last segment
 
@@ -277,7 +277,7 @@ public:
         @return The last segment.
     */
     std::string
-    back() const noexcept;
+    back() const;
 
     /** Return an iterator to the beginning
 

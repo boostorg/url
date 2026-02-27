@@ -180,7 +180,7 @@ size() const noexcept
 inline
 std::string
 segments_base::
-front() const noexcept
+front() const
 {
     BOOST_ASSERT(! empty());
     return *begin();
@@ -189,7 +189,7 @@ front() const noexcept
 inline
 std::string
 segments_base::
-back() const noexcept
+back() const
 {
     BOOST_ASSERT(! empty());
     return *--end();
