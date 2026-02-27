@@ -15,6 +15,8 @@
 
 #include "test_suite.hpp"
 
+#include <climits>
+
 #ifdef BOOST_TEST_CSTR_EQ
 #undef BOOST_TEST_CSTR_EQ
 #define BOOST_TEST_CSTR_EQ(expr1,expr2) \
@@ -921,6 +923,16 @@ struct format_test
     }
 
     void
+    testLLONGMIN()
+    {
+        // LLONG_MIN negation must not trigger UB
+        {
+            url u = urls::format("/{}/", LLONG_MIN);
+            BOOST_TEST(u.encoded_path().size() > 0);
+        }
+    }
+
+    void
     run()
     {
         // I have spent a lot of time on this and have no
@@ -928,6 +940,7 @@ struct format_test
         // without help from the pros.
 #if !BOOST_WORKAROUND( BOOST_GCC_VERSION, < 60000 )
         testFormat();
+        testLLONGMIN();
 #endif
     }
 };
