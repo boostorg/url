@@ -177,11 +177,24 @@ public:
     }
 
     void
+    testDecodeNoexcept()
+    {
+        // decode() token overload must not be
+        // noexcept (noexcept removal regression)
+        {
+            static_assert(
+                !noexcept(decode("x")),
+                "");
+        }
+    }
+
+    void
     run()
     {
         testDecodedSize();
         testDecodeBuffer();
         testDecodeTokens();
+        testDecodeNoexcept();
         testDocExamples();
     }
 };
