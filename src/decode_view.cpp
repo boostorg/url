@@ -105,6 +105,8 @@ bool
 decode_view::
 ends_with( core::string_view s ) const noexcept
 {
+    if (s.empty())
+        return true;
     if (s.size() > size())
         return false;
     auto it0 = end();

@@ -230,6 +230,12 @@ struct decode_view_test
             BOOST_TEST_NOT(s.ends_with("url test"));
         }
 
+        // ends_with() empty string regression
+        {
+            BOOST_TEST(decode_view("anything").ends_with(""));
+            BOOST_TEST(decode_view("").ends_with(""));
+        }
+
         // find()
         {
             decode_view s(str);
