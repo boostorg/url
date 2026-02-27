@@ -944,6 +944,17 @@ struct format_test
     }
 
     void
+    testColonInFirstSegment()
+    {
+        // first segment with colon triggers encoding;
+        // n.path must be updated after colon-encoding
+        {
+            url u = urls::format("{}", "a:b");
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "a%3Ab");
+        }
+    }
+
+    void
     run()
     {
         // I have spent a lot of time on this and have no
@@ -953,6 +964,7 @@ struct format_test
         testFormat();
         testLLONGMIN();
         testCenterAlignPad();
+        testColonInFirstSegment();
 #endif
     }
 };
