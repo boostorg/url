@@ -62,6 +62,8 @@ url&
 url::
 operator=(url&& u) noexcept
 {
+    if(this == &u)
+        return *this;
     if(s_)
         deallocate(s_);
     impl_ = u.impl_;
