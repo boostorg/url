@@ -144,6 +144,14 @@ struct url_test
             BOOST_TEST_EQ(u2.buffer(), "x://y/z?q#f");
         }
 
+        // self-move assignment preserves state
+        {
+            url u("http://example.com");
+            auto& ref = u;
+            u = std::move(ref);
+            BOOST_TEST_EQ(u.buffer(), "http://example.com");
+        }
+
         // url(core::string_view)
         {
             url u("http://example.com/path/to/file.txt?#");
