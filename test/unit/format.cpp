@@ -933,6 +933,17 @@ struct format_test
     }
 
     void
+    testCenterAlignPad()
+    {
+        // center-alignment: lpad must not exceed
+        // total padding (heap overflow regression)
+        {
+            url u = urls::format("{:.^6s}", "abcd");
+            BOOST_TEST_CSTR_EQ(u.buffer(), ".abcd.");
+        }
+    }
+
+    void
     run()
     {
         // I have spent a lot of time on this and have no
@@ -941,6 +952,7 @@ struct format_test
 #if !BOOST_WORKAROUND( BOOST_GCC_VERSION, < 60000 )
         testFormat();
         testLLONGMIN();
+        testCenterAlignPad();
 #endif
     }
 };
