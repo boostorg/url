@@ -288,6 +288,7 @@ apply(
                         dest0++;
                     }
                 }
+                n.path += diff;
             }
         }
         // 2) url has no authority and path
