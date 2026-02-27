@@ -187,7 +187,7 @@ format(core::string_view str, format_context& ctx, grammar::lut_chars const& cs)
             lpad = pad;
             break;
         case '^':
-            lpad = w / 2;
+            lpad = pad / 2;
             rpad = pad - lpad;
             break;
         }
