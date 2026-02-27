@@ -955,6 +955,19 @@ struct format_test
     }
 
     void
+    testHighByteEncode()
+    {
+        // signed char shift UB regression: encoding
+        // a byte with the high bit set (e.g. 0x80)
+        {
+            url u = urls::format("/{}/",
+                std::string(1, '\x80'));
+            auto p = u.encoded_path();
+            BOOST_TEST(p.find("%80") != core::string_view::npos);
+        }
+    }
+
+    void
     run()
     {
         // I have spent a lot of time on this and have no
@@ -965,6 +978,7 @@ struct format_test
         testLLONGMIN();
         testCenterAlignPad();
         testColonInFirstSegment();
+        testHighByteEncode();
 #endif
     }
 };
