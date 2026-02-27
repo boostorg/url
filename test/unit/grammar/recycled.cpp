@@ -48,6 +48,14 @@ struct recycled_test
             BOOST_TEST(sp2->capacity() >= 1000);
         }
 
+        // get() returns nullptr after release
+        {
+            recycled_ptr<std::string> sp;
+            sp->reserve(100);
+            sp.release();
+            BOOST_TEST(sp.get() == nullptr);
+        }
+
         // coverage
         {
             implementation_defined::recycled_add_impl(1);
