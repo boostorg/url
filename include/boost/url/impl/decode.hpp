@@ -53,7 +53,7 @@ system::result<typename StringToken::result_type>
 decode(
     core::string_view s,
     encoding_opts opt,
-    StringToken&& token) noexcept
+    StringToken&& token)
 {
     static_assert(
         string_token::is_token<
