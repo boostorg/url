@@ -110,6 +110,12 @@ public:
         static_assert(std::is_same<
             decltype(ci_less{}("a", "b")),
             bool>::value, "");
+
+        // ci_is_less with mismatched lengths
+        // (OOB read regression)
+        BOOST_TEST(ci_is_less("ab", "abc"));
+        BOOST_TEST(! ci_is_less("abc", "ab"));
+        BOOST_TEST(! ci_is_less("ABC", "ab"));
     }
 
     void
