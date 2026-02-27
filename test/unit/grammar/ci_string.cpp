@@ -19,6 +19,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 
 namespace boost {
@@ -103,6 +104,12 @@ public:
 
         BOOST_TEST(ci_less{}("a", "aa"));
         BOOST_TEST(! ci_less{}("xy", "z"));
+
+        // ci_less::operator() must return bool,
+        // not std::size_t
+        static_assert(std::is_same<
+            decltype(ci_less{}("a", "b")),
+            bool>::value, "");
     }
 
     void
