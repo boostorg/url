@@ -330,7 +330,7 @@ struct ci_less
 {
     using is_transparent = void;
 
-    std::size_t
+    bool
     operator()(
         core::string_view s0,
         core::string_view s1) const noexcept
