@@ -68,7 +68,7 @@ parse(
     }
     // no digits
     t.str = core::string_view(start, it);
-    t.has_number = it != end;
+    t.has_number = it != start;
     t.number = 0;
     return t;
 }
