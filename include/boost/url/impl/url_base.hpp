@@ -245,8 +245,8 @@ remove_scheme()
         auto begin = s_ + impl_.offset(id_path);
         auto it = begin;
         auto end = begin + pn;
-        while (*it != '/' &&
-               it != end)
+        while (it != end &&
+               *it != '/')
             ++it;
         // we don't need op here because this is
         // an internal operation
@@ -2089,8 +2089,8 @@ normalize_path()
         auto end = begin + pn;
         while (core::string_view(it, 2) == "./")
             it += 2;
-        while (*it != '/' &&
-               it != end)
+        while (it != end &&
+               *it != '/')
             ++it;
         // we don't need op here because this is
         // an internal operation
@@ -2614,8 +2614,10 @@ first_segment() const noexcept
             p0, end - p0);
     auto p = p0;
     while(*p != '/')
+    {
+        BOOST_ASSERT(p < end);
         ++p;
-    BOOST_ASSERT(p < end);
+    }
     return core::string_view(p0, p - p0);
 }
 

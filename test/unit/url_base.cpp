@@ -1861,6 +1861,23 @@ struct url_base_test
     }
 
     void
+    testSetEncodedPathBoundary()
+    {
+        // exercise paths that end exactly at
+        // iterator boundary (OOB read regression)
+        {
+            url u;
+            u.set_encoded_path("x");
+            BOOST_TEST_EQ(u.encoded_path(), "x");
+        }
+        {
+            url u;
+            u.set_encoded_path("");
+            BOOST_TEST(u.encoded_path().empty());
+        }
+    }
+
+    void
     run()
     {
         testSetScheme();
@@ -1871,6 +1888,7 @@ struct url_base_test
         testSetHost();
         testSetPort();
         testQuery();
+        testSetEncodedPathBoundary();
         testJavadocs();
     }
 };
