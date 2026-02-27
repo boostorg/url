@@ -278,7 +278,7 @@ encode(
     core::string_view s,
     CS const& allowed,
     encoding_opts opt,
-    StringToken&& token) noexcept
+    StringToken&& token)
 {
     BOOST_CORE_STATIC_ASSERT(
         grammar::is_charset<CS>::value);
