@@ -1773,16 +1773,15 @@ url_base::
 resolve(
     url_view_base const& ref)
 {
-    if (this == &ref &&
-        has_scheme())
-    {
-        normalize_path();
-        return {};
-    }
-
     if(! has_scheme())
     {
         BOOST_URL_RETURN_EC(error::not_a_base);
+    }
+
+    if (this == &ref)
+    {
+        normalize_path();
+        return {};
     }
 
     op_t op(*this);
@@ -1998,160 +1997,345 @@ url_base::
 normalize_path()
 {
     op_t op(*this);
+
+    //
+    // Step 1: Percent-encoding normalization
+    //
+    // Decode percent-encoded characters that are
+    // valid unencoded in path segments (pchar),
+    // and uppercase remaining hex digits.
+    //
+    // This can introduce:
+    //   - New '.' from %2E (dot is unreserved)
+    //   - New ':' from %3A (colon is a pchar)
+    // This cannot introduce:
+    //   - New '/' (%2F stays encoded, '/' is not
+    //     a segment character)
+    //
+    // These new '.' and ':' characters can create
+    // ambiguities that Steps 2 and 3 must handle.
+    //
     normalize_octets_impl(id_path, detail::segment_chars, op);
     core::string_view p = impl_.get(id_path);
     char* p_dest = s_ + impl_.offset(id_path);
     char* p_end = s_ + impl_.offset(id_path + 1);
     auto pn = p.size();
-    auto skip_dot = 0;
-    bool encode_colons = false;
-    core::string_view first_seg;
 
-//------------------------------------------------
-//
-//  Determine unnecessary initial dot segments to skip and
-//  if we need to encode colons in the first segment
-//
-    if (
-        !has_authority() &&
-        p.starts_with("/./"))
+    //
+    // Step 2: Preserve existing path shields
+    //
+    // If the URL has no authority, a path starting
+    // with "//" would be misinterpreted as an
+    // authority when serialized and re-parsed.
+    // Some paths already have a dot prefix ("/."
+    // or "./") that shields against this. We
+    // preserve them so remove_dot_segments (Step 3)
+    // does not strip them. Step 1 can also reveal
+    // new shields by decoding %2E to '.'.
+    //
+    // This is an optimization. Step 4 would create
+    // a new shield anyway if remove_dot_segments
+    // produces a problematic output, but preserving
+    // an existing shield avoids the memmove in
+    // Step 4.
+    //
+    // path_shield_len: number of leading bytes
+    // to skip during remove_dot_segments.
+    // Always 0 (no shield) or 2 ("/." or "./").
+    //
+    auto path_shield_len = 0;
+    if (!has_authority())
     {
-        // check if removing the "/./" would result in "//"
-        // ex: "/.//", "/././/", "/././/", ...
-        skip_dot = 2;
-        while (p.substr(skip_dot, 3).starts_with("/./"))
-            skip_dot += 2;
-        if (p.substr(skip_dot).starts_with("//"))
-            skip_dot = 2;
-        else
-            skip_dot = 0;
-    }
-    else if (
-        !has_scheme() &&
-        !has_authority())
-    {
-        if (p.starts_with("./"))
+        if (p.starts_with("/./"))
         {
-            // check if removing the "./" would result in "//"
-            // ex: ".//", "././/", "././/", ...
-            skip_dot = 1;
-            while (p.substr(skip_dot, 3).starts_with("/./"))
-                skip_dot += 2;
-            if (p.substr(skip_dot).starts_with("//"))
-                skip_dot = 2;
-            else
-                skip_dot = 0;
-
-            if ( !skip_dot )
+            // (a) Absolute path with "/." prefix.
+            //
+            // Check if "/." shields a "//"
+            // underneath (possibly through
+            // multiple "/./" layers like "/././/").
+            // If so, preserve the first 2 chars.
+            //
+            // /.//evil -> /.//evil (preserved)
+            //   Without it: //evil (ambiguous).
+            // /././/evil -> /.//evil (same idea)
+            //
+            // Requires no authority (with authority,
+            // "//" in the path is unambiguous):
+            //   http://h/.//x -> http://h//x (OK)
+            // Scheme is irrelevant (absolute paths
+            // can't be confused with a scheme):
+            //   scheme:/.//x and /.//x both need it.
+            //
+            path_shield_len = 2;
+            while (p.substr(path_shield_len, 3).starts_with("/./"))
             {
-                // check if removing "./"s would leave us
-                // a first segment with an ambiguous ":"
-                first_seg = p.substr(2);
-                while (first_seg.starts_with("./"))
-                    first_seg = first_seg.substr(2);
-                auto i = first_seg.find('/');
-                if (i != core::string_view::npos)
-                    first_seg = first_seg.substr(0, i);
-                encode_colons = first_seg.contains(':');
+                path_shield_len += 2;
             }
-        }
-        else
-        {
-            // check if normalize_octets_impl
-            // didn't already create a ":"
-            // in the first segment
-            first_seg = p;
-            auto i = first_seg.find('/');
-            if (i != core::string_view::npos)
-                first_seg = p.substr(0, i);
-            encode_colons = first_seg.contains(':');
-        }
-    }
-
-//------------------------------------------------
-//
-//  Encode colons in the first segment
-//
-    if (encode_colons)
-    {
-        // prepend with "./"
-        // (resize_impl never throws)
-        auto cn =
-            std::count(
-                first_seg.begin(),
-                first_seg.end(),
-                ':');
-        resize_impl(
-            id_path, pn + (2 * cn), op);
-        // move the 2nd, 3rd, ... segments
-        auto begin = s_ + impl_.offset(id_path);
-        auto it = begin;
-        auto end = begin + pn;
-        while (core::string_view(it, 2) == "./")
-            it += 2;
-        while (it != end &&
-               *it != '/')
-            ++it;
-        // we don't need op here because this is
-        // an internal operation
-        std::memmove(it + (2 * cn), it, end - it);
-
-        // move 1st segment
-        auto src = s_ + impl_.offset(id_path) + pn;
-        auto dest = s_ + impl_.offset(id_query);
-        src -= end - it;
-        dest -= end - it;
-        pn -= end - it;
-        do {
-            --src;
-            --dest;
-            if (*src != ':')
+            if (p.substr(path_shield_len).starts_with("//"))
             {
-                *dest = *src;
+                path_shield_len = 2;
             }
             else
             {
-                // use uppercase as required by
-                // syntax-based normalization
-                *dest-- = 'A';
-                *dest-- = '3';
-                *dest = '%';
+                path_shield_len = 0;
             }
-            --pn;
-        } while (pn);
-        skip_dot = 0;
-        p = impl_.get(id_path);
-        pn = p.size();
-        p_dest = s_ + impl_.offset(id_path);
-        p_end = s_ + impl_.offset(id_path + 1);
+        }
+        else if (
+            !has_scheme() &&
+            p.starts_with("./"))
+        {
+            // (b) Relative path with "./" prefix,
+            //     no scheme.
+            //
+            // Check if "./" shields a "//"
+            // underneath. If so, preserve it.
+            //
+            // .//evil -> .//evil (preserved)
+            //   Without it: //evil (ambiguous).
+            // ././/evil -> .//evil (same idea)
+            //
+            // Requires no authority (with authority,
+            // "//" in the path is unambiguous):
+            //   //h/.//x -> //h//x (OK)
+            // Requires no scheme: with a scheme,
+            // remove_dot_segments would strip "./"
+            // and Step 4 handles any resulting "//".
+            //
+            path_shield_len = 1;
+            while (p.substr(path_shield_len, 3).starts_with("/./"))
+            {
+                path_shield_len += 2;
+            }
+            if (p.substr(path_shield_len).starts_with("//"))
+            {
+                path_shield_len = 2;
+            }
+            else
+            {
+                path_shield_len = 0;
+            }
+        }
     }
 
-//------------------------------------------------
-//
-//  Remove "." and ".." segments
-//
-    p.remove_prefix(skip_dot);
-    p_dest += skip_dot;
+    //
+    // Step 3: Remove "." and ".." segments
+    //
+    // RFC 3986 Section 5.2.4.
+    //
+    // If path_shield_len > 0, the first
+    // path_shield_len characters are an existing
+    // path shield ("/." or "./") that must
+    // be preserved (see Step 2), we tell
+    // remove_dot_segments to start after that
+    // prefix.
+    //
+    // Note: remove_dot_segments only recognizes
+    // literal '.' and '..', not encoded forms like
+    // '%2E'. This is correct here because Step 1
+    // already decoded %2E to '.'. If this function
+    // were called without Step 1, encoded dots
+    // would be missed.
+    //
+    bool was_absolute = is_path_absolute();
+    p.remove_prefix(path_shield_len);
+    p_dest += path_shield_len;
     auto n = detail::remove_dot_segments(
         p_dest, p_end, p);
 
-//------------------------------------------------
-//
-//  Update path parameters
-//
+    //
+    // Step 4: Create path shield if needed,
+    // then shrink path to final size
+    //
+    // remove_dot_segments can produce output that
+    // needs a 2-byte shield prefix, as explained
+    // in step 2. The memmove below writes within
+    // the original path region (before shrink_impl)
+    // and always has room because ".." cancellation
+    // consumes >= 5 bytes but we only need 2 for the
+    // shield.
+    //
+    bool needs_shield = [&]()
+    {
+        if (path_shield_len)
+        {
+            // Step 2 already preserved a shield.
+            return false;
+        }
+        if (has_authority())
+        {
+            // With an authority, "//" in the path
+            // is unambiguous and the path is always
+            // absolute (path-abempty).
+            return false;
+        }
+        if (n == 0)
+        {
+            // Empty output. Nothing to shield.
+            return false;
+        }
+        if (p_dest[0] != '/')
+        {
+            // Output doesn't start with '/'.
+            // No authority ambiguity, and if it
+            // was relative, it stayed relative.
+            return false;
+        }
+        if (n >= 2 && p_dest[1] == '/')
+        {
+            // Output starts with "//": would be
+            // misinterpreted as authority.
+            //   /a/..//evil -> //evil
+            // so we need a shield
+            //   /a/..//evil -> /.//evil
+            return true;
+        }
+        if (!was_absolute)
+        {
+            // Relative path became absolute: ".."
+            // canceled all leading segments and
+            // the remaining input started with "/"
+            // because of how remove_dot_segments is
+            // defined.
+            //   a/..//evil -> /evil -> .//evil
+            //   a/b/../..//evil -> /evil -> .//evil
+            return true;
+        }
+        return false;
+    }();
+    if (needs_shield)
+    {
+        BOOST_ASSERT(n + 2 <= pn);
+        std::memmove(p_dest + 2, p_dest, n);
+        if (was_absolute)
+        {
+            // "/." keeps the path absolute.
+            p_dest[0] = '/';
+            p_dest[1] = '.';
+        }
+        else
+        {
+            // "./" keeps the path relative.
+            p_dest[0] = '.';
+            p_dest[1] = '/';
+        }
+        path_shield_len = 2;
+    }
     if (n != pn)
     {
         BOOST_ASSERT(n < pn);
-        shrink_impl(id_path, n + skip_dot, op);
+        shrink_impl(id_path, n + path_shield_len, op);
+    }
+
+    //
+    // Step 5: Encode colons in first segment
+    //
+    // If the URL has no scheme and no authority,
+    // a colon in the first path segment would be
+    // misinterpreted as a scheme delimiter when
+    // serialized and re-parsed.
+    //
+    // Colons can appear in the first segment either
+    // because they were already there (decoded from
+    // %3A in Step 1), or because remove_dot_segments
+    // (Step 3) canceled preceding segments via ".."
+    // and exposed a colon that was deeper in the path.
+    //
+    // Example (pre-existing):
+    //   my%3Asharona -> Step 1: my:sharona
+    //   -> Step 5: my%3Asharona
+    // Example (exposed by dot removal):
+    //   a/../b:c -> Step 3: b:c
+    //   -> Step 5: b%3Ac
+    //
+    // ALL colons in the first segment must be
+    // encoded, not just the first one. In a
+    // schemeless relative-reference, the first
+    // segment must be segment-nz-nc (RFC 3986
+    // Section 4.2), which does not allow ':':
+    //   path-noscheme = segment-nz-nc *( "/" segment )
+    //   segment-nz-nc = 1*( unreserved / pct-encoded
+    //                     / sub-delims / "@" )
+    // So "b%3Ac:d" would fail to re-parse.
+    // All colons must go: "b%3Ac%3Ad".
+    //
+    // Requires no scheme (with a scheme, colons
+    // in the path are unambiguous):
+    //   scheme:a:b -> scheme:a:b (OK)
+    // Requires no authority (with authority,
+    // path starts with "/" so the first segment
+    // is empty, no colon issue).
+    //
+    if (!has_scheme() &&
+        !has_authority())
+    {
+        p = impl_.get(id_path);
+        core::string_view first_seg = p;
+        auto i = first_seg.find('/');
+        if (i != core::string_view::npos)
+        {
+            first_seg = p.substr(0, i);
+        }
+        if (first_seg.contains(':'))
+        {
+            pn = p.size();
+            auto cn =
+                std::count(
+                    first_seg.begin(),
+                    first_seg.end(),
+                    ':');
+            resize_impl(
+                id_path, pn + (2 * cn), op);
+            auto begin = s_ + impl_.offset(id_path);
+            auto it = begin;
+            auto end = begin + pn;
+            while (it != end &&
+                   *it != '/')
+            {
+                ++it;
+            }
+            std::memmove(it + (2 * cn), it, end - it);
+            auto src = s_ + impl_.offset(id_path) + pn;
+            auto dest = s_ + impl_.offset(id_query);
+            src -= end - it;
+            dest -= end - it;
+            pn -= end - it;
+            do {
+                --src;
+                --dest;
+                if (*src != ':')
+                {
+                    *dest = *src;
+                }
+                else
+                {
+                    *dest-- = 'A';
+                    *dest-- = '3';
+                    *dest = '%';
+                }
+                --pn;
+            } while (pn);
+        }
+    }
+
+    //
+    // Step 6: Update path parameters
+    //
+    {
         p = encoded_path();
         if (p == "/")
+        {
             impl_.nseg_ = 0;
+        }
         else if (!p.empty())
+        {
             impl_.nseg_ = detail::to_size_type(
                 std::count(
                     p.begin() + 1, p.end(), '/') + 1);
+        }
         else
+        {
             impl_.nseg_ = 0;
+        }
         impl_.decoded_[id_path] =
             detail::to_size_type(detail::decode_bytes_unsafe(
                 impl_.get(id_path)));
