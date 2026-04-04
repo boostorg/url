@@ -23,5 +23,6 @@
 ** xref:examples/file-router.adoc[]
 ** xref:examples/router.adoc[]
 ** xref:examples/sanitize.adoc[]
+* xref:design.adoc[]
 * xref:reference.adoc[Reference]
 * xref:HelpCard.adoc[]
