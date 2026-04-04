@@ -217,6 +217,16 @@ public:
         }
         }
 
+        // persist() with null data() and zero size()
+        {
+            url_view u;
+            BOOST_TEST(u.empty());
+            auto sp = u.persist();
+            BOOST_TEST(sp->empty());
+            BOOST_TEST_EQ(sp->size(), 0u);
+            BOOST_TEST_EQ(sp->buffer(), "");
+        }
+
         // operator core::string_view()
         {
             auto const f = []( core::string_view ) {};
