@@ -1,0 +1,22 @@
+Boost.URL is a portable C++ library which provides containers and algorithms for handling URLs as described by https://tools.ietf.org/html/rfc3986[RFC 3986].
+It supports parsing, inspection, modification, normalization, and resolution of URLs, with interfaces designed for network programs that need to process URLs efficiently and securely from untrusted sources.
+
+[source,cpp]
+----
+url_view uv("https://www.example.com/path/to/file.txt?id=1001&name=John%20Doe");
+
+for (auto v : uv.params())
+    std::cout << v.key << "=" << v.value << "\n";
+// id=1001
+// name=John Doe
+
+url u = uv;
+u.set_scheme("http")
+ .set_encoded_host("boost.org")
+ .set_encoded_path("/index.htm")
+ .remove_query()
+ .params().append({"key", "value"});
+
+std::cout << u;
+// http://boost.org/index.htm?key=value
+----
