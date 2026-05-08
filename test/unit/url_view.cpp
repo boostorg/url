@@ -1231,6 +1231,12 @@ public:
             }
         }
 
+        // Malformed IPv6 host must not read uninitialized memory (issue #993)
+        {
+            BOOST_URL_CXX20_CONSTEXPR auto r = parse_uri("https://[::.");
+            BOOST_TEST(! r.has_value());
+        }
+
         // Detailed test
         {
             BOOST_URL_CXX20_CONSTEXPR auto r = parse_uri_reference("http://example.com:8080/path?query=1#frag");
