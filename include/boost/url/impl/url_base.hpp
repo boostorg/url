@@ -2149,10 +2149,11 @@ normalize_path()
     // remove_dot_segments can produce output that
     // needs a 2-byte shield prefix, as explained
     // in step 2. The memmove below writes within
-    // the original path region (before shrink_impl)
-    // and always has room because ".." cancellation
-    // consumes >= 5 bytes but we only need 2 for the
-    // shield.
+    // the path region; when ".." cancellation has
+    // consumed >= 2 bytes there is already slack,
+    // but for short inputs that take the shield
+    // branch without any cancellation (e.g. "//"),
+    // the region has to grow to fit the prefix.
     //
     bool needs_shield = [&]()
     {
@@ -2204,7 +2205,14 @@ normalize_path()
     }();
     if (needs_shield)
     {
-        BOOST_ASSERT(n + 2 <= pn);
+        if (n + 2 > pn)
+        {
+            // No "..  cancellation slack — grow the path
+            // region to fit the 2-byte shield. p_dest may
+            // be invalidated by the underlying reallocation.
+            p_dest = resize_impl(id_path, n + 2, op);
+            pn = n + 2;
+        }
         std::memmove(p_dest + 2, p_dest, n);
         if (was_absolute)
         {
