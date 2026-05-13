@@ -315,7 +315,7 @@ Output::
 ----
 path
 to
-my-file.txt
+my%2dfile.txt
 ----
 --
 ====
