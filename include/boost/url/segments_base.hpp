@@ -244,7 +244,8 @@ public:
         @return The first segment.
     */
     std::string
-    front() const;
+    front() const
+        BOOST_URL_PRE( !empty() );
 
     /** Return the last segment
 
@@ -277,7 +278,8 @@ public:
         @return The last segment.
     */
     std::string
-    back() const;
+    back() const
+        BOOST_URL_PRE( !empty() );
 
     /** Return an iterator to the beginning
 

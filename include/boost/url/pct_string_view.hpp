@@ -444,7 +444,7 @@ make_pct_string_view_unsafe(
     std::size_t decoded_size) noexcept
 {
 #if 0
-    BOOST_ASSERT(! make_pct_string_view(
+    BOOST_URL_CONTRACT_ASSERT(! make_pct_string_view(
         core::string_view(data, size)).has_error());
 #endif
     return pct_string_view(

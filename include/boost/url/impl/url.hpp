@@ -26,7 +26,7 @@ url::
 {
     if(s_)
     {
-        BOOST_ASSERT(
+        BOOST_URL_CONTRACT_ASSERT(
             cap_ != 0);
         deallocate(s_);
     }
@@ -109,7 +109,7 @@ clear_impl() noexcept
     }
     else
     {
-        BOOST_ASSERT(impl_.cs_[0] == 0);
+        BOOST_URL_CONTRACT_ASSERT(impl_.cs_[0] == 0);
     }
 }
 
@@ -138,7 +138,7 @@ reserve_impl(
             new_cap = n;
         s = allocate(new_cap);
         std::memcpy(s, s_, size() + 1);
-        BOOST_ASSERT(! op.old);
+        BOOST_URL_CONTRACT_ASSERT(! op.old);
         op.old = s_;
         s_ = s;
     }

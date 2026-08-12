@@ -30,7 +30,7 @@ parse(
 {
     // Can't have a literal
     // with an empty string!
-    BOOST_ASSERT(n_ > 0);
+    BOOST_URL_CONTRACT_ASSERT(n_ > 0);
 
     std::size_t n = end - it;
     if(n >= n_)

@@ -56,7 +56,7 @@ params_iter_impl(
     , index(index_)
     , pos(pos_)
 {
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         pos <= ref.size());
     if(index < ref_.nparam())
         setup();
@@ -71,7 +71,7 @@ setup() noexcept
     dk = 1;
     dv = 0;
     auto const end = ref.end();
-    BOOST_ASSERT(pos != ref.size());
+    BOOST_URL_CONTRACT_ASSERT(pos != ref.size());
     auto p0 = ref.begin() + pos;
     auto p = p0;
     // key
@@ -90,7 +90,7 @@ setup() noexcept
             break;
         if(*p == '%')
         {
-            BOOST_ASSERT(
+            BOOST_URL_CONTRACT_ASSERT(
                 end - p >= 3);
             dk += 2;
             p += 2;
@@ -110,7 +110,7 @@ setup() noexcept
             break;
         if(*p == '%')
         {
-            BOOST_ASSERT(
+            BOOST_URL_CONTRACT_ASSERT(
                 end - p >= 3);
             dv += 2;
             p += 2;
@@ -125,7 +125,7 @@ void
 params_iter_impl::
 increment() noexcept
 {
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         index < ref.nparam());
     pos += nk + nv;
     ++index;
@@ -138,12 +138,12 @@ void
 params_iter_impl::
 decrement() noexcept
 {
-    BOOST_ASSERT(index > 0);
+    BOOST_URL_CONTRACT_ASSERT(index > 0);
     --index;
     dk = 1; // for '&' or '?'
     dv = 1; // for '='
     auto const begin = ref.begin();
-    BOOST_ASSERT(pos > 0);
+    BOOST_URL_CONTRACT_ASSERT(pos > 0);
     auto p1 = begin + (pos - 1);
     auto p = p1;
     // find key or '='
@@ -218,8 +218,8 @@ param_pct_view
 params_iter_impl::
 dereference() const noexcept
 {
-    BOOST_ASSERT(index < ref.nparam());
-    BOOST_ASSERT(pos < ref.size());
+    BOOST_URL_CONTRACT_ASSERT(index < ref.nparam());
+    BOOST_URL_CONTRACT_ASSERT(pos < ref.size());
     auto const p = ref.begin() + pos;
     if(nv)
         return {
@@ -238,8 +238,8 @@ pct_string_view
 params_iter_impl::
 key() const noexcept
 {
-    BOOST_ASSERT(index < ref.nparam());
-    BOOST_ASSERT(pos < ref.size());
+    BOOST_URL_CONTRACT_ASSERT(index < ref.nparam());
+    BOOST_URL_CONTRACT_ASSERT(pos < ref.size());
     auto const p = ref.begin() + pos;
     return make_pct_string_view_unsafe(
         p, nk - 1, dk);

@@ -189,7 +189,7 @@ pct_string_view
 segments_encoded_base::
 front() const noexcept
 {
-    BOOST_ASSERT(! empty());
+    BOOST_URL_PRE_ASSERT( !empty() );
     return *begin();
 }
 
@@ -198,7 +198,7 @@ pct_string_view
 segments_encoded_base::
 back() const noexcept
 {
-    BOOST_ASSERT(! empty());
+    BOOST_URL_PRE_ASSERT( !empty() );
     return *--end();
 }
 

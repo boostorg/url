@@ -253,7 +253,7 @@ struct charset_ref
     `ref` should only be used with compile-time
     constants.
 
-    @tparam CS The character set type
+    @tparam CharSet The character set type
     @param cs The character set to use
     @return The character set as a reference type
 */

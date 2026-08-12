@@ -187,6 +187,59 @@
 #define BOOST_URL_CONSTRAINT(C) class
 #endif
 
+// C++26 Contracts (P2900), experimental.
+//
+// When the toolchain supports contracts, the macros below expand to
+// real contract-assertions: BOOST_URL_PRE / BOOST_URL_POST attach a
+// precondition / postcondition to a function declarator, and
+// BOOST_URL_CONTRACT_ASSERT is the in-body assertion statement.
+//
+// On every other toolchain the pre/post macros expand to nothing and
+// BOOST_URL_CONTRACT_ASSERT falls back to BOOST_ASSERT, so the library
+// builds and behaves exactly as before.
+//
+// A precondition written as pre() on a declaration disappears entirely on
+// toolchains without contracts, which would silently drop a check the body
+// used to perform with BOOST_ASSERT. BOOST_URL_PRE_ASSERT restores that:
+// it is a no-op when contracts are active (the pre() already enforces it)
+// and a plain BOOST_ASSERT otherwise. Use the two together: BOOST_URL_PRE
+// on the declaration, BOOST_URL_PRE_ASSERT with the same condition as the
+// first statement of the body.
+//
+// Tested toolchain: this was verified only against Eric Fiselier's
+// contracts-enabled Clang fork (https://contracts.efcs.ca), branch
+// contracts-nightly of https://github.com/efcs/llvm-project, reporting
+// "clang version 23.0.0git" (commit 1634b387b76f), targeting
+// arm64-apple-darwin and built with its bundled libc++. It was compiled
+// as C++26 with -fcontracts -stdlib=libc++ and run under
+// -fcontract-evaluation-semantic=enforce. No released compiler supports
+// P2900 yet; this is expected to need revisiting as the fork and the
+// proposal evolve.
+//
+// Support is detected via the __cpp_contracts feature-test macro (e.g.
+// Clang built with -fcontracts -stdlib=libc++, see
+// https://contracts.efcs.ca). Define BOOST_URL_USE_CONTRACTS to force it
+// on (e.g. if the fork advertises a different macro), or
+// BOOST_URL_DISABLE_CONTRACTS to force the fallback.
+#if (defined(__cpp_contracts) || defined(BOOST_URL_USE_CONTRACTS)) && \
+    !defined(BOOST_URL_DISABLE_CONTRACTS)
+# define BOOST_URL_HAS_CONTRACTS
+#endif
+
+#if defined(BOOST_URL_HAS_CONTRACTS)
+# include <boost/assert.hpp>
+# define BOOST_URL_PRE(...) pre(__VA_ARGS__)
+# define BOOST_URL_POST(...) post(__VA_ARGS__)
+# define BOOST_URL_CONTRACT_ASSERT(...) contract_assert(__VA_ARGS__)
+# define BOOST_URL_PRE_ASSERT(...) ((void)0)
+#else
+# include <boost/assert.hpp>
+# define BOOST_URL_PRE(...)
+# define BOOST_URL_POST(...)
+# define BOOST_URL_CONTRACT_ASSERT(...) BOOST_ASSERT((__VA_ARGS__))
+# define BOOST_URL_PRE_ASSERT(...) BOOST_ASSERT((__VA_ARGS__))
+#endif
+
 // String token parameters
 #ifndef BOOST_URL_STRTOK_TPARAM
 #define BOOST_URL_STRTOK_TPARAM BOOST_URL_CONSTRAINT(string_token::StringToken) StringToken = string_token::return_string

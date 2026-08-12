@@ -182,7 +182,7 @@ std::string
 segments_base::
 front() const
 {
-    BOOST_ASSERT(! empty());
+    BOOST_URL_PRE_ASSERT( !empty() );
     return *begin();
 }
 
@@ -191,7 +191,7 @@ std::string
 segments_base::
 back() const
 {
-    BOOST_ASSERT(! empty());
+    BOOST_URL_PRE_ASSERT( !empty() );
     return *--end();
 }
 

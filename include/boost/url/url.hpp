@@ -117,7 +117,8 @@ public:
         <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-4.2"
             >4.2. Relative Reference (rfc3986)</a>
     */
-    url() noexcept;
+    url() noexcept
+        BOOST_URL_POST( empty() == true );
 
     /** Constructor
 
@@ -191,7 +192,8 @@ public:
 
         @param u The url to move from.
     */
-    url(url&& u) noexcept;
+    url(url&& u) noexcept
+        BOOST_URL_POST( u.empty() == true );
 
     /** Constructor
 
@@ -215,6 +217,7 @@ public:
         @param u The url to copy.
     */
     url(url_view_base const& u)
+        BOOST_URL_POST( buffer() == u.buffer() )
     {
         copy(u);
     }
@@ -241,6 +244,7 @@ public:
         @param u The url to copy.
     */
     url(url const& u)
+        BOOST_URL_POST( buffer() == u.buffer() )
         : url(static_cast<
             url_view_base const&>(u))
     {
@@ -270,7 +274,8 @@ public:
         @return A reference to this object.
     */
     url&
-    operator=(url&& u) noexcept;
+    operator=(url&& u) noexcept
+        BOOST_URL_POST( this == &u || u.empty() == true );
 
     /** Assignment
 
@@ -299,6 +304,7 @@ public:
     url&
     operator=(
         url_view_base const& u)
+        BOOST_URL_POST( buffer() == u.buffer() )
     {
         copy(u);
         return *this;
@@ -328,6 +334,7 @@ public:
     */
     url&
     operator=(url const& u)
+        BOOST_URL_POST( buffer() == u.buffer() )
     {
         return (*this)=static_cast<
             url_view_base const&>(u);

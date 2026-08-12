@@ -74,7 +74,7 @@ apply(
         }
         if (host.starts_with('['))
         {
-            BOOST_ASSERT(host.ends_with(']'));
+            BOOST_URL_CONTRACT_ASSERT(host.ends_with(']'));
             pctx = {host.substr(1, host.size() - 2), pctx.next_arg_id()};
             n.host = pct_vmeasure(
                 lhost_chars, pctx, mctx) + 2;
@@ -187,7 +187,7 @@ apply(
             n.host, op);
         if (host.starts_with('['))
         {
-            BOOST_ASSERT(host.ends_with(']'));
+            BOOST_URL_CONTRACT_ASSERT(host.ends_with(']'));
             pctx = {host.substr(1, host.size() - 2), pctx.next_arg_id()};
             *dest++ = '[';
             fctx.advance_to(dest);
@@ -451,7 +451,7 @@ struct fmt_token_rule_t
         char const* end) const noexcept
     {
         auto const start = it;
-        BOOST_ASSERT(it != end);
+        BOOST_URL_CONTRACT_ASSERT(it != end);
         /*
         // This should never happen because
         // all tokens are optional and will
@@ -546,7 +546,7 @@ struct userinfo_template_rule_t
             pct_encoded_fmt_string_rule(uchars);
         auto rv = grammar::parse(
             it, end, user_fmt_rule);
-        BOOST_ASSERT(rv);
+        BOOST_URL_CONTRACT_ASSERT(rv);
         t.user = *rv;
 
         // ':'
@@ -564,7 +564,7 @@ struct userinfo_template_rule_t
             pct_encoded_fmt_string_rule(grammar::ref(pwchars));
         rv = grammar::parse(
             it, end, pass_fmt_rule);
-        BOOST_ASSERT(rv);
+        BOOST_URL_CONTRACT_ASSERT(rv);
         t.has_password = true;
         t.password = *rv;
 
@@ -605,7 +605,7 @@ struct host_template_rule_t
                 it, end, any_host_template_rule);
             // any_host_template_rule can always
             // be empty, so it's never invalid
-            BOOST_ASSERT(rv);
+            BOOST_URL_CONTRACT_ASSERT(rv);
             return detail::to_sv(*rv);
         }
         // IP-literals need to be enclosed in
@@ -630,7 +630,7 @@ struct host_template_rule_t
         // be empty, so it's never invalid, but
         // the rule might fail to match the
         // closing "]"
-        BOOST_ASSERT(rv);
+        BOOST_URL_CONTRACT_ASSERT(rv);
         (void)rv;
         return core::string_view{it0, it};
     }
@@ -659,7 +659,7 @@ struct authority_template_rule_t
                         userinfo_template_rule,
                         grammar::squelch(
                             grammar::delim_rule('@')))));
-            BOOST_ASSERT(rv);
+            BOOST_URL_CONTRACT_ASSERT(rv);
             if(rv->has_value())
             {
                 auto& r = **rv;
@@ -676,7 +676,7 @@ struct authority_template_rule_t
                 it, end,
                 host_template_rule);
             // host is allowed to be empty
-            BOOST_ASSERT(rv);
+            BOOST_URL_CONTRACT_ASSERT(rv);
             u.host = *rv;
         }
 
@@ -866,7 +866,7 @@ struct pattern_rule_t
                 it, end,
                 authority_template_rule);
             // authority is allowed to be empty
-            BOOST_ASSERT(rv);
+            BOOST_URL_CONTRACT_ASSERT(rv);
             u.has_authority = true;
             u.has_user = rv->has_user;
             u.user = rv->user;
@@ -898,7 +898,7 @@ struct pattern_rule_t
         auto rp = grammar::parse(
             it, end, segment_fmt_rule);
         // path-abempty is allowed to be empty
-        BOOST_ASSERT(rp);
+        BOOST_URL_CONTRACT_ASSERT(rp);
         u.path = *rp;
 
         // [ "?" query ]

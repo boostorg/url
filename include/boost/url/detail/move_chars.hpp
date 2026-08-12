@@ -40,8 +40,8 @@ is_overlapping(
     if(less_equal(e1, b0))
         return false;
     // partial overlap is undefined
-    BOOST_ASSERT(less_equal(e1, e0));
-    BOOST_ASSERT(less_equal(b0, b1));
+    BOOST_URL_CONTRACT_ASSERT(less_equal(e1, e0));
+    BOOST_URL_CONTRACT_ASSERT(less_equal(b0, b1));
     return true;
 }
 

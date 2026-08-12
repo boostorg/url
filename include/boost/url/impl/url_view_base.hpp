@@ -111,8 +111,8 @@ has_scheme() const noexcept
         id_scheme);
     if(n == 0)
         return false;
-    BOOST_ASSERT(n > 1);
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(n > 1);
+    BOOST_URL_CONTRACT_ASSERT(
         impl().get(id_scheme
             ).ends_with(':'));
     return true;
@@ -126,8 +126,8 @@ scheme() const noexcept
     auto s = impl().get(id_scheme);
     if(! s.empty())
     {
-        BOOST_ASSERT(s.size() > 1);
-        BOOST_ASSERT(s.ends_with(':'));
+        BOOST_URL_CONTRACT_ASSERT(s.size() > 1);
+        BOOST_URL_CONTRACT_ASSERT(s.ends_with(':'));
         s.remove_suffix(1);
     }
     return s;
@@ -164,9 +164,9 @@ authority() const noexcept
     else
     {
         u.set_size(id_user, impl().len(id_user));
-        BOOST_ASSERT(impl().len(id_pass) == 0);
-        BOOST_ASSERT(impl().len(id_host) == 0);
-        BOOST_ASSERT(impl().len(id_port) == 0);
+        BOOST_URL_CONTRACT_ASSERT(impl().len(id_pass) == 0);
+        BOOST_URL_CONTRACT_ASSERT(impl().len(id_host) == 0);
+        BOOST_URL_CONTRACT_ASSERT(impl().len(id_port) == 0);
     }
     u.decoded_[id_user] = impl().decoded_[id_user];
     u.decoded_[id_pass] = impl().decoded_[id_pass];
@@ -188,7 +188,7 @@ encoded_authority() const noexcept
     auto s = impl().get(id_user, id_path);
     if(! s.empty())
     {
-        BOOST_ASSERT(has_authority());
+        BOOST_URL_CONTRACT_ASSERT(has_authority());
         s.remove_prefix(2);
     }
     return make_pct_string_view_unsafe(
@@ -215,8 +215,8 @@ has_userinfo() const noexcept
     auto n = impl().len(id_pass);
     if(n == 0)
         return false;
-    BOOST_ASSERT(has_authority());
-    BOOST_ASSERT(impl().get(
+    BOOST_URL_CONTRACT_ASSERT(has_authority());
+    BOOST_URL_CONTRACT_ASSERT(impl().get(
         id_pass).ends_with('@'));
     return true;
 }
@@ -229,13 +229,13 @@ has_password() const noexcept
     auto const n = impl().len(id_pass);
     if(n > 1)
     {
-        BOOST_ASSERT(impl().get(id_pass
+        BOOST_URL_CONTRACT_ASSERT(impl().get(id_pass
             ).starts_with(':'));
-        BOOST_ASSERT(impl().get(id_pass
+        BOOST_URL_CONTRACT_ASSERT(impl().get(id_pass
             ).ends_with('@'));
         return true;
     }
-    BOOST_ASSERT(n == 0 || impl().get(
+    BOOST_URL_CONTRACT_ASSERT(n == 0 || impl().get(
         id_pass).ends_with('@'));
     return false;
 }
@@ -249,12 +249,12 @@ encoded_userinfo() const noexcept
         id_user, id_host);
     if(s.empty())
         return s;
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         has_authority());
     s.remove_prefix(2);
     if(s.empty())
         return s;
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         s.ends_with('@'));
     s.remove_suffix(1);
     return make_pct_string_view_unsafe(
@@ -273,7 +273,7 @@ encoded_user() const noexcept
     auto s = impl().get(id_user);
     if(! s.empty())
     {
-        BOOST_ASSERT(
+        BOOST_URL_CONTRACT_ASSERT(
             has_authority());
         s.remove_prefix(2);
     }
@@ -292,7 +292,7 @@ encoded_password() const noexcept
     switch(s.size())
     {
     case 1:
-        BOOST_ASSERT(
+        BOOST_URL_CONTRACT_ASSERT(
             s.starts_with('@'));
         s.remove_prefix(1);
         BOOST_FALLTHROUGH;
@@ -302,8 +302,8 @@ encoded_password() const noexcept
     default:
         break;
     }
-    BOOST_ASSERT(s.ends_with('@'));
-    BOOST_ASSERT(s.starts_with(':'));
+    BOOST_URL_CONTRACT_ASSERT(s.ends_with('@'));
+    BOOST_URL_CONTRACT_ASSERT(s.starts_with(':'));
     return make_pct_string_view_unsafe(
         s.data() + 1,
         s.size() - 2,
@@ -349,7 +349,7 @@ encoded_host_address() const noexcept
     {
     default:
     case urls::host_type::none:
-        BOOST_ASSERT(s.empty());
+        BOOST_URL_CONTRACT_ASSERT(s.empty());
         n = 0;
         break;
 
@@ -361,13 +361,13 @@ encoded_host_address() const noexcept
     case urls::host_type::ipv6:
     case urls::host_type::ipvfuture:
     {
-        BOOST_ASSERT(
+        BOOST_URL_CONTRACT_ASSERT(
             impl().decoded_[id_host] ==
                 s.size() ||
             !this->encoded_zone_id().empty());
-        BOOST_ASSERT(s.size() >= 2);
-        BOOST_ASSERT(s.front() == '[');
-        BOOST_ASSERT(s.back() == ']');
+        BOOST_URL_CONTRACT_ASSERT(s.size() >= 2);
+        BOOST_URL_CONTRACT_ASSERT(s.front() == '[');
+        BOOST_URL_CONTRACT_ASSERT(s.back() == ']');
         s = s.substr(1, s.size() - 2);
         n = impl().decoded_[id_host] - 2;
         break;
@@ -416,9 +416,9 @@ host_ipvfuture() const noexcept
             urls::host_type::ipvfuture)
         return {};
     core::string_view s = impl().get(id_host);
-    BOOST_ASSERT(s.size() >= 6);
-    BOOST_ASSERT(s.front() == '[');
-    BOOST_ASSERT(s.back() == ']');
+    BOOST_URL_CONTRACT_ASSERT(s.size() >= 6);
+    BOOST_URL_CONTRACT_ASSERT(s.front() == '[');
+    BOOST_URL_CONTRACT_ASSERT(s.back() == ']');
     s = s.substr(1, s.size() - 2);
     return s;
 }
@@ -447,8 +447,8 @@ encoded_zone_id() const noexcept
         urls::host_type::ipv6)
         return {};
     core::string_view s = impl().get(id_host);
-    BOOST_ASSERT(s.front() == '[');
-    BOOST_ASSERT(s.back() == ']');
+    BOOST_URL_CONTRACT_ASSERT(s.front() == '[');
+    BOOST_URL_CONTRACT_ASSERT(s.back() == ']');
     s = s.substr(1, s.size() - 2);
     auto pos = s.find("%25");
     if (pos == core::string_view::npos)
@@ -467,7 +467,7 @@ has_port() const noexcept
     auto const n = impl().len(id_port);
     if(n == 0)
         return false;
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl().get(id_port).starts_with(':'));
     return true;
 }
@@ -480,7 +480,7 @@ port() const noexcept
     auto s = impl().get(id_port);
     if(s.empty())
         return s;
-    BOOST_ASSERT(has_port());
+    BOOST_URL_CONTRACT_ASSERT(has_port());
     return s.substr(1);
 }
 
@@ -489,7 +489,7 @@ std::uint16_t
 url_view_base::
 port_number() const noexcept
 {
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         has_port() ||
         impl().port_number_ == 0);
     return impl().port_number_;
@@ -541,7 +541,7 @@ has_query() const noexcept
         id_query);
     if(n == 0)
         return false;
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl().get(id_query).
             starts_with('?'));
     return true;
@@ -555,7 +555,7 @@ encoded_query() const noexcept
     auto s = impl().get(id_query);
     if(s.empty())
         return s;
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         s.starts_with('?'));
     return s.substr(1);
 }
@@ -601,7 +601,7 @@ has_fragment() const noexcept
     auto const n = impl().len(id_frag);
     if(n == 0)
         return false;
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl().get(id_frag).
             starts_with('#'));
     return true;
@@ -615,7 +615,7 @@ encoded_fragment() const noexcept
     auto s = impl().get(id_frag);
     if(! s.empty())
     {
-        BOOST_ASSERT(
+        BOOST_URL_CONTRACT_ASSERT(
             s.starts_with('#'));
         s.remove_prefix(1);
     }
@@ -662,7 +662,7 @@ encoded_resource() const noexcept
         ++n;
     if(has_fragment())
         ++n;
-    BOOST_ASSERT(pct_string_view(
+    BOOST_URL_CONTRACT_ASSERT(pct_string_view(
         impl().get(id_path, id_end)
             ).decoded_size() == n);
     auto s = impl().get(id_path, id_end);
@@ -680,7 +680,7 @@ encoded_target() const noexcept
         impl().decoded_[id_query];
     if(has_query())
         ++n;
-    BOOST_ASSERT(pct_string_view(
+    BOOST_URL_CONTRACT_ASSERT(pct_string_view(
         impl().get(id_path, id_frag)
             ).decoded_size() == n);
     auto s = impl().get(id_path, id_frag);

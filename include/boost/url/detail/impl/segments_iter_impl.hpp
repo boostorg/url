@@ -77,13 +77,13 @@ segments_iter_impl(
         return;
     }
 
-    BOOST_ASSERT(pos <= ref.size());
+    BOOST_URL_CONTRACT_ASSERT(pos <= ref.size());
     // compute decoded prefix by scanning once up to the encoded offset
     decoded_prefix = detail::decode_bytes_unsafe(
         core::string_view(ref.data(), pos));
     if(pos != ref.size())
     {
-        BOOST_ASSERT(
+        BOOST_URL_CONTRACT_ASSERT(
             ref.data()[pos] == '/');
         ++pos; // skip '/'
         update();
@@ -99,7 +99,7 @@ void
 segments_iter_impl::
 update() noexcept
 {
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         pos == 0 ||
         ref.data()[pos - 1] == '/');
     auto const end = ref.end();
@@ -130,7 +130,7 @@ void
 segments_iter_impl::
 increment() noexcept
 {
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         index != ref.nseg());
     auto const old_index = index;
     auto const old_dn = dn;
@@ -146,8 +146,8 @@ increment() noexcept
     // "/" segment
     auto const end = ref.end();
     auto p = ref.data() + pos;
-    BOOST_ASSERT(p != end);
-    BOOST_ASSERT(*p == '/');
+    BOOST_URL_CONTRACT_ASSERT(p != end);
+    BOOST_URL_CONTRACT_ASSERT(*p == '/');
     dn = 0;
     ++p; // skip '/'
     auto const p0 = p;
@@ -174,7 +174,7 @@ void
 segments_iter_impl::
 decrement() noexcept
 {
-    BOOST_ASSERT(index != 0);
+    BOOST_URL_CONTRACT_ASSERT(index != 0);
     auto const current_dn = dn;
     auto const current_index = index;
     // remove the decoded length of the segment we're leaving
@@ -188,7 +188,7 @@ decrement() noexcept
         pos = path_prefix(ref.buffer());
         decoded_prefix = pos;
         update();
-        BOOST_ASSERT(! s_.ends_with('/'));
+        BOOST_URL_CONTRACT_ASSERT(! s_.ends_with('/'));
         return;
     }
     // scan backwards to find the '/' before
@@ -196,7 +196,7 @@ decrement() noexcept
     auto const begin = ref.data() +
         path_prefix(ref.buffer());
     auto p = ref.data() + pos;
-    BOOST_ASSERT(p != begin);
+    BOOST_URL_CONTRACT_ASSERT(p != begin);
     while(p != begin)
     {
         --p;

@@ -322,6 +322,7 @@ void
 segments_encoded_ref::
 pop_back() noexcept
 {
+    BOOST_URL_PRE_ASSERT( !empty() );
     erase(std::prev(end()));
 }
 

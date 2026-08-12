@@ -69,7 +69,7 @@ public:
     iterator&
     operator++() noexcept
     {
-        BOOST_ASSERT(pos_ != nullptr);
+        BOOST_URL_CONTRACT_ASSERT(pos_ != nullptr);
         if (*pos_ != '%')
             ++pos_;
         else
@@ -80,7 +80,7 @@ public:
     iterator&
     operator--() noexcept
     {
-        BOOST_ASSERT(pos_ != begin_);
+        BOOST_URL_CONTRACT_ASSERT(pos_ != begin_);
         if (pos_ - begin_ < 3 ||
                 pos_[-3] != '%')
             --pos_;
@@ -152,7 +152,7 @@ decode_view::
 front() const noexcept ->
     const_reference
 {
-    BOOST_ASSERT( !empty() );
+    BOOST_URL_PRE_ASSERT( !empty() );
     return *begin();
 }
 
@@ -162,7 +162,7 @@ decode_view::
 back() const noexcept ->
     const_reference
 {
-    BOOST_ASSERT( !empty() );
+    BOOST_URL_PRE_ASSERT( !empty() );
     return *--end();
 }
 

@@ -290,7 +290,8 @@ public:
         Throws nothing.
     */
     void
-    clear() noexcept;
+    clear() noexcept
+        BOOST_URL_POST( empty() == true );
 
     //--------------------------------------------
 

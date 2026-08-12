@@ -80,11 +80,11 @@ path_segments(
     switch(s.size())
     {
     case 0:
-        BOOST_ASSERT(nseg == 0);
+        BOOST_URL_CONTRACT_ASSERT(nseg == 0);
         return 0;
 
     case 1:
-        BOOST_ASSERT(nseg == 1);
+        BOOST_URL_CONTRACT_ASSERT(nseg == 1);
         if(s[0] == '/')
             return 0;
         return 1;
@@ -95,7 +95,7 @@ path_segments(
         if( s[0] == '.' &&
             s[1] == '/')
         {
-            BOOST_ASSERT(nseg > 1);
+            BOOST_URL_CONTRACT_ASSERT(nseg > 1);
             return nseg - 1;
         }
         return nseg;
@@ -106,7 +106,7 @@ path_segments(
             if( s[1] == '.' &&
                 s[2] == '/')
             {
-                BOOST_ASSERT(nseg > 1);
+                BOOST_URL_CONTRACT_ASSERT(nseg > 1);
                 return nseg - 1;
             }
             return nseg;
@@ -114,7 +114,7 @@ path_segments(
         if( s[0] == '.' &&
             s[1] == '/')
         {
-            BOOST_ASSERT(nseg > 1);
+            BOOST_URL_CONTRACT_ASSERT(nseg > 1);
             return nseg - 1;
         }
         break;

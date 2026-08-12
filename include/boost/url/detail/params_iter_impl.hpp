@@ -72,7 +72,7 @@ struct BOOST_SYMBOL_VISIBLE params_iter_impl
             other) const noexcept
     {
         // different containers
-        BOOST_ASSERT(ref.alias_of(other.ref));
+        BOOST_URL_CONTRACT_ASSERT(ref.alias_of(other.ref));
         return index == other.index;
     }
 };

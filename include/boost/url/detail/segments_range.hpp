@@ -44,12 +44,12 @@ make_subref_from_impls(
     segments_iter_impl const& first,
     segments_iter_impl const& last) noexcept
 {
-    BOOST_ASSERT(first.ref.alias_of(last.ref));
+    BOOST_URL_CONTRACT_ASSERT(first.ref.alias_of(last.ref));
     path_ref const& ref = first.ref;
 
     std::size_t const i0 = first.index;
     std::size_t const i1 = last.index;
-    BOOST_ASSERT(i0 <= i1);
+    BOOST_URL_CONTRACT_ASSERT(i0 <= i1);
     std::size_t const nseg = i1 - i0;
 
     bool const absolute = ref.buffer().starts_with('/');
@@ -117,13 +117,13 @@ make_subref_from_impls(
         off1 = last.pos;
     }
 
-    BOOST_ASSERT(off1 >= off0);
+    BOOST_URL_CONTRACT_ASSERT(off1 >= off0);
     core::string_view const sub(ref.data() + off0, off1 - off0);
 
     // decoded sizes reuse iterator bookkeeping instead of rescanning
     std::size_t start_dn = (i0 == 0) ? 0 : first.decoded_prefix_size();
     std::size_t const end_dn = last.decoded_prefix_size(); // already excludes segment at `last`
-    BOOST_ASSERT(end_dn >= start_dn);
+    BOOST_URL_CONTRACT_ASSERT(end_dn >= start_dn);
     std::size_t const dn_sum = end_dn - start_dn;
 
     return {sub, dn_sum, nseg};

@@ -55,11 +55,11 @@ re_encoded_size_unsafe(
         }
         else
         {
-            BOOST_ASSERT(end - it >= 3);
-            BOOST_ASSERT(
+            BOOST_URL_CONTRACT_ASSERT(end - it >= 3);
+            BOOST_URL_CONTRACT_ASSERT(
                     grammar::hexdig_value(
                             it[1]) >= 0);
-            BOOST_ASSERT(
+            BOOST_URL_CONTRACT_ASSERT(
                     grammar::hexdig_value(
                             it[2]) >= 0);
             n += 3;
@@ -88,9 +88,9 @@ re_encode_unsafe(
         auto c = static_cast<unsigned char>(c0);
         ignore_unused(end);
         *dest++ = '%';
-        BOOST_ASSERT(dest != end);
+        BOOST_URL_CONTRACT_ASSERT(dest != end);
         *dest++ = hex[c>>4];
-        BOOST_ASSERT(dest != end);
+        BOOST_URL_CONTRACT_ASSERT(dest != end);
         *dest++ = hex[c&0xf];
     };
     ignore_unused(end);
@@ -102,7 +102,7 @@ re_encode_unsafe(
     auto it = s.begin();
     while(it != last)
     {
-        BOOST_ASSERT(dest != end);
+        BOOST_URL_CONTRACT_ASSERT(dest != end);
         if(*it != '%')
         {
             if(unreserved(*it))
@@ -119,9 +119,9 @@ re_encode_unsafe(
         else
         {
             *dest++ = *it++;
-            BOOST_ASSERT(dest != end);
+            BOOST_URL_CONTRACT_ASSERT(dest != end);
             *dest++ = *it++;
-            BOOST_ASSERT(dest != end);
+            BOOST_URL_CONTRACT_ASSERT(dest != end);
             *dest++ = *it++;
             dn += 2;
         }

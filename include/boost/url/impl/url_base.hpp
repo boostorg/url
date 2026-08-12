@@ -198,7 +198,7 @@ remove_scheme()
         return *this;
     }
     // encode any ":" in the first path segment
-    BOOST_ASSERT(sn >= 2);
+    BOOST_URL_CONTRACT_ASSERT(sn >= 2);
     auto pn = impl_.len(id_path);
     std::size_t cn = 0;
     for (char c: fseg)
@@ -521,7 +521,7 @@ set_encoded_user(
             dest + n,
             s,
             detail::user_chars));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.decoded_[id_user] ==
             s.decoded_size());
     return *this;
@@ -568,7 +568,7 @@ set_encoded_password(
             dest + n,
             s,
             detail::password_chars));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.decoded_[id_pass] ==
             s.decoded_size());
     return *this;
@@ -776,7 +776,7 @@ set_encoded_host(
             impl_.get(id_path).data(),
             s,
             detail::host_chars));
-    BOOST_ASSERT(impl_.decoded_[id_host] ==
+    BOOST_URL_CONTRACT_ASSERT(impl_.decoded_[id_host] ==
         s.decoded_size());
     impl_.host_type_ =
         urls::host_type::name;
@@ -923,7 +923,7 @@ set_encoded_host_address(
             impl_.get(id_path).data(),
             s,
             detail::host_chars));
-    BOOST_ASSERT(impl_.decoded_[id_host] ==
+    BOOST_URL_CONTRACT_ASSERT(impl_.decoded_[id_host] ==
         s.decoded_size());
     impl_.host_type_ =
         urls::host_type::name;
@@ -1142,7 +1142,7 @@ set_encoded_host_name(
             dest + n,
             s,
             allowed));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.decoded_[id_host] ==
             s.decoded_size());
     impl_.host_type_ =
@@ -1393,8 +1393,8 @@ set_path(
         opt);
     impl_.decoded_[id_path] +=
         detail::to_size_type(s.size());
-    BOOST_ASSERT(!dest || dest == impl_.get(id_query).data());
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(!dest || dest == impl_.get(id_query).data());
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.decoded_[id_path] ==
         s.size() + make_absolute + 2 * add_dot_segment);
 
@@ -1508,8 +1508,8 @@ set_encoded_path(
             impl_.get(id_query).data(),
             s.substr(first_seg.size()),
             detail::path_chars));
-    BOOST_ASSERT(dest == impl_.get(id_query).data());
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(dest == impl_.get(id_query).data());
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.decoded_[id_path] ==
         s.decoded_size() + make_absolute + 2 * add_dot_segment);
 
@@ -1626,7 +1626,7 @@ set_encoded_query(
             dest + n,
             s,
             detail::query_chars));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.decoded_[id_query] ==
             s.decoded_size());
     impl_.nparam_ =
@@ -1755,7 +1755,7 @@ set_encoded_fragment(
             dest + n,
             s,
             detail::fragment_chars));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.decoded_[id_frag] ==
             s.decoded_size());
     return *this;
@@ -1918,7 +1918,7 @@ normalize_octets_impl(
             ++dest;
             continue;
         }
-        BOOST_ASSERT(end - it >= 3);
+        BOOST_URL_CONTRACT_ASSERT(end - it >= 3);
 
         // decode unreserved octets
         d = detail::decode_one(it + 1);
@@ -2230,7 +2230,7 @@ normalize_path()
     }
     if (n != pn)
     {
-        BOOST_ASSERT(n < pn);
+        BOOST_URL_CONTRACT_ASSERT(n < pn);
         shrink_impl(id_path, n + path_shield_len, op);
     }
 
@@ -2400,40 +2400,40 @@ void
 url_base::
 check_invariants() const noexcept
 {
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.len(id_scheme) == 0 ||
         impl_.get(id_scheme).ends_with(':'));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.len(id_user) == 0 ||
         impl_.get(id_user).starts_with("//"));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.len(id_pass) == 0 ||
         impl_.get(id_user).starts_with("//"));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.len(id_pass) == 0 ||
         (impl_.len(id_pass) == 1 &&
             impl_.get(id_pass) == "@") ||
         (impl_.len(id_pass) > 1 &&
             impl_.get(id_pass).starts_with(':') &&
             impl_.get(id_pass).ends_with('@')));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.len(id_user, id_path) == 0 ||
         impl_.get(id_user).starts_with("//"));
-    BOOST_ASSERT(impl_.decoded_[id_path] >=
+    BOOST_URL_CONTRACT_ASSERT(impl_.decoded_[id_path] >=
         ((impl_.len(id_path) + 2) / 3));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.len(id_port) == 0 ||
         impl_.get(id_port).starts_with(':'));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.len(id_query) == 0 ||
         impl_.get(id_query).starts_with('?'));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         (impl_.len(id_query) == 0 && impl_.nparam_ == 0) ||
         (impl_.len(id_query) > 0 && impl_.nparam_ > 0));
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         impl_.len(id_frag) == 0 ||
         impl_.get(id_frag).starts_with('#'));
-    BOOST_ASSERT(c_str()[size()] == '\0');
+    BOOST_URL_CONTRACT_ASSERT(c_str()[size()] == '\0');
 }
 
 inline
@@ -2507,7 +2507,7 @@ shrink_impl(
 {
     // shrinking
     auto const n0 = impl_.len(first, last);
-    BOOST_ASSERT(new_len <= n0);
+    BOOST_URL_CONTRACT_ASSERT(new_len <= n0);
     std::size_t n = n0 - new_len;
     auto const pos =
         impl_.offset(last);
@@ -2807,7 +2807,7 @@ first_segment() const noexcept
     auto p = p0;
     while(*p != '/')
     {
-        BOOST_ASSERT(p < end);
+        BOOST_URL_CONTRACT_ASSERT(p < end);
         ++p;
     }
     return core::string_view(p0, p - p0);
@@ -2826,21 +2826,21 @@ edit_segments(
     int absolute)
 {
     // Iterator doesn't belong to this url
-    BOOST_ASSERT(it0.ref.alias_of(impl_));
+    BOOST_URL_CONTRACT_ASSERT(it0.ref.alias_of(impl_));
 
     // Iterator doesn't belong to this url
-    BOOST_ASSERT(it1.ref.alias_of(impl_));
+    BOOST_URL_CONTRACT_ASSERT(it1.ref.alias_of(impl_));
 
     // Iterator is in the wrong order
-    BOOST_ASSERT(it0.index <= it1.index);
+    BOOST_URL_CONTRACT_ASSERT(it0.index <= it1.index);
 
     // Iterator is out of range
-    BOOST_ASSERT(it0.index <= impl_.nseg_);
-    BOOST_ASSERT(it0.pos <= impl_.len(id_path));
+    BOOST_URL_CONTRACT_ASSERT(it0.index <= impl_.nseg_);
+    BOOST_URL_CONTRACT_ASSERT(it0.pos <= impl_.len(id_path));
 
     // Iterator is out of range
-    BOOST_ASSERT(it1.index <= impl_.nseg_);
-    BOOST_ASSERT(it1.pos <= impl_.len(id_path));
+    BOOST_URL_CONTRACT_ASSERT(it1.index <= impl_.nseg_);
+    BOOST_URL_CONTRACT_ASSERT(it1.pos <= impl_.len(id_path));
 
 //------------------------------------------------
 //
@@ -2937,7 +2937,7 @@ edit_segments(
             prefix = absolute;
             break;
         default:
-            BOOST_ASSERT(*p == '/');
+            BOOST_URL_CONTRACT_ASSERT(*p == '/');
             if(p[1] != '/')
             {
                 if(absolute)
@@ -2953,7 +2953,7 @@ edit_segments(
             BOOST_FALLTHROUGH;
         case 1:
             // empty
-            BOOST_ASSERT(*p == '/');
+            BOOST_URL_CONTRACT_ASSERT(*p == '/');
             prefix = 2 + absolute;
             break;
         }
@@ -2989,13 +2989,13 @@ edit_segments(
     switch(src.fast_nseg)
     {
     case 0:
-        BOOST_ASSERT(nseg == 0);
+        BOOST_URL_CONTRACT_ASSERT(nseg == 0);
         break;
     case 1:
-        BOOST_ASSERT(nseg == 1);
+        BOOST_URL_CONTRACT_ASSERT(nseg == 1);
         break;
     case 2:
-        BOOST_ASSERT(nseg >= 2);
+        BOOST_URL_CONTRACT_ASSERT(nseg >= 2);
         break;
     }
 
@@ -3069,7 +3069,7 @@ edit_segments(
         impl_.set_size(
             id_path,
             impl_.len(id_path) + nchar - nremove);
-        BOOST_ASSERT(size() == new_size);
+        BOOST_URL_CONTRACT_ASSERT(size() == new_size);
         end = dest + nchar;
         auto const nseg1 =
             static_cast<std::ptrdiff_t>(impl_.nseg_) +
@@ -3077,7 +3077,7 @@ edit_segments(
             static_cast<std::ptrdiff_t>(it1.index) +
             static_cast<std::ptrdiff_t>(it0.index) -
             static_cast<std::ptrdiff_t>(cp_src_prefix);
-        BOOST_ASSERT(nseg1 >= 0);
+        BOOST_URL_CONTRACT_ASSERT(nseg1 >= 0);
         impl_.nseg_ = detail::to_size_type(nseg1);
         if(s_)
             s_[size()] = '\0';
@@ -3121,7 +3121,7 @@ edit_segments(
         if(suffix)
             *dest++ = '/';
     }
-    BOOST_ASSERT(dest == dest0 + nchar);
+    BOOST_URL_CONTRACT_ASSERT(dest == dest0 + nchar);
 
     // calc decoded size of new range,
     auto const dn =
@@ -3154,17 +3154,17 @@ edit_params(
     pos0 = pos0 + it0.pos;
 
     // Iterators belong to this url
-    BOOST_ASSERT(it0.ref.alias_of(impl_));
-    BOOST_ASSERT(it1.ref.alias_of(impl_));
+    BOOST_URL_CONTRACT_ASSERT(it0.ref.alias_of(impl_));
+    BOOST_URL_CONTRACT_ASSERT(it1.ref.alias_of(impl_));
 
     // Iterators is in the right order
-    BOOST_ASSERT(it0.index <= it1.index);
+    BOOST_URL_CONTRACT_ASSERT(it0.index <= it1.index);
 
     // Iterators are within range
-    BOOST_ASSERT(it0.index <= impl_.nparam_);
-    BOOST_ASSERT(pos0 <= impl_.offset(id_frag));
-    BOOST_ASSERT(it1.index <= impl_.nparam_);
-    BOOST_ASSERT(pos1 <= impl_.offset(id_frag));
+    BOOST_URL_CONTRACT_ASSERT(it0.index <= impl_.nparam_);
+    BOOST_URL_CONTRACT_ASSERT(pos0 <= impl_.offset(id_frag));
+    BOOST_URL_CONTRACT_ASSERT(it1.index <= impl_.nparam_);
+    BOOST_URL_CONTRACT_ASSERT(pos1 <= impl_.offset(id_frag));
 
     // calc decoded size of old range,
     // minus one for the leading '?' which is
@@ -3225,7 +3225,7 @@ edit_params(
             static_cast<std::ptrdiff_t>(nparam) -
             static_cast<std::ptrdiff_t>(it1.index) +
             static_cast<std::ptrdiff_t>(it0.index);
-        BOOST_ASSERT(nparam1 >= 0);
+        BOOST_URL_CONTRACT_ASSERT(nparam1 >= 0);
         reserve_impl(size() + nchar - nremove, op);
         dest = s_ + pos0;
         end = dest + nchar;

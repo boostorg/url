@@ -78,7 +78,7 @@ public:
     equal(
         segments_iter_impl const& other) const noexcept
     {
-        BOOST_ASSERT(ref.alias_of(other.ref));
+        BOOST_URL_CONTRACT_ASSERT(ref.alias_of(other.ref));
         return index == other.index;
     }
 };

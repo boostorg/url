@@ -75,7 +75,7 @@ has_userinfo() const noexcept
     auto n = u_.len(id_pass);
     if(n == 0)
         return false;
-    BOOST_ASSERT(u_.get(
+    BOOST_URL_CONTRACT_ASSERT(u_.get(
         id_pass).ends_with('@'));
     return true;
 }
@@ -89,7 +89,7 @@ encoded_userinfo() const noexcept
         id_user, id_host);
     if(s.empty())
         return s;
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         s.ends_with('@'));
     s.remove_suffix(1);
     return make_pct_string_view_unsafe(
@@ -120,13 +120,13 @@ has_password() const noexcept
     auto const n = u_.len(id_pass);
     if(n > 1)
     {
-        BOOST_ASSERT(u_.get(id_pass
+        BOOST_URL_CONTRACT_ASSERT(u_.get(id_pass
             ).starts_with(':'));
-        BOOST_ASSERT(u_.get(id_pass
+        BOOST_URL_CONTRACT_ASSERT(u_.get(id_pass
             ).ends_with('@'));
         return true;
     }
-    BOOST_ASSERT(n == 0 || u_.get(
+    BOOST_URL_CONTRACT_ASSERT(n == 0 || u_.get(
         id_pass).ends_with('@'));
     return false;
 }
@@ -140,7 +140,7 @@ encoded_password() const noexcept
     switch(s.size())
     {
     case 1:
-        BOOST_ASSERT(
+        BOOST_URL_CONTRACT_ASSERT(
             s.starts_with('@'));
         s.remove_prefix(1);
         BOOST_FALLTHROUGH;
@@ -150,8 +150,8 @@ encoded_password() const noexcept
     default:
         break;
     }
-    BOOST_ASSERT(s.ends_with('@'));
-    BOOST_ASSERT(s.starts_with(':'));
+    BOOST_URL_CONTRACT_ASSERT(s.ends_with('@'));
+    BOOST_URL_CONTRACT_ASSERT(s.starts_with(':'));
     return make_pct_string_view_unsafe(
         s.data() + 1,
         s.size() - 2,
@@ -203,12 +203,12 @@ encoded_host_address() const noexcept
     case urls::host_type::ipv6:
     case urls::host_type::ipvfuture:
     {
-        BOOST_ASSERT(
+        BOOST_URL_CONTRACT_ASSERT(
             u_.decoded_[id_host] ==
                 s.size());
-        BOOST_ASSERT(s.size() >= 2);
-        BOOST_ASSERT(s.front() == '[');
-        BOOST_ASSERT(s.back() == ']');
+        BOOST_URL_CONTRACT_ASSERT(s.size() >= 2);
+        BOOST_URL_CONTRACT_ASSERT(s.front() == '[');
+        BOOST_URL_CONTRACT_ASSERT(s.back() == ']');
         s = s.substr(1, s.size() - 2);
         n = u_.decoded_[id_host] - 2;
         break;
@@ -225,7 +225,7 @@ encoded_host_address() const noexcept
          * This is correct because `reg-name`
          * accepts empty strings.
          */
-        BOOST_ASSERT(s.empty());
+        BOOST_URL_CONTRACT_ASSERT(s.empty());
         n = 0;
         break;
     // LCOV_EXCL_STOP
@@ -271,9 +271,9 @@ host_ipvfuture() const noexcept
             urls::host_type::ipvfuture)
         return {};
     core::string_view s = u_.get(id_host);
-    BOOST_ASSERT(s.size() >= 6);
-    BOOST_ASSERT(s.front() == '[');
-    BOOST_ASSERT(s.back() == ']');
+    BOOST_URL_CONTRACT_ASSERT(s.size() >= 6);
+    BOOST_URL_CONTRACT_ASSERT(s.front() == '[');
+    BOOST_URL_CONTRACT_ASSERT(s.back() == ']');
     s = s.substr(1, s.size() - 2);
     return s;
 }
@@ -303,7 +303,7 @@ has_port() const noexcept
     auto const n = u_.len(id_port);
     if(n == 0)
         return false;
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         u_.get(id_port).starts_with(':'));
     return true;
 }
@@ -316,7 +316,7 @@ port() const noexcept
     auto s = u_.get(id_port);
     if(s.empty())
         return s;
-    BOOST_ASSERT(has_port());
+    BOOST_URL_CONTRACT_ASSERT(has_port());
     return s.substr(1);
 }
 
@@ -325,7 +325,7 @@ std::uint16_t
 authority_view::
 port_number() const noexcept
 {
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         has_port() ||
         u_.port_number_ == 0);
     return u_.port_number_;

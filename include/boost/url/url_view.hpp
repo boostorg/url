@@ -278,6 +278,7 @@ public:
     BOOST_URL_CXX14_CONSTEXPR
     url_view(
         url_view_base const& other) noexcept
+        BOOST_URL_POST( buffer().data() == other.buffer().data() )
         : url_view_base(other.impl_)
     {
         external_impl_ = other.external_impl_;
@@ -307,6 +308,7 @@ public:
     url_view&
     operator=(
         url_view const& other) noexcept
+        BOOST_URL_POST( buffer().data() == other.buffer().data() )
     {
         impl_ = other.impl_;
         external_impl_ = other.external_impl_;
@@ -336,6 +338,7 @@ public:
     BOOST_URL_CXX14_CONSTEXPR
     url_view& operator=(
         url_view_base const& other) noexcept
+        BOOST_URL_POST( buffer().data() == other.buffer().data() )
     {
         impl_ = other.impl_;
         external_impl_ = other.external_impl_;

@@ -31,7 +31,7 @@ recycled<T>::
     {
         ++n;
         auto next = it->next;
-        BOOST_ASSERT(
+        BOOST_URL_CONTRACT_ASSERT(
             it->refs == 0);
         delete it;
         it = next;
@@ -66,7 +66,7 @@ acquire() ->
             p = new U;
         }
     }
-    BOOST_ASSERT(p->refs == 1);
+    BOOST_URL_CONTRACT_ASSERT(p->refs == 1);
     return p;
 }
 
@@ -166,7 +166,7 @@ operator=(
     recycled_ptr&& other) noexcept ->
         recycled_ptr&
 {
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         bin_ == other.bin_);
     if(p_)
         bin_->release(p_);
@@ -184,7 +184,7 @@ operator=(
 {
     if(this == &other)
         return *this;
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         bin_ == other.bin_);
     if(p_)
         bin_->release(p_);

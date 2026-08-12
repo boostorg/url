@@ -625,7 +625,7 @@ public:
     {
         // can't compare iterators
         // from different containers!
-        BOOST_ASSERT(r_ == other.r_);
+        BOOST_URL_CONTRACT_ASSERT(r_ == other.r_);
 
         return p_ == other.p_;
     }
@@ -640,7 +640,7 @@ public:
     iterator&
     operator++() noexcept
     {
-        BOOST_ASSERT(
+        BOOST_URL_CONTRACT_ASSERT(
             p_ != nullptr);
         auto const end =
             r_->s_.data() +

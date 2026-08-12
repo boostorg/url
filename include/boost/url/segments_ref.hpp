@@ -262,7 +262,8 @@ public:
         Throws nothing.
     */
     void
-    clear() noexcept;
+    clear() noexcept
+        BOOST_URL_POST( empty() == true );
 
     /** Assign segments
 
@@ -701,7 +702,8 @@ public:
         Throws nothing.
     */
     void
-    pop_back() noexcept;
+    pop_back() noexcept
+        BOOST_URL_PRE( !empty() );
 
 private:
     template<class FwdIt>

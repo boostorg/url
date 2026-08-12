@@ -162,6 +162,7 @@ public:
             >4.2. Relative Reference (rfc3986)</a>
     */
     static_url() noexcept
+        BOOST_URL_POST( empty() == true )
         : static_url_base(
             buf_, sizeof(buf_))
     {
@@ -241,6 +242,7 @@ public:
     */
     static_url(
         static_url const& u) noexcept
+        BOOST_URL_POST( buffer() == u.buffer() )
         : static_url()
     {
         copy(u);
@@ -269,6 +271,7 @@ public:
     */
     static_url(
         url_view_base const& u)
+        BOOST_URL_POST( buffer() == u.buffer() )
         : static_url()
     {
         copy(u);
@@ -298,6 +301,7 @@ public:
     static_url&
     operator=(
         static_url const& u) noexcept
+        BOOST_URL_POST( buffer() == u.buffer() )
     {
         if (this != &u)
             copy(u);
@@ -331,6 +335,7 @@ public:
     static_url&
     operator=(
         url_view_base const& u)
+        BOOST_URL_POST( buffer() == u.buffer() )
     {
         copy(u);
         return *this;

@@ -259,17 +259,17 @@ path_ends_with(
     core::string_view str,
     core::string_view suffix) noexcept
 {
-    BOOST_ASSERT(!str.empty());
-    BOOST_ASSERT(!suffix.empty());
-    BOOST_ASSERT(!suffix.contains("%2F"));
-    BOOST_ASSERT(!suffix.contains("%2f"));
+    BOOST_URL_CONTRACT_ASSERT(!str.empty());
+    BOOST_URL_CONTRACT_ASSERT(!suffix.empty());
+    BOOST_URL_CONTRACT_ASSERT(!suffix.contains("%2F"));
+    BOOST_URL_CONTRACT_ASSERT(!suffix.contains("%2f"));
     auto consume_last = [](
         core::string_view::iterator& it,
         core::string_view::iterator& end,
         char& c)
     {
-        BOOST_ASSERT(end > it);
-        BOOST_ASSERT(it != end);
+        BOOST_URL_CONTRACT_ASSERT(end > it);
+        BOOST_URL_CONTRACT_ASSERT(it != end);
         if ((end - it) < 3 ||
             *(std::prev(end, 3)) != '%')
         {
@@ -358,7 +358,7 @@ remove_dot_segments(
         [](char*& first, char const* last, core::string_view in)
     {
         // append `in` to `dest`
-        BOOST_ASSERT(in.size() <= std::size_t(last - first));
+        BOOST_URL_CONTRACT_ASSERT(in.size() <= std::size_t(last - first));
         std::memmove(first, in.data(), in.size());
         first += in.size();
         ignore_unused(last);

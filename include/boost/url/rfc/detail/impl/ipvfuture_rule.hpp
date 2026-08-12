@@ -54,8 +54,8 @@ parse(
     t.minor = std::get<1>(*rv);
     // token_rule guarantees non-empty tokens,
     // so major/minor are always non-empty here.
-    BOOST_ASSERT(!t.major.empty());
-    BOOST_ASSERT(!t.minor.empty());
+    BOOST_URL_CONTRACT_ASSERT(!t.major.empty());
+    BOOST_URL_CONTRACT_ASSERT(!t.minor.empty());
     t.str = core::string_view(
         it0, it - it0);
     return t;

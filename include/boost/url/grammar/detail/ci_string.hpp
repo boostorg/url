@@ -135,7 +135,7 @@ ci_is_equal(
     //
     // ci_is_equal(s0,s1) == ci_is_equal(s1,s0)
     //
-    BOOST_ASSERT(
+    BOOST_URL_CONTRACT_ASSERT(
         detail::type_id<S0>() <=
         detail::type_id<S1>());
 

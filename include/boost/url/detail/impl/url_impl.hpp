@@ -48,7 +48,7 @@ apply_userinfo(
 {
     // this function is for
     // authority_view_rule only
-    BOOST_ASSERT(from_ == from::authority);
+    BOOST_URL_CONTRACT_ASSERT(from_ == from::authority);
 
     // userinfo
     set_size(id_user, user.size());
@@ -80,7 +80,7 @@ apply_host(
 {
     // this function is for
     // authority_view_rule only
-    BOOST_ASSERT(from_ == from::authority);
+    BOOST_URL_CONTRACT_ASSERT(from_ == from::authority);
 
     // host, port
     host_type_ = ht;
@@ -103,7 +103,7 @@ apply_port(
 {
     // this function is for
     // authority_view_rule only
-    BOOST_ASSERT(from_ == from::authority);
+    BOOST_URL_CONTRACT_ASSERT(from_ == from::authority);
 
     port_number_ = pn;
     set_size(id_port, 1 + s.size());
@@ -115,7 +115,7 @@ url_impl::
 apply_authority(
     url_impl const& a) noexcept
 {
-    BOOST_ASSERT(from_ != from::authority);
+    BOOST_URL_CONTRACT_ASSERT(from_ != from::authority);
 
     // userinfo
     set_size(id_user,
@@ -186,8 +186,8 @@ len(
     int first,
     int last) const noexcept
 {
-    BOOST_ASSERT(first <= last);
-    BOOST_ASSERT(last <= id_end);
+    BOOST_URL_CONTRACT_ASSERT(first <= last);
+    BOOST_URL_CONTRACT_ASSERT(last <= id_end);
     return offset(last) - offset(first);
 }
 
@@ -301,7 +301,7 @@ split(
     int id,
     std::size_t n) noexcept
 {
-    BOOST_ASSERT(id < id_end - 1);
+    BOOST_URL_CONTRACT_ASSERT(id < id_end - 1);
     //BOOST_ASSERT(n <= len(id));
     offset_[id + 1] = detail::to_size_type(
         offset(id) + n);

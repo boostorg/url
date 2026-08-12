@@ -46,7 +46,7 @@ parse(format_parse_context& ctx)
 {
     char const* it = ctx.begin();
     char const* end = ctx.end();
-    BOOST_ASSERT(it != end);
+    BOOST_URL_CONTRACT_ASSERT(it != end);
 
     // fill / align
     if (end - it > 2)
@@ -235,7 +235,7 @@ parse(format_parse_context& ctx)
 {
     char const* it = ctx.begin();
     char const* end = ctx.end();
-    BOOST_ASSERT(it != end);
+    BOOST_URL_CONTRACT_ASSERT(it != end);
 
     // fill / align
     if (end - it > 2)
@@ -474,7 +474,7 @@ format(
     while (uv > 0);
     static constexpr auto m =
         std::numeric_limits<long long int>::digits10;
-    BOOST_ASSERT(n <= m + 2);
+    BOOST_URL_CONTRACT_ASSERT(n <= m + 2);
     ignore_unused(m);
 
     // get pad
@@ -576,7 +576,7 @@ grammar::lut_chars const& cs) const
     while (v > 0);
     static constexpr auto m =
         std::numeric_limits<unsigned long long int>::digits10;
-    BOOST_ASSERT(n <= m + 2);
+    BOOST_URL_CONTRACT_ASSERT(n <= m + 2);
     ignore_unused(m);
 
     // get pad

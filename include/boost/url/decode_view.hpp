@@ -314,7 +314,8 @@ public:
         @return The first decoded character
     */
     reference
-    front() const noexcept;
+    front() const noexcept
+        BOOST_URL_PRE( !empty() );
 
     /** Return the last character
 
@@ -337,7 +338,8 @@ public:
         @return The last decoded character
     */
     reference
-    back() const noexcept;
+    back() const noexcept
+        BOOST_URL_PRE( !empty() );
 
     /** Checks if the string begins with the given prefix
 
@@ -470,7 +472,8 @@ public:
     */
     BOOST_URL_DECL
     void
-    remove_prefix( size_type n );
+    remove_prefix( size_type n )
+        BOOST_URL_PRE( n <= size() );
 
     /** Remove the last characters
 
@@ -493,7 +496,8 @@ public:
     */
     BOOST_URL_DECL
     void
-    remove_suffix( size_type n );
+    remove_suffix( size_type n )
+        BOOST_URL_PRE( n <= size() );
 
     /** Return the decoding options
 

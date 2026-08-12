@@ -92,7 +92,7 @@ public:
     pointer
     allocate(size_type n)
     {
-        BOOST_ASSERT(n == 1);
+        BOOST_URL_CONTRACT_ASSERT(n == 1);
         using U = typename boost::type_with_alignment<
             alignof(value_type)>::type;
         auto constexpr S = sizeof(U);
@@ -107,7 +107,7 @@ public:
     void
     deallocate(pointer p, size_type n)
     {
-        BOOST_ASSERT(n == 1);
+        BOOST_URL_CONTRACT_ASSERT(n == 1);
         using U = typename boost::type_with_alignment<
             alignof(value_type)>::type;
         auto constexpr S = sizeof(U);

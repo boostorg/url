@@ -102,8 +102,8 @@ BOOST_URL_CXX14_CONSTEXPR_OR_INLINE
 url_impl::size_type
 to_size_type(std::size_t n) noexcept
 {
-    BOOST_ASSERT(n <= BOOST_URL_MAX_SIZE);
-    BOOST_ASSERT(n <= UINT32_MAX);
+    BOOST_URL_CONTRACT_ASSERT(n <= BOOST_URL_MAX_SIZE);
+    BOOST_URL_CONTRACT_ASSERT(n <= UINT32_MAX);
     return static_cast<url_impl::size_type>(n);
 }
 
@@ -111,7 +111,7 @@ BOOST_URL_CXX14_CONSTEXPR_OR_INLINE
 url_impl::size_type
 to_size_type(std::ptrdiff_t n) noexcept
 {
-    BOOST_ASSERT(n >= 0);
+    BOOST_URL_CONTRACT_ASSERT(n >= 0);
     return to_size_type(
         static_cast<std::size_t>(n));
 }
@@ -158,7 +158,7 @@ public:
     {
         if(impl_)
             return impl_ == ref.impl_;
-        BOOST_ASSERT(data_ != ref.data_ || (
+        BOOST_URL_CONTRACT_ASSERT(data_ != ref.data_ || (
             size_ == ref.size_ &&
             nseg_ == ref.nseg_ &&
             dn_ == ref.dn_));
@@ -208,7 +208,7 @@ public:
     {
         if(impl_)
             return impl_ == ref.impl_;
-        BOOST_ASSERT(data_ != ref.data_ || (
+        BOOST_URL_CONTRACT_ASSERT(data_ != ref.data_ || (
             size_ == ref.size_ &&
             nparam_ == ref.nparam_ &&
             dn_ == ref.dn_));

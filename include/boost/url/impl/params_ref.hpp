@@ -368,7 +368,7 @@ unset(
     iterator pos) noexcept ->
         iterator
 {
-    BOOST_ASSERT(pos.it_.nk > 0);
+    BOOST_URL_CONTRACT_ASSERT(pos.it_.nk > 0);
     core::string_view s;
     return iterator(
         u_->edit_params(
@@ -387,7 +387,7 @@ set(
     core::string_view value) ->
         iterator
 {
-    BOOST_ASSERT(pos.it_.nk > 0);
+    BOOST_URL_CONTRACT_ASSERT(pos.it_.nk > 0);
     return iterator(
         u_->edit_params(
             pos.it_,

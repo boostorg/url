@@ -478,7 +478,9 @@ public:
         @return A reference to the object
     */
     T& operator*() const noexcept
+        BOOST_URL_PRE( !empty() )
     {
+        BOOST_URL_PRE_ASSERT( !empty() );
         return *get();
     }
 
@@ -496,7 +498,8 @@ public:
 
         @return A reference to the object
     */
-    T& acquire();
+    T& acquire()
+        BOOST_URL_POST( !empty() );
 
     /** Release the referenced object
 
@@ -513,7 +516,8 @@ public:
         @par Exception Safety
         Throws nothing.
     */
-    void release() noexcept;
+    void release() noexcept
+        BOOST_URL_POST( empty() );
 };
 
 } // grammar

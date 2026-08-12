@@ -173,11 +173,11 @@ public:
         char const* end)
     {
         // [it, end] -> "} suffix"
-        BOOST_ASSERT(it != end);
+        BOOST_URL_CONTRACT_ASSERT(it != end);
         ignore_unused(end);
         // Should be always empty/valid as an
         // implementation detail
-        BOOST_ASSERT(*it == '}');
+        BOOST_URL_CONTRACT_ASSERT(*it == '}');
         /*
         if (*it != '}')
             urls::detail::throw_invalid_argument();
@@ -193,7 +193,7 @@ measure_one(
     grammar::lut_chars const& unreserved)
 {
     // '%' must be reserved
-    BOOST_ASSERT(! unreserved('%'));
+    BOOST_URL_CONTRACT_ASSERT(! unreserved('%'));
     return 1 + !unreserved(c) * 2;
 }
 
@@ -205,7 +205,7 @@ encode_one(
     grammar::lut_chars const& unreserved)
 {
     // '%' must be reserved
-    BOOST_ASSERT(! unreserved('%'));
+    BOOST_URL_CONTRACT_ASSERT(! unreserved('%'));
     if(unreserved(c))
     {
         *out++ = c;

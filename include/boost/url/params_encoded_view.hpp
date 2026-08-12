@@ -226,7 +226,8 @@ public:
         @return A new view with percent escapes decoded.
     */
     operator
-    params_view() const noexcept;
+    params_view() const noexcept
+        BOOST_URL_POST( r : r.buffer().data() == buffer().data() );
 
     //--------------------------------------------
 

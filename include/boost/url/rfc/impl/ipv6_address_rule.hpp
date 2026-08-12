@@ -75,7 +75,7 @@ parse(
                 // end in "::"
                 break;
             }
-            BOOST_ASSERT(n > 0);
+            BOOST_URL_CONTRACT_ASSERT(n > 0);
             // not enough words
             BOOST_URL_CONSTEXPR_RETURN_EC(
                 grammar::error::invalid);

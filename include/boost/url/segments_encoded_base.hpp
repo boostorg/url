@@ -246,7 +246,8 @@ public:
         @return The first segment.
     */
     pct_string_view
-    front() const noexcept;
+    front() const noexcept
+        BOOST_URL_PRE( !empty() );
 
     /** Return the last segment
 
@@ -285,7 +286,8 @@ public:
         @return The last segment.
     */
     pct_string_view
-    back() const noexcept;
+    back() const noexcept
+        BOOST_URL_PRE( !empty() );
 
     /** Return an iterator to the beginning
 

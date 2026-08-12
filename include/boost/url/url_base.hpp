@@ -164,6 +164,7 @@ public:
     */
     void
     clear() noexcept
+        BOOST_URL_POST( empty() == true )
     {
         this->clear_impl();
     }
@@ -316,7 +317,8 @@ public:
             @ref set_scheme.
     */
     url_base&
-    remove_scheme();
+    remove_scheme()
+        BOOST_URL_POST( has_scheme() == false && scheme_id() == scheme::none );
 
     //--------------------------------------------
     //
@@ -406,7 +408,8 @@ public:
             @ref set_encoded_authority.
     */
     url_base&
-    remove_authority();
+    remove_authority()
+        BOOST_URL_POST( has_authority() == false && has_userinfo() == false && has_port() == false );
 
     //--------------------------------------------
     //
@@ -583,7 +586,8 @@ public:
             @ref set_userinfo.
     */
     url_base&
-    remove_userinfo() noexcept;
+    remove_userinfo() noexcept
+        BOOST_URL_POST( has_userinfo() == false && encoded_userinfo().empty() == true );
 
     //--------------------------------------------
 
@@ -634,7 +638,8 @@ public:
     */
     url_base&
     set_user(
-        core::string_view s);
+        core::string_view s)
+        BOOST_URL_POST( has_authority() == true && has_userinfo() == true );
 
     /** Set the user
 
@@ -691,7 +696,8 @@ public:
     */
     url_base&
     set_encoded_user(
-        pct_string_view s);
+        pct_string_view s)
+        BOOST_URL_POST( has_authority() == true && has_userinfo() == true );
 
     /** Set the password.
 
@@ -803,7 +809,8 @@ public:
     */
     url_base&
     set_encoded_password(
-        pct_string_view s);
+        pct_string_view s)
+        BOOST_URL_POST( has_password() == true );
 
     /** Remove the password
 
@@ -855,7 +862,8 @@ public:
             @ref set_user.
     */
     url_base&
-    remove_password() noexcept;
+    remove_password() noexcept
+        BOOST_URL_POST( has_password() == false && encoded_password().empty() == true );
 
     //--------------------------------------------
     //
@@ -940,7 +948,8 @@ public:
     */
     url_base&
     set_host(
-        core::string_view s);
+        core::string_view s)
+        BOOST_URL_POST( has_authority() == true );
 
     /** Set the host
 
@@ -1025,7 +1034,8 @@ public:
             @ref set_host_name.
     */
     url_base&
-    set_encoded_host(pct_string_view s);
+    set_encoded_host(pct_string_view s)
+        BOOST_URL_POST( has_authority() == true );
 
     /** Set the host to an address
 
@@ -1124,7 +1134,8 @@ public:
             @ref set_host_name.
     */
     url_base&
-    set_host_address(core::string_view s);
+    set_host_address(core::string_view s)
+        BOOST_URL_POST( has_authority() == true );
 
     /** Set the host to an address
 
@@ -1229,7 +1240,8 @@ public:
     */
     url_base&
     set_encoded_host_address(
-        pct_string_view s);
+        pct_string_view s)
+        BOOST_URL_POST( has_authority() == true );
 
     /** Set the host to an address
 
@@ -1286,7 +1298,8 @@ public:
     */
     url_base&
     set_host_ipv4(
-        ipv4_address const& addr);
+        ipv4_address const& addr)
+        BOOST_URL_POST( has_authority() == true && host_ipv4_address() == addr && host_type() == host_type::ipv4 );
 
     /** Set the host to an address
 
@@ -1352,7 +1365,8 @@ public:
     */
     url_base&
     set_host_ipv6(
-        ipv6_address const& addr);
+        ipv6_address const& addr)
+        BOOST_URL_POST( has_authority() == true && host_ipv6_address() == addr && host_type() == host_type::ipv6 );
 
     /** Set the zone ID for an IPv6 address.
 
@@ -1694,7 +1708,8 @@ public:
             @ref set_port.
     */
     url_base&
-    remove_port() noexcept;
+    remove_port() noexcept
+        BOOST_URL_POST( has_port() == false && port_number() == 0 && port() == "" );
 
     //--------------------------------------------
     //
@@ -2355,7 +2370,8 @@ public:
     url_base&
     set_params(
         std::initializer_list<param_view> ps,
-        encoding_opts opts = {}) noexcept;
+        encoding_opts opts = {}) noexcept
+        BOOST_URL_POST( has_query() == true );
 
     /** Set the query params
 
@@ -2417,7 +2433,8 @@ public:
             @ref set_query.
     */
     url_base&
-    set_encoded_params( std::initializer_list< param_pct_view > ps ) noexcept;
+    set_encoded_params( std::initializer_list< param_pct_view > ps ) noexcept
+        BOOST_URL_POST( has_query() == true );
 
     /** Remove the query
 
@@ -2461,7 +2478,8 @@ public:
             @ref set_query.
     */
     url_base&
-    remove_query() noexcept;
+    remove_query() noexcept
+        BOOST_URL_POST( has_query() == false && params().empty() );
 
     //--------------------------------------------
     //
@@ -2508,7 +2526,8 @@ public:
             @ref set_fragment.
     */
     url_base&
-    remove_fragment() noexcept;
+    remove_fragment() noexcept
+        BOOST_URL_POST( has_fragment() == false && encoded_fragment() == "" );
 
     /** Set the fragment.
 
@@ -2642,7 +2661,8 @@ public:
         Throws nothing.
     */
     url_base&
-    remove_origin();
+    remove_origin()
+        BOOST_URL_POST( scheme_id() == scheme::none && has_authority() == false );
 
     //--------------------------------------------
     //

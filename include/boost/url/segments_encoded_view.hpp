@@ -291,7 +291,8 @@ public:
         @return A view of the segments.
     */
     operator
-    segments_view() const noexcept;
+    segments_view() const noexcept
+        BOOST_URL_POST( r : r.buffer().data() == buffer().data() );
 
     //--------------------------------------------
 

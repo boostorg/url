@@ -112,7 +112,7 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    BOOST_ASSERT(! at_end_);
+    BOOST_URL_CONTRACT_ASSERT(! at_end_);
     // When interacting with the query as
     // an intact string, we do not treat
     // the plus sign as an encoded space.
@@ -207,7 +207,7 @@ copy(
     char*& dest,
     char const* end) noexcept
 {
-    BOOST_ASSERT(! at_end_);
+    BOOST_URL_CONTRACT_ASSERT(! at_end_);
     encoding_opts opt;
     opt.space_as_plus = space_as_plus_;
     dest += encode(

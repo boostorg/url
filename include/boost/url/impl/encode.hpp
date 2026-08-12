@@ -115,7 +115,7 @@ encode(
         grammar::is_charset<CS>::value);
 
     // '%' must be reserved
-    BOOST_ASSERT(!allowed('%'));
+    BOOST_URL_CONTRACT_ASSERT(!allowed('%'));
 
     char const* const hex =
         detail::hexdigs[opt.lower_case];
@@ -203,7 +203,7 @@ encode_unsafe(
         grammar::is_charset<CS>::value);
 
     // '%' must be reserved
-    BOOST_ASSERT(!allowed('%'));
+    BOOST_URL_CONTRACT_ASSERT(!allowed('%'));
 
     auto it = s.data();
     auto const last = it + s.size();
@@ -218,9 +218,9 @@ encode_unsafe(
     {
         ignore_unused(end);
         *dest++ = '%';
-        BOOST_ASSERT(dest != end);
+        BOOST_URL_CONTRACT_ASSERT(dest != end);
         *dest++ = hex[c>>4];
-        BOOST_ASSERT(dest != end);
+        BOOST_URL_CONTRACT_ASSERT(dest != end);
         *dest++ = hex[c&0xf];
     };
 
@@ -229,7 +229,7 @@ encode_unsafe(
     {
         while(it != last)
         {
-            BOOST_ASSERT(dest != end);
+            BOOST_URL_CONTRACT_ASSERT(dest != end);
             char const c = *it;
             if(allowed(c))
             {
@@ -246,7 +246,7 @@ encode_unsafe(
     {
         while(it != last)
         {
-            BOOST_ASSERT(dest != end);
+            BOOST_URL_CONTRACT_ASSERT(dest != end);
             char const c = *it;
             if (c == ' ')
             {

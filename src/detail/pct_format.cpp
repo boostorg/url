@@ -51,12 +51,12 @@ pct_vmeasure(
 
         // enter replacement id
         ++it1;
-        BOOST_ASSERT(it1 != end);
+        BOOST_URL_CONTRACT_ASSERT(it1 != end);
 
         // handle escaped replacement (second '{')
         // there's no "{{" in URL templates because
         // '{'s are not allowed in URLs
-        BOOST_ASSERT(*it1 != '{');
+        BOOST_URL_CONTRACT_ASSERT(*it1 != '{');
         /*
         if( *it1 == '{' )
         {
@@ -104,7 +104,7 @@ pct_vmeasure(
 
 
         it1 = pctx.begin();
-        BOOST_ASSERT(*it1 == '}');
+        BOOST_URL_CONTRACT_ASSERT(*it1 == '}');
         it0 = it1 + 1;
     }
 
@@ -149,12 +149,12 @@ pct_vformat(
 
         // enter replacement id
         ++it1;
-        BOOST_ASSERT(it1 != end);
+        BOOST_URL_CONTRACT_ASSERT(it1 != end);
 
         // handle escaped replacement (second '{')
         // there's no "{{" in URL templates because
         // '{'s are not allowed in URLs
-        BOOST_ASSERT(*it1 != '{');
+        BOOST_URL_CONTRACT_ASSERT(*it1 != '{');
         /*
         if( *it1 == '{' )
         {
@@ -202,7 +202,7 @@ pct_vformat(
         }
 
         it1 = pctx.begin();
-        BOOST_ASSERT(*it1 == '}');
+        BOOST_URL_CONTRACT_ASSERT(*it1 == '}');
         it0 = it1 + 1;
     }
 
