@@ -208,15 +208,28 @@
 
 // Limit tests
 #ifndef BOOST_URL_MAX_SIZE
-// leave room for a null terminator and
-// fit within url_impl's 32-bit offsets
+/** The largest URL the library can hold.
+
+    Define this before including the library to lower or raise the cap.
+    It leaves room for a null terminator and fits within `url_impl`'s
+    32-bit offsets.
+*/
 #define BOOST_URL_MAX_SIZE ((std::size_t)UINT32_MAX - 1)
 #endif
 
 // libstdcxx copy-on-write strings
+#ifdef __MRDOCS__
+/** Define this to make the library tolerate libstdc++ copy-on-write strings.
+
+    It is detected automatically for older libstdc++ ABIs; define it
+    yourself to force the behavior on.
+*/
+#define BOOST_URL_COW_STRINGS
+#else
 #ifndef BOOST_URL_COW_STRINGS
 #if defined(BOOST_LIBSTDCXX_VERSION) && (BOOST_LIBSTDCXX_VERSION < 60000 || (defined(_GLIBCXX_USE_CXX11_ABI) && _GLIBCXX_USE_CXX11_ABI == 0))
 #define BOOST_URL_COW_STRINGS
+#endif
 #endif
 #endif
 

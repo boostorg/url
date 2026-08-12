@@ -14,6 +14,8 @@ exclude:
 # Filters
 include-symbols:
   - 'boost::urls::**'
+include-macros:
+  - 'BOOST_URL_*'
 see-below:
   - 'boost::urls::format_arg'
   - 'boost::urls::named_arg'
