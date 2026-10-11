@@ -361,10 +361,10 @@ encoded_host_address() const noexcept
     case urls::host_type::ipv6:
     case urls::host_type::ipvfuture:
     {
+        // decoded size matches iff there's no zone_id
         BOOST_ASSERT(
-            impl().decoded_[id_host] ==
-                s.size() ||
-            !this->encoded_zone_id().empty());
+            (impl().decoded_[id_host] == s.size()) ==
+            this->encoded_zone_id().empty());
         BOOST_ASSERT(s.size() >= 2);
         BOOST_ASSERT(s.front() == '[');
         BOOST_ASSERT(s.back() == ']');

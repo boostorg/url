@@ -262,9 +262,11 @@ struct url_test
 
         {
             // issue #919
-            core::string_view s = "http://[fe80::1%25eth0]/";
+            core::string_view s = "http://[fe80::1%25eth0%25%5E]/";
             url u0 = parse_uri(s).value();
             BOOST_TEST_EQ(u0.host_type(), host_type::ipv6);
+            BOOST_TEST_EQ(u0.host_address().size(), 14);
+            BOOST_TEST_EQ(u0.host_address(), "fe80::1%eth0%^");
 
             // Round-trip ipv6_address
             ipv6_address a = u0.host_ipv6_address();
