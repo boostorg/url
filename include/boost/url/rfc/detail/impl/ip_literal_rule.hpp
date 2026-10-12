@@ -71,6 +71,7 @@ parse(
             if(! rv2)
                 return rv2.error();
             t.ipv6 = rv2->ipv6;
+            t.zone_id = rv2->zone_id;
             t.is_ipv6 = true;
             return t;
         }

@@ -62,8 +62,17 @@ parse(
                 b.size());
             t.host_type =
                 urls::host_type::ipv6;
+            // "[" IPv6address [ "%25" ZoneID ] "]"
+            // decodes to
+            // "[" IPv6address [ "%" zone_id ] "]"
+            auto dn = static_cast<
+                std::size_t>(it - it0);
+            if(! v.zone_id.empty())
+                dn = dn
+                    - (3 + v.zone_id.size())
+                    + (1 + v.zone_id.decoded_size());
             t.match = make_pct_string_view_unsafe(
-                it0, it - it0, it - it0);
+                it0, it - it0, dn);
             return t;
         }
 

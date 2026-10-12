@@ -672,6 +672,72 @@ public:
             check("ftp://a.com/files/", "");
             BOOST_TEST_NOT(parse_uri("http://[fe80::1%25]/").has_value());
         }
+        {
+            // issue #1004
+            // decoded host size with zone_id
+            auto check = [](
+                core::string_view u0,
+                core::string_view eh,
+                core::string_view h)
+            {
+                auto ru = parse_uri(u0);
+                BOOST_TEST(ru.has_value());
+                auto const& u = *ru;
+                BOOST_TEST_EQ(u.host_type(), host_type::ipv6);
+                auto eha = eh.substr(1, eh.size() - 2);
+                auto ha = h.substr(1, h.size() - 2);
+
+                // url_view
+                BOOST_TEST_EQ(u.encoded_host(), eh);
+                BOOST_TEST_EQ(u.encoded_host().decoded_size(), h.size());
+                BOOST_TEST_EQ(u.host(), h);
+                BOOST_TEST_EQ(u.encoded_host_address(), eha);
+                BOOST_TEST_EQ(u.encoded_host_address().decoded_size(), ha.size());
+                BOOST_TEST_EQ(u.host_address(), ha);
+                BOOST_TEST_EQ(u.encoded_authority(), eh);
+                BOOST_TEST_EQ(u.encoded_authority().decoded_size(), h.size());
+                BOOST_TEST_EQ(u.authority().buffer(), eh);
+
+                // authority_view
+                auto a = u.authority();
+                BOOST_TEST_EQ(a.encoded_host(), eh);
+                BOOST_TEST_EQ(a.encoded_host().decoded_size(), h.size());
+                BOOST_TEST_EQ(a.host(), h);
+                BOOST_TEST_EQ(a.encoded_host_address(), eha);
+                BOOST_TEST_EQ(a.encoded_host_address().decoded_size(), ha.size());
+                BOOST_TEST_EQ(a.host_address(), ha);
+            };
+            // no zone_id: decoded size is the encoded size
+            check("http://[fe80::1]/", "[fe80::1]", "[fe80::1]");
+            // "%25" decodes to "%"
+            check("http://[fe80::1%25eth0]/", "[fe80::1%25eth0]", "[fe80::1%eth0]");
+            // pct-encoded octets in the zone_id
+            check("http://[fe80::1%25eth0%5E]/", "[fe80::1%25eth0%5E]", "[fe80::1%eth0^]");
+            check("http://[fe80::1%25%25]/", "[fe80::1%25%25]", "[fe80::1%%]");
+            check("http://[fe80::1%25%41%42]/", "[fe80::1%25%41%42]", "[fe80::1%AB]");
+        }
+        {
+            // issue #1004
+            // decoded authority size with userinfo and port
+            auto check = [](
+                core::string_view u0,
+                core::string_view a)
+            {
+                url_view u(u0);
+                BOOST_TEST_EQ(u.encoded_authority().decoded_size(), a.size());
+                BOOST_TEST_EQ(u.encoded_authority().decode(), a);
+                BOOST_TEST_EQ(u.authority().buffer(), u.encoded_authority());
+            };
+            check("http://host/", "host");
+            check("http://host:8080/", "host:8080");
+            check("http://user@host/", "user@host");
+            check("http://user:@host/", "user:@host");
+            check("http://user:pass@host/", "user:pass@host");
+            check("http://user:pass@host:8080/", "user:pass@host:8080");
+            check("http://us%65r:p%61ss@h%6Fst:8080/", "user:pass@host:8080");
+            check("http://u:p@[fe80::1%25eth0]:8080/", "u:p@[fe80::1%eth0]:8080");
+            check("http://[fe80::1%25eth0%5E]:8080/", "[fe80::1%eth0^]:8080");
+        }
     }
 
     void

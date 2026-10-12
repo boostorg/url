@@ -13,6 +13,7 @@
 
 #include <boost/url/detail/config.hpp>
 #include <boost/url/ipv6_address.hpp>
+#include <boost/url/pct_string_view.hpp>
 #include <boost/url/error_types.hpp>
 #include <boost/core/detail/string_view.hpp>
 
@@ -41,6 +42,7 @@ struct ip_literal_rule_t
         bool is_ipv6 = false;
         ipv6_address ipv6;
         core::string_view ipvfuture;
+        pct_string_view zone_id;
     };
 
     BOOST_URL_CXX20_CONSTEXPR

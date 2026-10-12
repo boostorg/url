@@ -203,9 +203,6 @@ encoded_host_address() const noexcept
     case urls::host_type::ipv6:
     case urls::host_type::ipvfuture:
     {
-        BOOST_ASSERT(
-            u_.decoded_[id_host] ==
-                s.size());
         BOOST_ASSERT(s.size() >= 2);
         BOOST_ASSERT(s.front() == '[');
         BOOST_ASSERT(s.back() == ']');

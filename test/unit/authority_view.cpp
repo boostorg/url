@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -267,6 +268,32 @@ public:
             BOOST_TEST(a.host() ==
                 "[v1.x]");
             BOOST_TEST(a.host_ipvfuture() == "v1.x");
+        }
+        {
+            // issue #1004
+            // decoded host size with zone_id
+            auto check = [](
+                core::string_view s,
+                core::string_view eh,
+                core::string_view h)
+            {
+                auto ra = parse_authority(s);
+                BOOST_TEST(ra.has_value());
+                auto const& a = *ra;
+                BOOST_TEST_EQ(a.host_type(), host_type::ipv6);
+                auto eha = eh.substr(1, eh.size() - 2);
+                auto ha = h.substr(1, h.size() - 2);
+                BOOST_TEST_EQ(a.encoded_host(), eh);
+                BOOST_TEST_EQ(a.encoded_host().decoded_size(), h.size());
+                BOOST_TEST_EQ(a.host(), h);
+                BOOST_TEST_EQ(a.encoded_host_address(), eha);
+                BOOST_TEST_EQ(a.encoded_host_address().decoded_size(), ha.size());
+                BOOST_TEST_EQ(a.host_address(), ha);
+            };
+            check("[fe80::1]:8080", "[fe80::1]", "[fe80::1]");
+            check("[fe80::1%25eth0]:8080", "[fe80::1%25eth0]", "[fe80::1%eth0]");
+            check("[fe80::1%25eth0%5E]:8080", "[fe80::1%25eth0%5E]", "[fe80::1%eth0^]");
+            check("[fe80::1%25%25]", "[fe80::1%25%25]", "[fe80::1%%]");
         }
     }
 
