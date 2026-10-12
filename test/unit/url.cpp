@@ -305,6 +305,67 @@ struct url_test
             url u1b(s);
             BOOST_TEST_EQ(u0, u1b);
         }
+
+        {
+            // issue #1004
+            // round-trip a pct-encoded zone_id
+            auto check = [](
+                core::string_view s,
+                core::string_view eh,
+                core::string_view h)
+            {
+                url u0 = parse_uri(s).value();
+                BOOST_TEST_EQ(u0.host_type(), host_type::ipv6);
+                BOOST_TEST_EQ(u0.encoded_host(), eh);
+                BOOST_TEST_EQ(u0.host(), h);
+
+                // Round-trip zone_id
+                std::string z = u0.zone_id();
+                u0.set_zone_id(z);
+                BOOST_TEST_CSTR_EQ(u0.buffer(), s);
+                BOOST_TEST_EQ(u0.host(), h);
+
+                // Round-trip encoded_zone_id
+                pct_string_view ez = u0.encoded_zone_id();
+                u0.set_encoded_zone_id(ez);
+                BOOST_TEST_CSTR_EQ(u0.buffer(), s);
+                BOOST_TEST_EQ(u0.host(), h);
+
+                // Round-trip host
+                std::string hs = u0.host();
+                u0.set_host(hs);
+                BOOST_TEST_CSTR_EQ(u0.buffer(), s);
+                BOOST_TEST_EQ(u0.host(), h);
+
+                // Round-trip encoded host
+                pct_string_view ehs = u0.encoded_host();
+                u0.set_encoded_host(ehs);
+                BOOST_TEST_CSTR_EQ(u0.buffer(), s);
+                BOOST_TEST_EQ(u0.host(), h);
+
+                // Round-trip host_address
+                std::string ha = u0.host_address();
+                BOOST_TEST_EQ(ha.size(), h.size() - 2);
+                BOOST_TEST_EQ(ha, h.substr(1, h.size() - 2));
+                u0.set_host_address(ha);
+                BOOST_TEST_CSTR_EQ(u0.buffer(), s);
+                BOOST_TEST_EQ(u0.host(), h);
+
+                // Round-trip encoded_host_address
+                pct_string_view eha = u0.encoded_host_address();
+                u0.set_encoded_host_address(eha);
+                BOOST_TEST_CSTR_EQ(u0.buffer(), s);
+                BOOST_TEST_EQ(u0.host(), h);
+
+                // Copy constructor
+                url u1(s);
+                BOOST_TEST_EQ(u0, u1);
+                BOOST_TEST_EQ(u1.host(), h);
+            };
+            check("http://[fe80::1%25eth0%5E]/", "[fe80::1%25eth0%5E]", "[fe80::1%eth0^]");
+            check("http://[fe80::1%25eth0%25]/", "[fe80::1%25eth0%25]", "[fe80::1%eth0%]");
+            check("http://[fe80::1%25eth0%25%5E]/", "[fe80::1%25eth0%25%5E]", "[fe80::1%eth0%^]");
+        }
     }
 
     //--------------------------------------------

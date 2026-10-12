@@ -920,6 +920,25 @@ struct format_test
                 "https://example.com:80/path/to/file.txt");
         }
 
+
+        {
+            // issue #1004
+            // decoded sizes of the authority parts
+            url u1 = format("http://[fe80::1]/");
+            BOOST_TEST_EQ(u1.encoded_host().decoded_size(), 9);
+            BOOST_TEST_EQ(u1.host(), "[fe80::1]");
+            BOOST_TEST_EQ(u1.host_address(), "fe80::1");
+            url u2 = format("http://user:pass@host:8080/");
+            BOOST_TEST_EQ(u2.encoded_user().decoded_size(), 4);
+            BOOST_TEST_EQ(u2.encoded_password().decoded_size(), 4);
+            BOOST_TEST_EQ(u2.password(), "pass");
+            BOOST_TEST_EQ(u2.encoded_host().decoded_size(), 4);
+            BOOST_TEST_EQ(u2.encoded_authority().decoded_size(), 19);
+            BOOST_TEST_EQ(u2.encoded_authority().decode(), "user:pass@host:8080");
+            url u3 = format("http://user@host/");
+            BOOST_TEST_EQ(u3.encoded_authority().decoded_size(), 9);
+            BOOST_TEST_EQ(u3.encoded_authority().decode(), "user@host");
+        }
     }
 
     void

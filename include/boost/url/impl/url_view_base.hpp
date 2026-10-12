@@ -191,14 +191,16 @@ encoded_authority() const noexcept
         BOOST_ASSERT(has_authority());
         s.remove_prefix(2);
     }
+    // [ user [ ":" pass ] "@" ] host [ ":" port ]
     return make_pct_string_view_unsafe(
         s.data(),
         s.size(),
         impl().decoded_[id_user] +
+            has_password() +
             impl().decoded_[id_pass] +
+            has_userinfo() +
             impl().decoded_[id_host] +
-            impl().decoded_[id_port] +
-            has_password());
+            impl().len(id_port));
 }
 
 //------------------------------------------------
@@ -361,10 +363,6 @@ encoded_host_address() const noexcept
     case urls::host_type::ipv6:
     case urls::host_type::ipvfuture:
     {
-        BOOST_ASSERT(
-            impl().decoded_[id_host] ==
-                s.size() ||
-            !this->encoded_zone_id().empty());
         BOOST_ASSERT(s.size() >= 2);
         BOOST_ASSERT(s.front() == '[');
         BOOST_ASSERT(s.back() == ']');

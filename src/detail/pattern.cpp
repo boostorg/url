@@ -180,7 +180,7 @@ apply(
                 u.impl_.decoded_[parts::id_pass] =
                     detail::to_size_type(
                         pct_string_view({destp, dest1})
-                            ->decoded_size() + 1);
+                            ->decoded_size());
             }
         }
         auto dest = u.set_host_impl(
@@ -196,7 +196,7 @@ apply(
             *dest1++ = ']';
             u.impl_.decoded_[parts::id_host] =
                 detail::to_size_type(
-                    pct_string_view(dest - 1, dest1 - dest)
+                    pct_string_view(dest - 1, dest1 - dest + 1)
                         ->decoded_size());
         }
         else
@@ -224,10 +224,6 @@ apply(
             fctx.advance_to(dest);
             char const* dest1 = pct_vformat(
                 grammar::digit_chars, pctx, fctx);
-            u.impl_.decoded_[parts::id_port] =
-                detail::to_size_type(
-                    pct_string_view(dest, dest1 - dest)
-                        ->decoded_size() + 1);
             core::string_view up = {dest - 1, dest1};
             auto p = grammar::parse(up, detail::port_part_rule).value();
             if (p.has_port)

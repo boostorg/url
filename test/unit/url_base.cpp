@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -196,6 +197,23 @@ struct url_base_test
         BOOST_TEST_THROWS(
             url().set_encoded_authority("%2"),
             system::system_error);
+
+        {
+            // issue #1004
+            // remove_authority clears decoded sizes
+            url u("http://us%65r:p%61ss@[fe80::1%25eth0]:8080/path");
+            BOOST_TEST_EQ(u.encoded_authority().decode(),
+                "user:pass@[fe80::1%eth0]:8080");
+            BOOST_TEST_EQ(u.encoded_authority().decoded_size(), 29);
+            u.remove_authority();
+            BOOST_TEST_EQ(u.buffer(), "http:/path");
+            BOOST_TEST_EQ(u.encoded_authority().decoded_size(), 0);
+            BOOST_TEST_EQ(u.encoded_authority().decode(), "");
+            BOOST_TEST_EQ(u.host(), "");
+            BOOST_TEST_EQ(u.host_address(), "");
+            BOOST_TEST_EQ(u.user(), "");
+            BOOST_TEST_EQ(u.password(), "");
+        }
 
         remove("", "");
         remove("/", "/");

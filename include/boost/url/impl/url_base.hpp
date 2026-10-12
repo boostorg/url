@@ -346,6 +346,10 @@ remove_authority()
         resize_impl(
             id_user, id_path, 0, op);
     }
+    impl_.decoded_[id_user] = 0;
+    impl_.decoded_[id_pass] = 0;
+    impl_.decoded_[id_host] = 0;
+    impl_.decoded_[id_port] = 0;
     impl_.host_type_ =
         urls::host_type::none;
     return *this;
