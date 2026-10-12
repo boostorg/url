@@ -28,6 +28,8 @@ project
     <toolset>clang-13:<cxxflags>"-Wno-unused-but-set-variable"
     <toolset>clang-14:<cxxflags>"-Wno-unused-but-set-variable"
     <toolset>clang-15:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>clang:<cxxflags>"-Wno-unused-template"
+    <toolset>msvc:<cxxflags>"/wd4848"
 
     # Different typeinfos confuse ubsan
     <undefined-sanitizer>norecover:<link>static

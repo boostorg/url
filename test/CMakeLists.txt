@@ -30,8 +30,16 @@ if (BOOST_URL_WARNINGS_AS_ERRORS)
         else()
             set(BOOST_URL_TEST_FLAGS "-Wall -Werror")
         endif()
+        # Clang 23 reports unused function templates in dependency headers
+        # (boost/intrusive/detail/uncast.hpp) under -Wall.
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 23)
+            set(BOOST_URL_TEST_FLAGS "${BOOST_URL_TEST_FLAGS} -Wno-unused-template")
+        endif()
     elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" OR CMAKE_CXX_COMPILER_FRONTEND_VARIANT MATCHES "MSVC")
-        set(BOOST_URL_TEST_FLAGS "/W4 /WX")
+        # C4848: [[msvc::no_unique_address]] before C++20 is a vendor
+        # extension. Emitted by BOOST_ATTRIBUTE_NO_UNIQUE_ADDRESS in
+        # Boost.Container and Boost.Unordered headers.
+        set(BOOST_URL_TEST_FLAGS "/W4 /WX /wd4848")
     endif()
 
     # Print test configuration if running in CI
