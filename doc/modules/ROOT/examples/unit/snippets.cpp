@@ -2052,7 +2052,10 @@ decode_with_token()
     }
 
     {
-#if defined(__cpp_static_assert) && __cpp_static_assert >= 201411L
+// Clang defines __cpp_static_assert at its newest value in every language
+// mode and only warns (-Wc++17-extensions) when the message is omitted
+// before C++17, so check the language level instead of the feature macro.
+#if (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L) || __cplusplus >= 201703L
         // tag::snippet_string_token_5[]
         static_assert(
             string_token::is_token<string_token::return_string>::value);
