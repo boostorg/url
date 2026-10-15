@@ -1498,7 +1498,9 @@ struct url_test
 
         // issue #1003
         // compare() hung on relative paths whose
-        // dot segments cancel out
+        // dot segments cancel out, and disagreed
+        // with normalize() when the last segment
+        // is "." or a ".." that removes a segment
         {
             auto check = [](core::string_view e1,
                             core::string_view e2,
@@ -1522,6 +1524,33 @@ struct url_test
             check("./", "", 0);
             check("a/../", "", 0);
             check("a/./..", "", 0);
+
+            // a trailing "." or a ".." that removes
+            // a segment leaves a trailing slash
+            check("/.", "/", 0);
+            check("/a/..", "/", 0);
+            check("/a/b/..", "/a/", 0);
+            check("x/./y/..", "x/", 0);
+            check("/./", "/", 0);
+            check("/a/../", "/", 0);
+            check("a/b/..", "a/", 0);
+            check("../a/..", "../", 0);
+            check("/a/b/%2E%2E", "/a/", 0);
+            check("/a/b/%2E", "/a/b/", 0);
+            check("/a/b/..", "/a", +1);
+
+            // unmatched ".." segments are kept
+            check("..", "..", 0);
+            check("a/../..", "..", 0);
+            check("/a/../..", "/..", 0);
+            check("/../a/..", "/../", 0);
+            check("../..", "..", +1);
+            check("/..", "/", +1);
+
+            // an encoded slash is not a separator
+            check("a%2Fb", "a/b", -1);
+            check("a%2Fb", "a%2fb", 0);
+            check("/a%2Fb", "/a/b", -1);
         }
 
         // normalize() keeps a "/." or "./" prefix

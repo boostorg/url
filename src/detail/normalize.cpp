@@ -765,199 +765,665 @@ normalized_path_digest(
     while (!str.empty());
 }
 
-// compare segments as if there were a normalized
+namespace {
+
+/* The chars of a normalized path, from the end
+
+   segments_compare()
+   must see the path that url_base::normalize()
+   would produce, but they cannot allocate, so
+   that path is never materialized. This class
+   produces its path chars one at a time in
+   reverse order instead, reading the encoded
+   segments in place:
+
+   @code
+   input:       /a/./b/../c/
+   normalized:  /a/c/
+   next():      '/' 'c' '/' 'a' '/'
+   @endcode
+
+   @par Why from the end
+
+   Doing it in reverse order ensures we
+   don't have to allocate memory.
+
+   Whether a segment survives depends on the
+   segments after it. In "a/b/.." the ".."
+   removes "b", so "b" cannot be emitted, or
+   skipped, before the ".." is seen. Reading
+   from the end, the ".." always comes first,
+   and a count of pending ".." is enough to
+   decide each segment the moment it is read:
+
+   @code
+   input:   a/b/..
+   read     pending   result
+   ".."     1
+   "b"      0         removed by the ".."
+   "a"      0         emitted
+   @endcode
+
+   Reading from the front would need to keep
+   every segment read so far until it is known
+   that no later ".." removes it, which is the
+   buffer remove_dot_segments() writes to.
+   However, in this algorithm we have no buffer
+   to write to and cannot allocate memory.
+
+   Producing the chars backward still gives a
+   lexicographic comparison in O(n).
+   segments_compare() aligns both paths at
+   their first char, reads the pairs of chars
+   from the end, and keeps the last difference
+   it sees, which is the first difference from
+   the front. For that it needs the size of
+   each path before the first char is produced,
+   so it can skip the extra chars at the end
+   of the longer path.
+
+   The only extra cost is comparing O(n) chars
+   even in cases where the distinction between
+   paths would be evident by comparing the first
+   normalized chars. The only way to implement
+   this as an optimization would be to have another
+   algorithm that doesn't operate in reverse but
+   covers a few limited cases where we can do it
+   in regular order, like paths whose size is
+   limited by a constant (in which case we can
+   use a buffer) or paths without dotdot
+   segments. Another possible optimization is not
+   using `compare` as the implementation for
+   `operator==` and having a faster bool version
+   of compare segments that fails on the first
+   difference, in which case the order doesn't
+   matter.
+
+   @par How
+
+   advance() reads the segments once, from the
+   end, and decides each one as it is read. One
+   decision depends on other segments, and it
+   is made only when it is needed:
+
+   @li Whether the path ends with "/" is decided
+   by the first call to advance(). When the
+   last segment is "..", this reads ahead until
+   that ".." removes a segment or the front is
+   reached: "/a/b/.." ends with "/" after
+   reading "b", and "/x/../.." does not, after
+   reading every segment.
+
+   The size of the normalized path is not known
+   in advance. normalized_path_size() counts it
+   by reading the path once more.
+
+   @par Rules
+
+   The rules are the ones of remove_dot_segments()
+   and url_base::normalize_path():
+
+   @li "." segments are removed and ".." segments
+   remove the closest preceding segment:
+   "/a/./b/../c" becomes "/a/c".
+
+   @li ".." segments with nothing left to remove
+   are kept at the front, as errata 4547
+   requires: "/a/../../b" becomes "/../b" and
+   "a/../.." becomes "..".
+
+   @li A path whose last segment is "." or a ".."
+   that removed a segment ends with "/" (RFC 3986
+   section 5.2.4, rules B and C): "/a/.." becomes
+   "/", "/." becomes "/" and "x/./y/.." becomes
+   "x/".
+
+   @li A relative path left with nothing but one
+   empty segment is the empty path: "a/.." and
+   "." become "".
+
+   @li Segments are compared after decoding, so
+   "%2E%2E" is "..". An encoded slash ("%2F") is
+   not decoded by normalize() and is not a
+   separator, so it is produced as '/' with a
+   flag that lets callers tell it apart.
+*/
+class normalized_path_reverse
+{
+    /* The types of segment advance() produces
+
+       advance() goes through these types in
+       the order they are declared, which is the
+       order these types of segments appear when
+       the normalized path is read from its end
+       to its front:
+
+       @code
+       path:        ../a/b/.
+       normalized:  ../a/b/
+       advance():   ""          trailing_empty_segment
+                    "b", "a"    surviving_segment
+                    ".."        dotdot_prefix
+       @endcode
+    */
+    enum class segment_type
+    {
+        // The empty last segment of a path that
+        // ends with "/". For "/a/b/..", which
+        // normalizes to "/a/", this produces "".
+        trailing_empty_segment,
+
+        // The segments that survive, last first.
+        // For "/a/./b/../c", which normalizes to
+        // "/a/c", this produces "c", then "a".
+        surviving_segment,
+
+        // The ".." left over at the front. For
+        // "a/../../..", which normalizes to
+        // "../..", this produces "..", then "..".
+        dotdot_prefix,
+
+        // Nothing is left, so advance() returns
+        // false.
+        end
+    };
+
+    // The type of segment advance() produces
+    // next. It starts at trailing_empty_segment,
+    // the type that comes first when reading
+    // from the end, and only moves forward. For
+    // "../a/b/." it stays at surviving_segment
+    // while producing "b" and "a", then moves
+    // to dotdot_prefix to produce "..".
+    segment_type cur_segment_type_ =
+        segment_type::trailing_empty_segment;
+
+    // The segments, and the next one to read
+    // from the end
+    segments_encoded_view::iterator begin_;
+    segments_encoded_view::iterator it_;
+
+    // What is left of the segment being produced
+    core::string_view seg_;
+
+    // Number of ".." read by advance() that have
+    // not removed a segment yet. While it is not
+    // zero, each segment read is removed instead
+    // of produced: in "a/b/../..", both "b" and
+    // "a" are removed.
+    std::size_t pending_dotdots_ = 0;
+
+    // The path starts with "/". next() produces
+    // that "/" as its very last char, after all
+    // segments: "/a" produces 'a', then '/'.
+    bool absolute_ = false;
+
+    // Number of segments advance() returned so
+    // far. next() puts no '/' after the first
+    // one: "a/b" produces 'b', then '/' and 'a'.
+    std::size_t n_produced_ = 0;
+
+    // Nothing is left to produce, so next()
+    // returns false.
+    bool done_ = false;
+
+    /* A char of a segment after decoding
+
+       The decoded value, and whether it was an
+       encoded slash ("%2F"). An encoded slash
+       decodes to '/' but is not a separator, so
+       callers need to tell it apart.
+
+       @code
+       "b"    ->  { 'b', false }
+       "%41"  ->  { 'A', false }
+       "%2F"  ->  { '/', true }
+       @endcode
+    */
+    struct decoded_char
+    {
+        char value;
+        bool encoded_slash;
+    };
+
+    /* Remove the decoded last char of a segment
+
+       Returns the decoded last char and removes
+       it from the encoded segment.
+
+       @code
+       "ab"     ->  { 'b', false }, leaves "a"
+       "a%41"   ->  { 'A', false }, leaves "a"
+       "a%2F"   ->  { '/', true },  leaves "a"
+       @endcode
+    */
+    static
+    decoded_char
+    pop_last_decoded_char(
+        core::string_view& s) noexcept
+    {
+        BOOST_ASSERT(!s.empty());
+        if (s.size() >= 3 &&
+            s[s.size() - 3] == '%')
+        {
+            char c = 0;
+            detail::decode_unsafe(
+                &c, &c + 1, s.substr(s.size() - 3));
+            s.remove_suffix(3);
+            return { c, c == '/' };
+        }
+        char c = s.back();
+        s.remove_suffix(1);
+        return { c, false };
+    }
+
+    /* Whether a segment is "." after decoding
+
+       @code
+       is_encoded_dot(".")    ->  true
+       is_encoded_dot("%2E")  ->  true
+       is_encoded_dot("..")   ->  false
+       @endcode
+    */
+    static
+    bool
+    is_encoded_dot(pct_string_view s) noexcept
+    {
+        return *s == ".";
+    }
+
+    /* Whether a segment is ".." after decoding
+
+       @code
+       is_encoded_dotdot("..")      ->  true
+       is_encoded_dotdot(".%2E")    ->  true
+       is_encoded_dotdot("...")     ->  false
+       @endcode
+    */
+    static
+    bool
+    is_encoded_dotdot(pct_string_view s) noexcept
+    {
+        return *s == "..";
+    }
+
+    /* Whether the normalized path ends with "/"
+
+       It does when the last segment is "." or a
+       ".." that removes a segment. For a "..",
+       this reads ahead, without moving it_, until
+       that ".." removes a segment or the front is
+       reached:
+
+       @code
+       path        normalized   result
+       /a/b/.      /a/b/        true:  the last segment is "."
+       /a/b/..     /a/          true:  reads "b", which the
+                                       ".." removes
+       /x/../..    /..          false: reads every segment, and
+                                       the last ".." removes
+                                       nothing
+       /a/b        /a/b         false: the last segment is
+                                       neither "." nor ".."
+       @endcode
+    */
+    bool
+    ends_with_slash() const noexcept
+    {
+        if (it_ == begin_)
+        {
+            return false;
+        }
+        auto it = it_;
+        --it;
+        if (is_encoded_dot(*it))
+        {
+            return true;
+        }
+        if (!is_encoded_dotdot(*it))
+        {
+            return false;
+        }
+        std::size_t pending = 1;
+        while (it != begin_)
+        {
+            --it;
+            pct_string_view seg = *it;
+            if (is_encoded_dotdot(seg))
+            {
+                ++pending;
+            }
+            else if (
+                !is_encoded_dot(seg) &&
+                --pending == 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Move to the next segment of the output
+
+       Sets seg_ to the next segment of the
+       normalized path, from the last to the
+       first, and returns false when there are
+       no more. The segments come in the order
+       of the types declared in segment_type:
+
+       @li trailing_empty_segment: the empty
+       segment of a trailing "/"
+       @li surviving_segment: the segments that
+       survive, last first
+       @li dotdot_prefix: the ".." left over at
+       the front
+
+       @code
+       path:       ../a/b/..
+       normalized: ../a/
+       advance():  "", "a", "..", false
+       @endcode
+    */
+    bool
+    advance() noexcept
+    {
+        // next() only asks for another segment
+        // when the previous one was fully
+        // produced and the output is not over
+        BOOST_ASSERT(seg_.empty());
+        BOOST_ASSERT(!done_);
+        if (cur_segment_type_ == segment_type::trailing_empty_segment)
+        {
+            // no segment was read yet
+            BOOST_ASSERT(pending_dotdots_ == 0);
+            BOOST_ASSERT(n_produced_ == 0);
+            cur_segment_type_ = segment_type::surviving_segment;
+            if (ends_with_slash())
+            {
+                ++n_produced_;
+                seg_ = {};
+                return true;
+            }
+        }
+        if (cur_segment_type_ == segment_type::surviving_segment)
+        {
+            while (it_ != begin_)
+            {
+                --it_;
+                pct_string_view s = *it_;
+                if (is_encoded_dotdot(s))
+                {
+                    ++pending_dotdots_;
+                }
+                else if (is_encoded_dot(s))
+                {
+                    continue;
+                }
+                else if (pending_dotdots_)
+                {
+                    --pending_dotdots_;
+                }
+                else
+                {
+                    ++n_produced_;
+                    seg_ = s;
+                    return true;
+                }
+            }
+            cur_segment_type_ = segment_type::dotdot_prefix;
+        }
+        if (cur_segment_type_ == segment_type::dotdot_prefix)
+        {
+            // every regular segment was read
+            BOOST_ASSERT(it_ == begin_);
+            if (pending_dotdots_)
+            {
+                --pending_dotdots_;
+                ++n_produced_;
+                seg_ = "..";
+                return true;
+            }
+            cur_segment_type_ = segment_type::end;
+        }
+        // every path to here went through the
+        // transition to end
+        BOOST_ASSERT(
+            cur_segment_type_ == segment_type::end);
+        return false;
+    }
+
+public:
+    /* Prepare to read a path from its end
+
+       Nothing is read until the first call to
+       next().
+    */
+    explicit
+    normalized_path_reverse(
+        segments_encoded_view segs) noexcept
+        : begin_(segs.begin())
+        , it_(segs.end())
+        , absolute_(segs.is_absolute())
+    {
+    }
+
+    /* Produce the next char from the end
+
+       Returns false when all chars were
+       produced. The flag is set when the char
+       is an encoded slash.
+
+       @code
+       path:    x/./y/..
+       next():  '/', 'x', false     ("x/")
+       @endcode
+    */
+    bool
+    next(
+        char& c,
+        bool& encoded_slash) noexcept
+    {
+        encoded_slash = false;
+        for (;;)
+        {
+            if (!seg_.empty())
+            {
+                decoded_char const d =
+                    pop_last_decoded_char(seg_);
+                c = d.value;
+                encoded_slash = d.encoded_slash;
+                return true;
+            }
+            if (done_)
+            {
+                return false;
+            }
+            if (advance())
+            {
+                if (n_produced_ == 1)
+                {
+                    // nothing follows the last segment
+                    continue;
+                }
+                c = '/';
+                return true;
+            }
+            done_ = true;
+            if (absolute_)
+            {
+                c = '/';
+                return true;
+            }
+            return false;
+        }
+    }
+
+    /* Produce the next char from the end
+
+       Like the other overload, for callers that
+       only count or skip chars and do not need
+       to know whether it was an encoded slash.
+
+       @code
+       path:    x/./y/..
+       next():  '/', 'x', false     ("x/")
+       @endcode
+    */
+    bool
+    next(char& c) noexcept
+    {
+        bool encoded_slash = false;
+        return next(c, encoded_slash);
+    }
+
+    /* Skip the next n chars from the end
+
+       The path must have at least n chars left.
+
+       @code
+       path:     /a/b/
+       skip(2):  skips '/' and 'b'
+       next():   '/', 'a', '/', false
+       @endcode
+    */
+    void
+    skip(std::size_t n) noexcept
+    {
+        char c = 0;
+        for (; n != 0; --n)
+        {
+            bool const ok = next(c);
+            BOOST_ASSERT(ok);
+            ignore_unused(ok);
+        }
+    }
+};
+
+/* The size of a path after normalization
+
+   Counts the chars normalized_path_reverse
+   produces, reading the path once.
+
+   @code
+   "/a/b/.."  ->  3   ("/a/")
+   "a/../.."  ->  2   ("..")
+   "a/.."     ->  0   ("")
+   @endcode
+*/
+std::size_t
+normalized_path_size(
+    segments_encoded_view segs) noexcept
+{
+    normalized_path_reverse r(segs);
+    std::size_t n = 0;
+    char c = 0;
+    while (r.next(c))
+    {
+        ++n;
+    }
+    return n;
+}
+
+} // (anon)
+
+/* Compare two paths as if they were normalized
+
+   The result is the order of the paths that
+   url_base::normalize() would produce, without
+   producing them, so that the function does not
+   allocate. Paths compare equal exactly when
+   they normalize to the same path:
+
+   @code
+   compare("/a/b/..", "/a/")      ->  0   ("/a/" and "/a/")
+   compare("a/../..", "..")       ->  0   (".." and "..")
+   compare("/a/b/..", "/a")       ->  +1  ("/a/" and "/a")
+   compare("a%2Fb", "a/b")        ->  -1  ("%2F" is not "/")
+   @endcode
+
+   Both paths are read from the end with
+   normalized_path_reverse, which explains why
+   the chars come in that order. The paths are
+   aligned at their first common char: the extra chars
+   at the end of the longer path are skipped,
+   then the remaining chars are compared in
+   pairs. Each difference overwrites the
+   previous one, so the result is the last
+   difference read, which is the first one from
+   the front. If there is none, the shorter path
+   comes first:
+
+   @code
+   lhs:    /a/c/      (size 5)
+   rhs:    /b/c       (size 4)
+   skip:   '/' of lhs
+   pairs:  ('c','c') ('/','/') ('a','b') ('/','/')
+   result: -1, from ('a','b')
+   @endcode
+
+   An encoded slash and a '/' are the same char
+   with a different meaning. The encoded slash
+   sorts first, as the '%' it is written with
+   would.
+*/
 int
 segments_compare(
     segments_encoded_view seg0,
     segments_encoded_view seg1) noexcept
 {
-    // calculate path size as if it were normalized
-    auto normalized_size =
-        [](segments_encoded_view seg) -> std::size_t
-    {
-        if (seg.empty())
-            return seg.is_absolute();
+    normalized_path_reverse r0(seg0);
+    normalized_path_reverse r1(seg1);
+    std::size_t const n0 = normalized_path_size(seg0);
+    std::size_t const n1 = normalized_path_size(seg1);
+    std::size_t const n = (std::min)(n0, n1);
 
-        std::size_t n = 0;
-        std::size_t skip = 0;
-        auto begin = seg.begin();
-        auto it = seg.end();
-        while (it != begin)
-        {
-            --it;
-            decode_view dseg = **it;
-            if (dseg == "..")
-                ++skip;
-            else if (dseg != ".")
-            {
-                if (skip)
-                    --skip;
-                else
-                    n += dseg.size() + 1;
-            }
-        }
-        n += skip * 3;
-        // a relative path has no leading slash,
-        // but a path whose segments all cancel
-        // out has no chars to discount at all
-        if (n != 0)
-            n -= !seg.is_absolute();
-        return n;
-    };
+    // skip the chars at the end of the longer
+    // path that have nothing to be compared
+    // with
+    normalized_path_reverse& longer =
+        n0 > n1 ? r0 : r1;
+    longer.skip((std::max)(n0, n1) - n);
 
-    // find the normalized size for the comparison
-    std::size_t n0 = normalized_size(seg0);
-    std::size_t n1 = normalized_size(seg1);
-    std::size_t n00 = n0;
-    std::size_t n10 = n1;
 
-    // consume the last char from a segment range
-    auto consume_last =
-        [](
-            std::size_t& n,
-            decode_view& dseg,
-            segments_encoded_view::iterator& begin,
-            segments_encoded_view::iterator& it,
-            decode_view::iterator& cit,
-            std::size_t& skip,
-            bool& at_slash) -> char
-    {
-        if (cit != dseg.begin())
-        {
-            // return last char from current segment
-            at_slash = false;
-            --cit;
-            --n;
-            return *cit;
-        }
-
-        if (!at_slash)
-        {
-            // current segment dseg is over and
-            // previous char was not a slash
-            // so we output one
-            at_slash = true;
-            --n;
-            return '/';
-        }
-
-        // current segment dseg is over and
-        // last char was already the slash
-        // between segments, so take the
-        // next final segment to consume
-        at_slash = false;
-        while (cit == dseg.begin())
-        {
-            // take next segment
-            if (it != begin)
-                --it;
-            else
-                break;
-            if (**it == "..")
-            {
-                // skip next if this is ".."
-                ++skip;
-            }
-            else if (**it != ".")
-            {
-                if (skip)
-                {
-                    // discount skips
-                    --skip;
-                }
-                else
-                {
-                    // or update current seg
-                    dseg = **it;
-                    cit = dseg.end();
-                    break;
-                }
-            }
-        }
-        // consume from the new current
-        // segment
-        --n;
-        if (cit != dseg.begin())
-        {
-            // in the general case, we consume
-            // one more character from the end
-            --cit;
-            return *cit;
-        }
-
-        // nothing left to consume in the
-        // current and new segment
-        if (it == begin)
-        {
-            // if this is the first
-            // segment, the segments are
-            // over and there can only
-            // be repetitions of "../" to
-            // output
-            return "/.."[n % 3];
-        }
-        // at other segments, we need
-        // a slash to transition to the
-        // next segment
-        at_slash = true;
-        return '/';
-    };
-
-    // consume final segments from seg0 that
-    // should not influence the comparison
-    auto begin0 = seg0.begin();
-    auto it0 = seg0.end();
-    decode_view dseg0;
-    if (it0 != seg0.begin())
-    {
-        --it0;
-        dseg0 = **it0;
-    }
-    decode_view::iterator cit0 = dseg0.end();
-    std::size_t skip0 = 0;
-    bool at_slash0 = true;
-    while (n0 > n1)
-    {
-        consume_last(n0, dseg0, begin0, it0, cit0, skip0, at_slash0);
-    }
-
-    // consume final segments from seg1 that
-    // should not influence the comparison
-    auto begin1 = seg1.begin();
-    auto it1 = seg1.end();
-    decode_view dseg1;
-    if (it1 != seg1.begin())
-    {
-        --it1;
-        dseg1 = **it1;
-    }
-    decode_view::iterator cit1 = dseg1.end();
-    std::size_t skip1 = 0;
-    bool at_slash1 = true;
-    while (n1 > n0)
-    {
-        consume_last(n1, dseg1, begin1, it1, cit1, skip1, at_slash1);
-    }
-
+    // compare the common prefix from the end,
+    // keeping the first difference
     int cmp = 0;
-    while (n0)
+    char c0 = 0;
+    char c1 = 0;
+    bool e0 = false;
+    bool e1 = false;
+    for (std::size_t i = 0; i < n; ++i)
     {
-        char c0 = consume_last(
-            n0, dseg0, begin0, it0, cit0, skip0, at_slash0);
-        char c1 = consume_last(
-            n1, dseg1, begin1, it1, cit1, skip1, at_slash1);
+        bool const ok0 = r0.next(c0, e0);
+        bool const ok1 = r1.next(c1, e1);
+        BOOST_ASSERT(ok0 && ok1);
+        ignore_unused(ok0, ok1);
         if (c0 < c1)
+        {
             cmp = -1;
+        }
         else if (c1 < c0)
+        {
             cmp = +1;
+        }
+        else if (e0 != e1)
+        {
+            // same char, but only one of them
+            // is an encoded slash, which is
+            // not a path separator: it sorts
+            // like the '%' it keeps
+            cmp = e0 ? -1 : +1;
+        }
     }
-
-    if (cmp != 0)
+    if (cmp != 0 ||
+        n0 == n1)
+    {
         return cmp;
-    if ( n00 == n10 )
-        return 0;
-    if ( n00 < n10 )
+    }
+    if (n0 < n1)
+    {
         return -1;
+    }
     return 1;
 }
 
