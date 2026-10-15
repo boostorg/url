@@ -46,8 +46,7 @@ ci_digest_encoded(
 BOOST_URL_DECL
 void
 normalized_path_digest(
-    core::string_view str,
-    bool remove_unmatched,
+    segments_encoded_view segs,
     fnv_1a& hasher) noexcept;
 
 BOOST_URL_DECL
@@ -90,7 +89,7 @@ digest(std::size_t salt) const noexcept
     detail::ci_digest_encoded(impl().get(id_host), h);
     h.put(impl().get(id_port));
     detail::normalized_path_digest(
-        impl().get(id_path), is_path_absolute(), h);
+        encoded_segments(), h);
     detail::digest_encoded(impl().get(id_query), h);
     detail::digest_encoded(impl().get(id_frag), h);
     return h.digest();
