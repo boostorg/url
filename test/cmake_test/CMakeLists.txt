@@ -82,6 +82,15 @@ endif()
 add_executable(main main.cpp)
 target_link_libraries(main Boost::url)
 
+# The consumer can use a different C++ standard
+# than the library, as when a distribution builds
+# the library with its compiler's default
+if (BOOST_URL_CMAKE_TEST_CXX_STANDARD)
+    set_target_properties(main PROPERTIES
+        CXX_STANDARD ${BOOST_URL_CMAKE_TEST_CXX_STANDARD}
+        CXX_STANDARD_REQUIRED ON)
+endif()
+
 if (BUILD_TESTING)
     enable_testing()
     add_test(NAME main COMMAND main)
