@@ -2579,6 +2579,7 @@ set_scheme_impl(
         impl_.set_size(
             id_path,
             impl_.len(id_path) - 2);
+        impl_.decoded_[id_path] -= 2;
         s_[size()] = '\0';
     }
 

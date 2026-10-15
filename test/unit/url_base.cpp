@@ -134,6 +134,31 @@ struct url_base_test
 
         setid(scheme::none, "a:/", "/");
 
+        {
+            // set_scheme() removes a "./" prefix
+            // the path no longer needs, and the
+            // decoded path size must not count it
+            auto check = [](
+                core::string_view s,
+                core::string_view scheme,
+                core::string_view after)
+            {
+                url u(s);
+                u.set_scheme(scheme);
+                url_view v(after);
+                BOOST_TEST_EQ(u.buffer(), after);
+                BOOST_TEST_EQ(u.path(), v.path());
+                BOOST_TEST_EQ(u.path().size(), v.path().size());
+                BOOST_TEST_EQ(
+                    u.encoded_segments().size(),
+                    v.encoded_segments().size());
+            };
+
+            check("./a:", "http", "http:a:");
+            check("./a:b", "y", "y:a:b");
+            check("./a:b/%00", "y", "y:a:b/%00");
+        }
+
         BOOST_TEST_THROWS(
             url().set_scheme(""),
             system::system_error);
