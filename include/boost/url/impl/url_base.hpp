@@ -343,6 +343,7 @@ remove_authority()
         impl_.split(id_pass, 0);
         impl_.split(id_host, 0);
         impl_.split(id_port, 0);
+        impl_.decoded_[id_path] += 2;
     }
     else
     {
