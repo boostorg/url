@@ -1510,6 +1510,13 @@ struct url_test
                 BOOST_TEST_EQ(u1.compare(u2), cmp);
                 BOOST_TEST_EQ(u2.compare(u1), -cmp);
                 BOOST_TEST_EQ(u1 == u2, cmp == 0);
+                if (cmp == 0)
+                {
+                    std::hash<url_view> h;
+                    BOOST_TEST_EQ(h(u1), h(u2));
+                    h = std::hash<url_view>(10);
+                    BOOST_TEST_EQ(h(u1), h(u2));
+                }
             };
 
             // inputs that used to hang

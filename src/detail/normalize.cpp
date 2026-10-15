@@ -245,74 +245,6 @@ ci_digest(
     }
 }
 
-/* Check if a string ends with the specified suffix (decoded comparison)
-
-   This function determines if a string ends with the specified suffix
-   when the string and suffix are compared after percent-decoding.
-
-   @param str The string to check (percent-encoded)
-   @param suffix The suffix to check for (percent-decoded)
-   @return The number of encoded chars consumed in the string
- */
-std::size_t
-path_ends_with(
-    core::string_view str,
-    core::string_view suffix) noexcept
-{
-    BOOST_ASSERT(!str.empty());
-    BOOST_ASSERT(!suffix.empty());
-    BOOST_ASSERT(!suffix.contains("%2F"));
-    BOOST_ASSERT(!suffix.contains("%2f"));
-    auto consume_last = [](
-        core::string_view::iterator& it,
-        core::string_view::iterator& end,
-        char& c)
-    {
-        BOOST_ASSERT(end > it);
-        BOOST_ASSERT(it != end);
-        if ((end - it) < 3 ||
-            *(std::prev(end, 3)) != '%')
-        {
-            c = *--end;
-            return false;
-        }
-        detail::decode_unsafe(
-            &c,
-            &c + 1,
-            core::string_view(std::prev(
-                end, 3), 3));
-        end -= 3;
-        return true;
-    };
-
-    auto it0 = str.begin();
-    auto end0 = str.end();
-    auto it1 = suffix.begin();
-    auto end1 = suffix.end();
-    char c0 = 0;
-    char c1 = 0;
-    while(
-        it0 < end0 &&
-        it1 < end1)
-    {
-        bool const is_encoded = consume_last(it0, end0, c0);
-        // The suffix never contains an encoded slash (%2F), and a decoded
-        // slash is not equivalent to an encoded slash
-        if (is_encoded && c0 == '/')
-            return 0;
-        consume_last(it1, end1, c1);
-        if (c0 != c1)
-            return 0;
-    }
-    bool const consumed_suffix = it1 == end1;
-    if (consumed_suffix)
-    {
-        std::size_t const consumed_encoded = str.end() - end0;
-        return consumed_encoded;
-    }
-    return 0;
-}
-
 std::size_t
 remove_dot_segments(
     char* dest0,
@@ -612,164 +544,12 @@ remove_dot_segments(
     return dest - dest0;
 }
 
-char
-path_pop_back( core::string_view& s )
-{
-    if (s.size() < 3 ||
-        *std::prev(s.end(), 3) != '%')
-    {
-        char c = s.back();
-        s.remove_suffix(1);
-        return c;
-    }
-    char c = 0;
-    detail::decode_unsafe(
-        &c, &c + 1, s.substr(s.size() - 3));
-    if (c != '/')
-    {
-        s.remove_suffix(3);
-        return c;
-    }
-    c = s.back();
-    s.remove_suffix(1);
-    return c;
-};
-
-void
-pop_last_segment(
-    core::string_view& str,
-    core::string_view& seg,
-    std::size_t& level,
-    bool remove_unmatched) noexcept
-{
-    seg = {};
-    std::size_t n = 0;
-    while (!str.empty())
-    {
-        // B.  if the input buffer begins with a
-        // prefix of "/./" or "/.", where "." is
-        // a complete path segment, then replace
-        // that prefix with "/" in the input
-        // buffer; otherwise,
-        n = detail::path_ends_with(str, "/./");
-        if (n)
-        {
-            seg = str.substr(str.size() - n);
-            str.remove_suffix(n);
-            continue;
-        }
-        n = detail::path_ends_with(str, "/.");
-        if (n)
-        {
-            seg = str.substr(str.size() - n, 1);
-            str.remove_suffix(n);
-            continue;
-        }
-
-        // C. if the input buffer begins with a
-        // prefix of "/../" or "/..", where ".."
-        // is a complete path segment, then
-        // replace that prefix with "/" in the
-        // input buffer and remove the last
-        // segment and its preceding "/"
-        // (if any) from the output buffer
-        // otherwise,
-        n = detail::path_ends_with(str, "/../");
-        if (n)
-        {
-            seg = str.substr(str.size() - n);
-            str.remove_suffix(n);
-            ++level;
-            continue;
-        }
-        n = detail::path_ends_with(str, "/..");
-        if (n)
-        {
-            seg = str.substr(str.size() - n);
-            str.remove_suffix(n);
-            ++level;
-            continue;
-        }
-
-        // E.  move the first path segment in the
-        // input buffer to the end of the output
-        // buffer, including the initial "/"
-        // character (if any) and any subsequent
-        // characters up to, but not including,
-        // the next "/" character or the end of
-        // the input buffer.
-        std::size_t p = str.size() > 1
-            ? str.find_last_of('/', str.size() - 2)
-            : core::string_view::npos;
-        if (p != core::string_view::npos)
-        {
-            seg = str.substr(p + 1);
-            str.remove_suffix(seg.size());
-        }
-        else
-        {
-            seg = str;
-            str = {};
-        }
-
-        if (level == 0)
-            return;
-        if (!str.empty())
-            --level;
-    }
-    // we still need to skip n_skip + 1
-    // but the string is empty
-    if (remove_unmatched && level)
-    {
-        seg = "/";
-        level = 0;
-        return;
-    }
-    else if (level)
-    {
-        if (!seg.empty())
-        {
-            seg = "/../";
-        }
-        else
-        {
-            // AFREITAS: this condition
-            // is correct, but it might
-            // unreachable.
-            seg = "/..";
-        }
-        --level;
-        return;
-    }
-    seg = {};
-}
-
-void
-normalized_path_digest(
-    core::string_view str,
-    bool remove_unmatched,
-    fnv_1a& hasher) noexcept
-{
-    core::string_view seg;
-    std::size_t level = 0;
-    do
-    {
-        pop_last_segment(
-            str, seg, level, remove_unmatched);
-        while (!seg.empty())
-        {
-            char c = path_pop_back(seg);
-            hasher.put(c);
-        }
-    }
-    while (!str.empty());
-}
-
 namespace {
 
 /* The chars of a normalized path, from the end
 
    segments_compare()
+   and normalized_path_digest()
    must see the path that url_base::normalize()
    would produce, but they cannot allocate, so
    that path is never materialized. This class
@@ -1391,6 +1171,50 @@ normalized_path_size(
 }
 
 } // (anon)
+
+/* Hash a path as if it were normalized
+
+   Hashes the chars of the path that
+   url_base::normalize() would produce, so
+   paths that segments_compare() finds equal
+   always hash equal. The chars are hashed
+   from the end of the path, in the order
+   normalized_path_reverse produces them. An
+   encoded slash is written "%2F" in
+   uppercase, as normalize() writes it, and
+   those three chars are hashed from the end
+   too, like any others:
+
+   @code
+   path       normalized   hashed
+   /.         /            '/'
+   a/../..    ..           '.' '.'
+   a%2fb      a%2Fb        'b' 'F' '2' '%' 'a'
+   @endcode
+*/
+void
+normalized_path_digest(
+    segments_encoded_view segs,
+    fnv_1a& hasher) noexcept
+{
+    normalized_path_reverse r(segs);
+    char c = 0;
+    bool encoded_slash = false;
+    while (r.next(c, encoded_slash))
+    {
+        if (!encoded_slash)
+        {
+            hasher.put(c);
+            continue;
+        }
+        // an encoded slash stays encoded in
+        // the normalized path, and its chars
+        // are hashed from the end as well
+        hasher.put('F');
+        hasher.put('2');
+        hasher.put('%');
+    }
+}
 
 /* Compare two paths as if they were normalized
 

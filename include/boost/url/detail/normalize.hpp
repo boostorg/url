@@ -63,24 +63,6 @@ digest(
     core::string_view s,
     fnv_1a& hasher) noexcept;
 
-// check if core::string_view lhs starts with core::string_view
-// rhs as if they are both percent-decoded. If
-// lhs starts with rhs, return number of chars
-// matched in the encoded core::string_view
-std::size_t
-path_starts_with(
-    core::string_view lhs,
-    core::string_view rhs) noexcept;
-
-// check if core::string_view lhs ends with core::string_view
-// rhs as if they are both percent-decoded. If
-// lhs ends with rhs, return number of chars
-// matched in the encoded core::string_view
-std::size_t
-path_ends_with(
-    core::string_view lhs,
-    core::string_view rhs) noexcept;
-
 // compare two core::string_views as if they are both
 // percent-decoded and lowercase
 BOOST_URL_DECL
@@ -126,23 +108,14 @@ remove_dot_segments(
     char const* end,
     core::string_view input) noexcept;
 
-void
-pop_last_segment(
-    core::string_view& str,
-    core::string_view& seg,
-    std::size_t& level,
-    bool remove_unmatched) noexcept;
-
-char
-path_pop_back( core::string_view& s );
-
+// digest a path as if it were normalized
 BOOST_URL_DECL
 void
 normalized_path_digest(
-    core::string_view str,
-    bool remove_unmatched,
+    segments_encoded_view segs,
     fnv_1a& hasher) noexcept;
 
+// compare two paths as if they were normalized
 BOOST_URL_DECL
 int
 segments_compare(
