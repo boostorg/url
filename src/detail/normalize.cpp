@@ -797,7 +797,11 @@ segments_compare(
             }
         }
         n += skip * 3;
-        n -= !seg.is_absolute();
+        // a relative path has no leading slash,
+        // but a path whose segments all cancel
+        // out has no chars to discount at all
+        if (n != 0)
+            n -= !seg.is_absolute();
         return n;
     };
 

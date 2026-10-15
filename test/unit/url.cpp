@@ -1496,6 +1496,34 @@ struct url_test
             check("../a/b", "%2E%2E/a/b", 0);
         }
 
+        // issue #1003
+        // compare() hung on relative paths whose
+        // dot segments cancel out
+        {
+            auto check = [](core::string_view e1,
+                            core::string_view e2,
+                            int cmp) {
+                url_view u1 = parse_uri_reference(e1).value();
+                url_view u2 = parse_uri_reference(e2).value();
+                BOOST_TEST_EQ(u1.compare(u2), cmp);
+                BOOST_TEST_EQ(u2.compare(u1), -cmp);
+                BOOST_TEST_EQ(u1 == u2, cmp == 0);
+            };
+
+            // inputs that used to hang
+            check(".", ".", 0);
+            check("a/..", "b", -1);
+            check("http:.", "http:x", -1);
+
+            // relative paths whose segments all
+            // cancel out are the empty path
+            check(".", "", 0);
+            check("a/..", "", 0);
+            check("./", "", 0);
+            check("a/../", "", 0);
+            check("a/./..", "", 0);
+        }
+
         // resolve preconditions
         {
             // base != ref / base.has_scheme()
