@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+// Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -119,7 +120,12 @@ struct BOOST_SYMBOL_VISIBLE
 };
 
 #if defined(BOOST_URL_HAS_CXX20_CONSTEXPR)
+// Visible so a shared library built as C++20
+// still exports the symbols that consumers built
+// as C++17 reference through the externs below
+BOOST_SYMBOL_VISIBLE
 inline constexpr error_cat_type error_cat{};
+BOOST_SYMBOL_VISIBLE
 inline constexpr condition_cat_type condition_cat{};
 #else
 BOOST_URL_DECL extern error_cat_type error_cat;
