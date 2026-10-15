@@ -842,9 +842,9 @@ namespace {
    @par How
 
    advance() reads the segments once, from the
-   end, and decides each one as it is read. One
-   decision depends on other segments, and it
-   is made only when it is needed:
+   end, and decides each one as it is read. Two
+   decisions depend on other segments, and both
+   are made only when they are needed:
 
    @li Whether the path ends with "/" is decided
    by the first call to advance(). When the
@@ -853,6 +853,11 @@ namespace {
    reached: "/a/b/.." ends with "/" after
    reading "b", and "/x/../.." does not, after
    reading every segment.
+
+   @li Whether the path gets a "./" prefix is
+   decided after the segments that survive were
+   produced, because it depends on whether the
+   first of them is empty.
 
    The size of the normalized path is not known
    in advance. normalized_path_size() counts it
@@ -882,6 +887,12 @@ namespace {
    empty segment is the empty path: "a/.." and
    "." become "".
 
+   @li A relative path whose first segment is
+   empty would serialize with a leading "//",
+   which reads as an authority, so normalize()
+   adds a "./" prefix that this class emits too:
+   "a/..//b" and ".//b" both become ".//b".
+
    @li Segments are compared after decoding, so
    "%2E%2E" is "..". An encoded slash ("%2F") is
    not decoded by normalize() and is not a
@@ -905,6 +916,13 @@ class normalized_path_reverse
                     "b", "a"    surviving_segment
                     ".."        dotdot_prefix
        @endcode
+
+       dot_prefix comes last because it is the
+       first segment of the normalized path. A
+       path never has both a dot_prefix and a
+       dotdot_prefix: the "./" prefix is only
+       needed when nothing is left over at the
+       front.
     */
     enum class segment_type
     {
@@ -922,6 +940,11 @@ class normalized_path_reverse
         // "a/../../..", which normalizes to
         // "../..", this produces "..", then "..".
         dotdot_prefix,
+
+        // The "." of the "./" prefix. For
+        // "a/..//b", which normalizes to ".//b",
+        // this produces ".".
+        dot_prefix,
 
         // Nothing is left, so advance() returns
         // false.
@@ -960,8 +983,24 @@ class normalized_path_reverse
 
     // Number of segments advance() returned so
     // far. next() puts no '/' after the first
-    // one: "a/b" produces 'b', then '/' and 'a'.
+    // one, and the "./" prefix needs at least
+    // two: "a/..//b" produces "b" and "" before
+    // the ".".
     std::size_t n_produced_ = 0;
+
+    // The last segment produced as a
+    // surviving_segment was empty. They come
+    // last first, so this is the first segment
+    // of the normalized path, and an empty one
+    // needs the "./" prefix: in "a/..//b" it is
+    // the "" before "b".
+    bool front_surviving_empty_ = false;
+
+    // advance() produced a leftover "..". The
+    // path then starts with "..", so it never
+    // needs the "./" prefix: "a/../..//b"
+    // normalizes to "..//b".
+    bool produced_dotdot_ = false;
 
     // Nothing is left to produce, so next()
     // returns false.
@@ -1117,6 +1156,7 @@ class normalized_path_reverse
        survive, last first
        @li dotdot_prefix: the ".." left over at
        the front
+       @li dot_prefix: the "." of the "./" prefix
 
        @code
        path:       ../a/b/..
@@ -1166,6 +1206,7 @@ class normalized_path_reverse
                 else
                 {
                     ++n_produced_;
+                    front_surviving_empty_ = s.empty();
                     seg_ = s;
                     return true;
                 }
@@ -1180,10 +1221,35 @@ class normalized_path_reverse
             {
                 --pending_dotdots_;
                 ++n_produced_;
+                produced_dotdot_ = true;
                 seg_ = "..";
                 return true;
             }
+            cur_segment_type_ = segment_type::dot_prefix;
+        }
+        if (cur_segment_type_ == segment_type::dot_prefix)
+        {
+            // every segment was read and every
+            // leftover ".." was produced
+            BOOST_ASSERT(it_ == begin_);
+            BOOST_ASSERT(pending_dotdots_ == 0);
             cur_segment_type_ = segment_type::end;
+            // A relative path whose first segment
+            // is empty, with more after it, would
+            // start with "//" and read as an
+            // authority: "a/..//b" produced "b"
+            // and "", so it gets a ".".
+            bool const needs_dot_prefix =
+                !absolute_ &&
+                !produced_dotdot_ &&
+                front_surviving_empty_ &&
+                n_produced_ >= 2;
+            if (needs_dot_prefix)
+            {
+                ++n_produced_;
+                seg_ = ".";
+                return true;
+            }
         }
         // every path to here went through the
         // transition to end

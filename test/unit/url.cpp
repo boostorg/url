@@ -1551,6 +1551,51 @@ struct url_test
             check("a%2Fb", "a/b", -1);
             check("a%2Fb", "a%2fb", 0);
             check("/a%2Fb", "/a/b", -1);
+
+            // a relative path left with a leading
+            // empty segment keeps its "./" shield
+            check(".//b", "/b", -1);
+            check("/./b", "a/..//b", +1);
+            check(".//", "/", -1);
+        }
+
+        // two URLs compare equal exactly when
+        // they normalize to the same string
+        {
+            auto check = [](
+                core::string_view a,
+                core::string_view b)
+            {
+                url na = parse_uri_reference(a).value();
+                na.normalize();
+                url nb = parse_uri_reference(b).value();
+                nb.normalize();
+                bool const same_buffer =
+                    na.buffer() == nb.buffer();
+                url_view ua = parse_uri_reference(a).value();
+                url_view ub = parse_uri_reference(b).value();
+                BOOST_TEST_EQ(ua.compare(ub) == 0, same_buffer);
+                BOOST_TEST_EQ(ub.compare(ua) == 0, same_buffer);
+                BOOST_TEST_EQ(ua == ub, same_buffer);
+            };
+
+            // ".//b" is not "/b"
+            check(".//b", "/b");
+            check(".//b", "/./b");
+            check("a/..//b", "/b");
+            check("a/..//b", "/./b");
+
+            // ".//" is not "/"
+            check(".//", "/");
+            check(".//", "/.");
+            check(".//", "/./");
+            check(".//", "/a/..");
+            check(".//", "/a/../");
+            check("a/..//", "/");
+            check("a/..//", "/.");
+            check("a/..//", "/./");
+            check("a/..//", "/a/..");
+            check("a/..//", "/a/../");
         }
 
         // normalize() keeps a "/." or "./" prefix
