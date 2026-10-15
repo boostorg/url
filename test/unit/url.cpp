@@ -1524,6 +1524,41 @@ struct url_test
             check("a/./..", "", 0);
         }
 
+        // normalize() keeps a "/." or "./" prefix
+        // in front of a path that starts with "//",
+        // and the segment count does not include it
+        {
+            auto check = [](core::string_view s,
+                            core::string_view after,
+                            std::size_t nseg)
+            {
+                url u = parse_uri_reference(s).value();
+                u.normalize();
+                BOOST_TEST_EQ(u.buffer(), after);
+                auto segs = u.encoded_segments();
+                BOOST_TEST_EQ(segs.size(), nseg);
+                BOOST_TEST_EQ(
+                    url_view(after).encoded_segments().size(),
+                    nseg);
+                std::size_t n = 0;
+                for (auto it = segs.end();
+                     it != segs.begin(); --it)
+                    ++n;
+                BOOST_TEST_EQ(n, nseg);
+            };
+
+            check("/.//b", "/.//b", 2);
+            check("/././/b", "/.//b", 2);
+            check("/a/..//b", "/.//b", 2);
+            check(".//b", ".//b", 2);
+            check("././/b", ".//b", 2);
+            check("a/..//b", ".//b", 2);
+            check("a/..//", ".//", 2);
+            check("/./b", "/b", 1);
+            check("/a/..", "/", 0);
+            check("a/..", "", 0);
+        }
+
         // resolve preconditions
         {
             // base != ref / base.has_scheme()

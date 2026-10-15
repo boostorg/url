@@ -2333,21 +2333,18 @@ normalize_path()
     // Step 6: Update path parameters
     //
     {
+        // The segment count is adjusted for the
+        // "/." or "./" shield prefix, which is
+        // not a segment of its own.
         p = encoded_path();
-        if (p == "/")
+        std::size_t nseg = 0;
+        if (!p.empty())
         {
-            impl_.nseg_ = 0;
+            nseg = std::count(
+                p.begin() + 1, p.end(), '/') + 1;
         }
-        else if (!p.empty())
-        {
-            impl_.nseg_ = detail::to_size_type(
-                std::count(
-                    p.begin() + 1, p.end(), '/') + 1);
-        }
-        else
-        {
-            impl_.nseg_ = 0;
-        }
+        impl_.nseg_ = detail::to_size_type(
+            detail::path_segments(p, nseg));
         impl_.decoded_[id_path] =
             detail::to_size_type(detail::decode_bytes_unsafe(
                 impl_.get(id_path)));
