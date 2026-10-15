@@ -258,6 +258,31 @@ struct url_base_test
             BOOST_TEST_EQ(dest.buffer(), "sc:///");
         }
 
+        {
+            // remove_authority() keeps a "//" path
+            // from becoming an authority by adding
+            // "/." in front of it, and the decoded
+            // path size must count it
+            auto check = [](
+                core::string_view s,
+                core::string_view after)
+            {
+                url u(s);
+                u.remove_authority();
+                url_view v(after);
+                BOOST_TEST_EQ(u.buffer(), after);
+                BOOST_TEST_EQ(u.path(), v.path());
+                BOOST_TEST_EQ(u.path().size(), v.path().size());
+                BOOST_TEST_EQ(
+                    u.encoded_segments().size(),
+                    v.encoded_segments().size());
+            };
+
+            check("//h//x", "/.//x");
+            check("http://h//x", "http:/.//x");
+            check("http://h//%00", "http:/.//%00");
+        }
+
         remove("", "");
         remove("/", "/");
         remove("/x", "/x");
