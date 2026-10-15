@@ -215,6 +215,49 @@ struct url_base_test
             BOOST_TEST_EQ(u.password(), "");
         }
 
+        {
+            // issue #1008
+            // adding an authority to a relative path
+            // inserts a "/" that the decoded path
+            // size must count
+            auto check = [](
+                core::string_view s,
+                core::string_view after,
+                void(*f)(url&))
+            {
+                url u(s);
+                f(u);
+                url_view v(after);
+                BOOST_TEST_EQ(u.buffer(), after);
+                BOOST_TEST_EQ(u.path(), v.path());
+                BOOST_TEST_EQ(u.path().size(), v.path().size());
+                BOOST_TEST_EQ(
+                    u.encoded_segments().size(),
+                    v.encoded_segments().size());
+            };
+
+            check("sc:%00", "sc:///%00", [](url& u) {
+                u.set_encoded_authority(""); });
+            check("sc:%00", "sc://h/%00", [](url& u) {
+                u.set_encoded_authority("h"); });
+            check("a/b", "//h/a/b", [](url& u) {
+                u.set_encoded_authority("h"); });
+            check("sc:%00", "sc://u@/%00", [](url& u) {
+                u.set_encoded_user("u"); });
+            check("sc:%00", "sc://:p@/%00", [](url& u) {
+                u.set_encoded_password("p"); });
+            check("sc:%00", "sc://u:p@/%00", [](url& u) {
+                u.set_encoded_userinfo("u:p"); });
+
+            // resolve() adds the authority first
+            url dest;
+            resolve(
+                url_view("sc:%00#"),
+                url_view("///"),
+                dest);
+            BOOST_TEST_EQ(dest.buffer(), "sc:///");
+        }
+
         remove("", "");
         remove("/", "/");
         remove("/x", "/x");

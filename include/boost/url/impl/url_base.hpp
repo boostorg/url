@@ -313,8 +313,11 @@ set_encoded_authority(
         dest[n - 1] = '/';
     impl_.apply_authority(a.u_);
     if(need_slash)
+    {
         impl_.adjust_right(
                 id_query, id_end, 1);
+        ++impl_.decoded_[id_path];
+    }
     return *this;
 }
 
@@ -2618,6 +2621,7 @@ set_user_impl(
         impl_.split(id_host, 0);
         impl_.split(id_port, 0);
         dest[3 + n] = '/';
+        ++impl_.decoded_[id_path];
     }
     check_invariants();
     return dest + 2;
@@ -2660,6 +2664,7 @@ set_password_impl(
         impl_.split(id_host, 0);
         impl_.split(id_port, 0);
         dest[4 + n] = '/';
+        ++impl_.decoded_[id_path];
     }
     check_invariants();
     return dest + 3;
@@ -2689,6 +2694,7 @@ set_userinfo_impl(
         impl_.split(id_host, 0);
         impl_.split(id_port, 0);
         dest[3 + n] = '/';
+        ++impl_.decoded_[id_path];
     }
     check_invariants();
     return dest + 2;
