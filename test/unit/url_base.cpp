@@ -105,6 +105,30 @@ struct url_base_test
         remove("x::::", "%3A%3A%3A");
 
 
+        {
+            // remove_scheme() keeps a "./" prefix
+            // that already protects the colon in
+            // the next segment
+            auto check = [](
+                core::string_view s,
+                core::string_view after)
+            {
+                url u(s);
+                u.remove_scheme();
+                url_view v(after);
+                BOOST_TEST_EQ(u.buffer(), after);
+                BOOST_TEST_EQ(u.path(), v.path());
+                BOOST_TEST_EQ(u.path().size(), v.path().size());
+                BOOST_TEST_EQ(
+                    u.encoded_segments().size(),
+                    v.encoded_segments().size());
+            };
+
+            check("sc:./a:b", "./a:b");
+            check("sc:./a:b/c", "./a:b/c");
+            check("sc:./a:b?q#f", "./a:b?q#f");
+        }
+
         remove("x://a.b/1/2",      "//a.b/1/2");
         remove("x://a:b@c.d/1/?#", "//a:b@c.d/1/?#");
 
