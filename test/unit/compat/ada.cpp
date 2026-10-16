@@ -2370,9 +2370,8 @@ struct ada_test
             // href: "http://example.com/(%28:%3A%29)"
             BOOST_TEST_CSTR_EQ(u.scheme(), "http");
             BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
-            // Boost.URL normalizes octets when resolving the URL
-            // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/(%28:%3A%29)");
-            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/((::))");
+            // Reserved escapes stay encoded.
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/(%28:%3A%29)");
         }();
         []{
             system::result<url> base = parse_uri("about:blank");
@@ -2389,9 +2388,8 @@ struct ada_test
             // href: "http://example.com/%3A%3a%3C%3c"
             BOOST_TEST_CSTR_EQ(u.scheme(), "http");
             BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
-            // Boost.URL normalizes octets when resolving the URL
-            // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%3A%3A%3C%3C");
-            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/::%3C%3C");
+            // Escape hex digits are normalized to uppercase.
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%3A%3A%3C%3C");
         }();
         []{
             system::result<url> base = parse_uri("about:blank");
@@ -2424,9 +2422,8 @@ struct ada_test
             // href: "http://example.com/%7Ffp3%3Eju%3Dduvgw%3Dd"
             BOOST_TEST_CSTR_EQ(u.scheme(), "http");
             BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
-            // Boost.URL normalizes octets when resolving the URL
-            // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%7Ffp3%3Eju%3Dduvgw%3Dd");
-            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%7Ffp3%3Eju=duvgw=d");
+            // Reserved escapes stay encoded.
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/%7Ffp3%3Eju%3Dduvgw%3Dd");
         }();
         []{
             system::result<url> base = parse_uri("about:blank");
@@ -2443,9 +2440,8 @@ struct ada_test
             // href: "http://example.com/@asdf%40"
             BOOST_TEST_CSTR_EQ(u.scheme(), "http");
             BOOST_TEST_CSTR_EQ(u.encoded_host(), "example.com");
-            // Boost.URL normalizes octets when resolving the URL
-            // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/@asdf%40");
-            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/@asdf@");
+            // Reserved escapes stay encoded.
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/@asdf%40");
         }();
         []{
             system::result<url> base = parse_uri("about:blank");
@@ -6186,9 +6182,8 @@ struct ada_test
             u.normalize_path();
             // href: "file:///C%3A/"
             BOOST_TEST_CSTR_EQ(u.scheme(), "file");
-            // Boost.URL normalizes octets when resolving the URL
-            // BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C%3A/");
-            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C:/");
+            // Reserved escapes stay encoded.
+            BOOST_TEST_CSTR_EQ(u.encoded_path(), "/C%3A/");
         }();
         []{
             system::result<url> base = parse_uri("about:blank");

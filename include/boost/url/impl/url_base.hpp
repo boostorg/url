@@ -2015,21 +2015,16 @@ normalize_path()
     //
     // Step 1: Percent-encoding normalization
     //
-    // Decode percent-encoded characters that are
-    // valid unencoded in path segments (pchar),
+    // Decode percent-encoded unreserved characters,
     // and uppercase remaining hex digits.
     //
-    // This can introduce:
-    //   - New '.' from %2E (dot is unreserved)
-    //   - New ':' from %3A (colon is a pchar)
-    // This cannot introduce:
-    //   - New '/' (%2F stays encoded, '/' is not
-    //     a segment character)
+    // This can introduce new '.' from %2E,
+    // but reserved characters stay encoded.
     //
-    // These new '.' and ':' characters can create
+    // These new '.' characters can create
     // ambiguities that Steps 2 and 3 must handle.
     //
-    normalize_octets_impl(id_path, detail::segment_chars, op);
+    normalize_octets_impl(id_path, unreserved_chars, op);
     core::string_view p = impl_.get(id_path);
     char* p_dest = s_ + impl_.offset(id_path);
     char* p_end = s_ + impl_.offset(id_path + 1);
@@ -2256,15 +2251,11 @@ normalize_path()
     // misinterpreted as a scheme delimiter when
     // serialized and re-parsed.
     //
-    // Colons can appear in the first segment either
-    // because they were already there (decoded from
-    // %3A in Step 1), or because remove_dot_segments
-    // (Step 3) canceled preceding segments via ".."
-    // and exposed a colon that was deeper in the path.
+    // Colons can appear in the first segment because
+    // remove_dot_segments (Step 3) canceled preceding
+    // segments via ".." and exposed a colon that was
+    // deeper in the path.
     //
-    // Example (pre-existing):
-    //   my%3Asharona -> Step 1: my:sharona
-    //   -> Step 5: my%3Asharona
     // Example (exposed by dot removal):
     //   a/../b:c -> Step 3: b:c
     //   -> Step 5: b%3Ac
@@ -2369,10 +2360,7 @@ normalize_query()
 {
     op_t op(*this);
     normalize_octets_impl(
-        id_query,
-        detail::query_chars,
-        detail::query_ignore_chars,
-        op);
+        id_query, unreserved_chars, op);
     return *this;
 }
 
@@ -2383,7 +2371,7 @@ normalize_fragment()
 {
     op_t op(*this);
     normalize_octets_impl(
-        id_frag, detail::fragment_chars, op);
+        id_frag, unreserved_chars, op);
     return *this;
 }
 

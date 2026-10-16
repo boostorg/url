@@ -1279,6 +1279,18 @@ struct url_test
             check("HtTp://cppalliance.org/%2F",
                   "http://cppalliance.org/%2F");
 
+            // Reserved escapes stay encoded during normalization.
+            check("https://example.com/item%3bname",
+                  "https://example.com/item%3Bname");
+            check("https://example.com/?q=a%2fb",
+                  "https://example.com/?q=a%2Fb");
+            check("https://example.com/#a%2fb",
+                  "https://example.com/#a%2Fb");
+            check("https://example.com/#a%23b",
+                  "https://example.com/#a%23b");
+            check("http://example.com/%7e%3b%41?%71=%2f%7e#%61%23%2f",
+                  "http://example.com/~%3BA?q=%2F~#a%23%2F");
+
         }
 
         // issue 985
