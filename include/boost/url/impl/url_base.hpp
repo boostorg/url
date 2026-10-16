@@ -183,7 +183,13 @@ remove_scheme()
     if(sn == 0)
         return *this;
     auto const po = impl_.offset(id_path);
-    auto fseg = first_segment();
+    // The first segment as written, not as
+    // first_segment() returns it: a "./" prefix
+    // already keeps a colon in the next segment
+    // from looking like a scheme, and the colon
+    // encoding below starts at the path
+    core::string_view fseg = impl_.get(id_path);
+    fseg = fseg.substr(0, fseg.find('/'));
     bool const encode_colon =
         !has_authority() &&
         impl_.nseg_ > 0 &&
