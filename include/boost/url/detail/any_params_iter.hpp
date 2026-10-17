@@ -348,12 +348,14 @@ struct param_value_iter
     param_value_iter(
         std::size_t nk,
         core::string_view const& value,
-        bool has_value) noexcept
+        bool has_value,
+        bool space_as_plus) noexcept
         : any_params_iter(
             false,
             value)
         , nk_(nk)
         , has_value_(has_value)
+        , space_as_plus_(space_as_plus)
     {
     }
 
@@ -361,6 +363,7 @@ private:
     std::size_t nk_ = 0;
     bool has_value_ = false;
     bool at_end_ = false;
+    bool space_as_plus_ = false;
 
     void rewind() noexcept override;
     bool measure(std::size_t&) noexcept override;
