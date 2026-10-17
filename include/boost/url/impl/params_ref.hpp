@@ -375,7 +375,8 @@ unset(
             pos.it_,
             pos.it_.next(),
             detail::param_value_iter(
-                pos.it_.nk - 1, s, false)),
+                pos.it_.nk - 1, s, false,
+                opt_.space_as_plus)),
         opt_);
 }
 
@@ -393,7 +394,8 @@ set(
             pos.it_,
             pos.it_.next(),
             detail::param_value_iter(
-                pos.it_.nk - 1, value, true)),
+                pos.it_.nk - 1, value, true,
+                opt_.space_as_plus)),
         opt_);
 }
 

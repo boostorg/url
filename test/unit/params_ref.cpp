@@ -1036,6 +1036,39 @@ struct params_ref_test
                 BOOST_TEST_EQ(u.buffer(), "https://a/a?a+b%20c=d+e%20f");
             }
 
+            // issue #1011
+            {
+                // A value written with set() should round
+                // trip: reading it back through the same
+                // options, or parsing the resulting URL
+                // again, gives the original value.
+                auto const check = [](bool space_as_plus)
+                {
+                    encoding_opts opts;
+                    opts.space_as_plus = space_as_plus;
+                    url u("?name=old&other=kept");
+                    params_ref params = u.params(opts);
+                    auto const round_trips = [&]
+                    {
+                        BOOST_TEST_EQ(
+                            (*params.find("name")).value, "C++ ");
+                        url_view u2(u.buffer());
+                        BOOST_TEST_EQ(
+                            (*u2.params(opts).find("name")).value, "C++ ");
+                        BOOST_TEST_EQ(
+                            (*u2.params(opts).find("other")).value, "kept");
+                    };
+
+                    params.set("name", "C++ ");
+                    round_trips();
+
+                    params.set(params.find("name"), "C++ ");
+                    round_trips();
+                };
+                check(true);
+                check(false);
+            }
+
             // comparisons
             {
                 // We should not consider two URLs equivalent

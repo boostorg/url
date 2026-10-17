@@ -425,7 +425,7 @@ measure(
     if(has_value_)
     {
         encoding_opts opt;
-        opt.space_as_plus = false;
+        opt.space_as_plus = space_as_plus_;
         n += encoded_size(
             s0,
             detail::param_value_chars,
@@ -445,7 +445,7 @@ copy(char*& it, char const* end) noexcept
         return;
     *it++ = '=';
     encoding_opts opt;
-    opt.space_as_plus = false;
+    opt.space_as_plus = space_as_plus_;
     it += encode(
         it,
         end - it,
