@@ -11,7 +11,7 @@
     This example shows how to construct and modify
     URLs to consume a third party API to
     generate QR Codes.
-    https://developers.google.com/chart/infographics/docs/qr_codes
+    https://goqr.me/api/doc/create-qr-code/
 */
 
 #include <boost/url/url.hpp>
@@ -26,14 +26,14 @@ int main(int argc, char** argv)
 {
     if (argc < 2) {
         std::cout << argv[0] << "\n";
-        std::cout << "Usage: qrcode <data> <width> <height> <output encoding> <error correction> <border>\n"
+        std::cout << "Usage: qrcode <data> <width> <height> <output encoding> <error correction> <margin>\n"
                      "options:\n"
                      "    <data>:             The data to encode (required)\n"
                      "    <width>:            Image width (default: 100)\n"
                      "    <height>:           Image height (default: width)\n"
-                     "    <output encoding>:  UTF-8, Shift_JIS, ISO-8859-1 (default: utf8)\n"
+                     "    <output encoding>:  UTF-8, ISO-8859-1 (default: UTF-8)\n"
                      "    <error correction>: percentage of error correction (default: 7)\n"
-                     "    <margin>:           border width (default: 4)\n"
+                     "    <margin>:           border width in modules (default: 4)\n"
                      "examples:\n"
                      "qrcode \"Hello world\"\n";
         return EXIT_FAILURE;
@@ -41,45 +41,45 @@ int main(int argc, char** argv)
 
     urls::url u =
         urls::parse_uri(
-            "https://chart.googleapis.com/chart?cht=qr").value();
+            "https://api.qrserver.com/v1/create-qr-code/").value();
     auto ps = u.params();
 
     // Data
-    ps.append({"chl", argv[1]});
+    ps.append({"data", argv[1]});
 
     // Size
     std::size_t width = argc < 3 ? 100 : std::stoll(argv[2]);
     std::size_t height = argc < 4 ? width : std::stoll(argv[3]);
-    ps.append({"chs", std::to_string(width) + "x" + std::to_string(height)});
+    ps.append({"size", std::to_string(width) + "x" + std::to_string(height)});
 
     // Encoding
     if (argc >= 5)
     {
          core::string_view output_encoding =
-            core::string_view(argv[3]) == "Shift_JIS" ||
-            core::string_view(argv[3]) == "ISO-8859-1" ?
+            core::string_view(argv[4]) == "ISO-8859-1" ?
                 argv[4] : "UTF-8";
-         ps.append({"choe", output_encoding});
+         ps.append({"charset-target", output_encoding});
     }
 
-    // Error
+    // Error correction
     if (argc >= 6)
     {
         std::size_t err = std::stoll(argv[5]);
-        std::string chld;
+        core::string_view ecc;
         if (err < 11)
-            chld = "L";
+            ecc = "L";
         else if (err < 20)
-            chld = "M";
+            ecc = "M";
         else if (err < 27)
-            chld = "Q";
+            ecc = "Q";
         else
-            chld = "H";
-        std::size_t margin = argc < 7 ? 4 : std::stoll(argv[6]);
-        chld += "|";
-        chld += std::to_string(margin);
-        ps.append({"chld", chld});
+            ecc = "H";
+        ps.append({"ecc", ecc});
     }
+
+    // Margin
+    std::size_t margin = argc < 7 ? 4 : std::stoll(argv[6]);
+    ps.append({"qzone", std::to_string(margin)});
 
     std::cout << u << '\n';
 
