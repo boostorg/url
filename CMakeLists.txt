@@ -133,10 +133,12 @@ endif ()
 # Library
 #
 #-------------------------------------------------
-file(GLOB_RECURSE BOOST_URL_HEADERS CONFIGURE_DEPENDS include/boost/*.hpp include/boost/*.natvis)
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+    file(GLOB_RECURSE BOOST_URL_HEADERS CONFIGURE_DEPENDS include/boost/*.hpp include/boost/*.natvis)
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/include/boost PREFIX "" FILES ${BOOST_URL_HEADERS})
+endif()
 file(GLOB_RECURSE BOOST_URL_SOURCES CONFIGURE_DEPENDS src/*.cpp)
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/include/boost PREFIX "" FILES ${BOOST_URL_HEADERS})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "url" FILES ${BOOST_URL_SOURCES})
 function(boost_url_setup_properties target)
     target_compile_features(${target} PUBLIC cxx_constexpr)
