@@ -133,10 +133,30 @@ endif ()
 # Library
 #
 #-------------------------------------------------
-file(GLOB_RECURSE BOOST_URL_HEADERS CONFIGURE_DEPENDS include/boost/*.hpp include/boost/*.natvis)
-file(GLOB_RECURSE BOOST_URL_SOURCES CONFIGURE_DEPENDS src/*.cpp)
+file(GLOB_RECURSE BOOST_URL_HEADERS ${BOOST_CONFIGURE_DEPENDS} include/boost/*.hpp include/boost/*.natvis)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/include/boost PREFIX "" FILES ${BOOST_URL_HEADERS})
+set(BOOST_URL_SOURCES
+    src/decode_view.cpp
+    src/error.cpp
+    src/ipv4_address.cpp
+    src/ipv6_address.cpp
+    src/parse_path.cpp
+    src/parse_query.cpp
+    src/pct_string_view.cpp
+    src/detail/decode.cpp
+    src/detail/except.cpp
+    src/detail/format_args.cpp
+    src/detail/normalize.cpp
+    src/detail/pattern.cpp
+    src/detail/pct_format.cpp
+    src/detail/replacement_field_rule.cpp
+    src/detail/vformat.cpp
+    src/grammar/ci_string.cpp
+    src/grammar/detail/recycled.cpp
+    src/grammar/error.cpp
+    src/grammar/string_view_base.cpp
+)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "url" FILES ${BOOST_URL_SOURCES})
 function(boost_url_setup_properties target)
     target_compile_features(${target} PUBLIC cxx_constexpr)
